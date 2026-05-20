@@ -146,6 +146,18 @@ export default function HomeScreen() {
           />
           <Text style={[styles.actionLabel, { color: colors.accent }]}>Digibank</Text>
         </TouchableOpacity>
+        <TouchableOpacity
+          style={[styles.actionBtn, { backgroundColor: '#f59e0b22', borderColor: '#f59e0b' }]}
+          onPress={() => router.push('/(tabs)/mochila')}
+          activeOpacity={0.8}
+        >
+          <Image
+            source={require('../../assets/images/mochila-icon.png')}
+            style={[styles.actionMapIcon, { tintColor: '#f59e0b' }]}
+            resizeMode="contain"
+          />
+          <Text style={[styles.actionLabel, { color: '#f59e0b' }]}>Mochila</Text>
+        </TouchableOpacity>
       </View>
     </ScrollView>
   );

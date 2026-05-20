@@ -20,6 +20,10 @@ function NativeTabLayout() {
         <Icon sf={{ default: "square.grid.2x2", selected: "square.grid.2x2.fill" }} />
         <Label>Digibank</Label>
       </NativeTabs.Trigger>
+      <NativeTabs.Trigger name="mochila">
+        <Icon sf={{ default: "backpack", selected: "backpack.fill" }} />
+        <Label>Mochila</Label>
+      </NativeTabs.Trigger>
       <NativeTabs.Trigger name="map">
         <Icon sf={{ default: "map", selected: "map.fill" }} />
         <Label>Mundo</Label>
@@ -80,6 +84,19 @@ function ClassicTabLayout() {
           tabBarIcon: ({ color }) => (
             <Image
               source={require('../../assets/images/digibank-icon.png')}
+              style={{ width: 26, height: 26, tintColor: color }}
+              resizeMode="contain"
+            />
+          ),
+        }}
+      />
+      <Tabs.Screen
+        name="mochila"
+        options={{
+          title: "Mochila",
+          tabBarIcon: ({ color }) => (
+            <Image
+              source={require('../../assets/images/mochila-icon.png')}
               style={{ width: 26, height: 26, tintColor: color }}
               resizeMode="contain"
             />

@@ -1,6 +1,9 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import React, { createContext, useCallback, useContext, useEffect, useState } from 'react';
-import { CHARACTERS, EVOLUTIONS, GAME_MAPS, expToNextLevel } from '@/constants/gameData';
+import {
+  CHARACTERS, EVOLUTIONS, GAME_MAPS, expToNextLevel,
+  EquipSlot, TamerGender, EQUIP_SLOTS_ORDER, DEFAULT_INVENTORY,
+} from '@/constants/gameData';
 
 export interface OwnedCharacter {
   ownedId: string;
@@ -9,12 +12,22 @@ export interface OwnedCharacter {
   exp: number;
 }
 
+type EquippedItems = Record<EquipSlot, string | null>;
+
+const defaultEquipped: EquippedItems = {
+  blusa: null, calca: null, sapato: null,
+  brasao: null, digivice: null, pulseira: null, oculos: null,
+};
+
 interface GameState {
   playerName: string;
+  gender: TamerGender;
   collection: OwnedCharacter[];
   clearedStages: Record<string, boolean>;
   selectedOwnedId: string | null;
   scanProgress: Record<string, number>;
+  inventory: string[];
+  equippedItems: EquippedItems;
 }
 
 interface GameContextValue extends GameState {
@@ -30,16 +43,23 @@ interface GameContextValue extends GameState {
   createFromScan: (characterId: string) => void;
   evolveDigimon: (ownedId: string) => void;
   totalPlayerLevel: number;
+  setGender: (g: TamerGender) => void;
+  equipItem: (slot: EquipSlot, itemId: string) => void;
+  unequipItem: (slot: EquipSlot) => void;
+  totalEquipBonus: () => Partial<Record<string, number>>;
 }
 
 const STORAGE_KEY = 'omega_dx10_save_v2';
 
 const defaultState: GameState = {
   playerName: 'Tamer',
+  gender: 'M',
   collection: [{ ownedId: 'owned_agumon_0', characterId: 'agumon', level: 1, exp: 0 }],
   clearedStages: {},
   selectedOwnedId: 'owned_agumon_0',
   scanProgress: {},
+  inventory: DEFAULT_INVENTORY,
+  equippedItems: defaultEquipped,
 };
 
 const GameContext = createContext<GameContextValue | null>(null);
@@ -57,6 +77,9 @@ export function GameProvider({ children }: { children: React.ReactNode }) {
             ...defaultState,
             ...parsed,
             scanProgress: parsed.scanProgress ?? {},
+            gender: parsed.gender ?? 'M',
+            inventory: parsed.inventory ?? DEFAULT_INVENTORY,
+            equippedItems: { ...defaultEquipped, ...(parsed.equippedItems ?? {}) },
           });
         } catch {}
       }
@@ -145,6 +168,24 @@ export function GameProvider({ children }: { children: React.ReactNode }) {
     setState((prev) => ({ ...prev, playerName: name }));
   }, []);
 
+  const setGender = useCallback((g: TamerGender) => {
+    setState((prev) => ({ ...prev, gender: g }));
+  }, []);
+
+  const equipItem = useCallback((slot: EquipSlot, itemId: string) => {
+    setState((prev) => ({
+      ...prev,
+      equippedItems: { ...prev.equippedItems, [slot]: itemId },
+    }));
+  }, []);
+
+  const unequipItem = useCallback((slot: EquipSlot) => {
+    setState((prev) => ({
+      ...prev,
+      equippedItems: { ...prev.equippedItems, [slot]: null },
+    }));
+  }, []);
+
   const isStageCleared = useCallback(
     (mapId: string, stageIndex: number) => {
       return !!state.clearedStages[`${mapId}-${stageIndex}`];
@@ -162,6 +203,21 @@ export function GameProvider({ children }: { children: React.ReactNode }) {
     },
     [state.clearedStages],
   );
+
+  const totalEquipBonus = useCallback((): Partial<Record<string, number>> => {
+    const { EQUIPMENT_ITEMS } = require('@/constants/gameData');
+    const result: Record<string, number> = {};
+    EQUIP_SLOTS_ORDER.forEach((slot) => {
+      const itemId = state.equippedItems[slot];
+      if (!itemId) return;
+      const item = EQUIPMENT_ITEMS.find((i: { id: string }) => i.id === itemId);
+      if (!item) return;
+      Object.entries(item.bonuses as Record<string, number>).forEach(([k, v]) => {
+        result[k] = (result[k] ?? 0) + (v as number);
+      });
+    });
+    return result;
+  }, [state.equippedItems]);
 
   const totalPlayerLevel = Math.max(1, Math.floor(
     state.collection.reduce((sum, c) => sum + c.level, 0) / Math.max(1, state.collection.length),
@@ -185,6 +241,10 @@ export function GameProvider({ children }: { children: React.ReactNode }) {
         createFromScan,
         evolveDigimon,
         totalPlayerLevel,
+        setGender,
+        equipItem,
+        unequipItem,
+        totalEquipBonus,
       }}
     >
       {children}

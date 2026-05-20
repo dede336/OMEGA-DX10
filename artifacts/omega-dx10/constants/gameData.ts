@@ -204,6 +204,62 @@ export const RARITY_LABELS: Record<RarityId, string> = {
   ULTRA:     'Ultra',
 };
 
+// ─── Tamer Equipment ──────────────────────────────────────────────────────────
+export type EquipSlot = 'blusa' | 'calca' | 'sapato' | 'brasao' | 'digivice' | 'pulseira' | 'oculos';
+export type TamerGender = 'M' | 'F' | 'N';
+
+export interface EquipItem {
+  id: string;
+  name: string;
+  slot: EquipSlot;
+  rarity: RarityId;
+  description: string;
+  bonuses: Partial<BaseStats>;
+}
+
+export const EQUIP_SLOT_LABELS: Record<EquipSlot, string> = {
+  blusa:    'Blusa',
+  calca:    'Calça',
+  sapato:   'Sapato',
+  brasao:   'Brasão',
+  digivice: 'Digivice',
+  pulseira: 'Pulseira',
+  oculos:   'Óculos',
+};
+
+export const EQUIP_SLOT_ICONS: Record<EquipSlot, string> = {
+  blusa:    'wind',
+  calca:    'align-justify',
+  sapato:   'chevrons-down',
+  brasao:   'shield',
+  digivice: 'cpu',
+  pulseira: 'link',
+  oculos:   'eye',
+};
+
+export const EQUIPMENT_ITEMS: EquipItem[] = [
+  { id: 'blusa_tamer',    name: 'Camiseta de Tamer',  slot: 'blusa',    rarity: 'COMMON',    description: 'Camiseta padrão dos Tamers. Aumenta o ataque do parceiro.',          bonuses: { atk: 5 } },
+  { id: 'blusa_jaqueta',  name: 'Jaqueta Tática',     slot: 'blusa',    rarity: 'RARE',      description: 'Jaqueta reforçada com chip de dados embutido.',                     bonuses: { atk: 10, def: 5 } },
+  { id: 'calca_treino',   name: 'Calça de Treino',    slot: 'calca',    rarity: 'COMMON',    description: 'Calça confortável para treinamento. Aumenta a defesa.',              bonuses: { def: 5 } },
+  { id: 'calca_tatica',   name: 'Calça Tática',       slot: 'calca',    rarity: 'RARE',      description: 'Calça reforçada com fibra digital de alto grau.',                   bonuses: { def: 12, spd: 3 } },
+  { id: 'sapato_tenis',   name: 'Tênis de Corrida',   slot: 'sapato',   rarity: 'COMMON',    description: 'Leve e rápido. Aumenta a velocidade do parceiro.',                  bonuses: { spd: 6 } },
+  { id: 'sapato_botas',   name: 'Botas de Batalha',   slot: 'sapato',   rarity: 'RARE',      description: 'Botas robustas para batalhas intensas.',                            bonuses: { spd: 8, def: 6 } },
+  { id: 'brasao_digital', name: 'Brasão Digital',     slot: 'brasao',   rarity: 'COMMON',    description: 'Símbolo de um Tamer legítimo. Aumenta o HP do parceiro.',           bonuses: { hp: 15 } },
+  { id: 'brasao_elite',   name: 'Brasão de Elite',    slot: 'brasao',   rarity: 'EPIC',      description: 'Concedido apenas aos melhores Tamers do mundo digital.',            bonuses: { hp: 35, mp: 20 } },
+  { id: 'digivice_d3',    name: 'Digivice D-3',       slot: 'digivice', rarity: 'COMMON',    description: 'Digivice padrão. Potencializa o espírito do parceiro.',             bonuses: { spt: 6 } },
+  { id: 'digivice_x',    name: 'Digivice X',          slot: 'digivice', rarity: 'LEGENDARY', description: 'Versão X do Digivice. Poder muito além dos limites conhecidos.',    bonuses: { spt: 20, atk: 12, mp: 25 } },
+  { id: 'pulseira_forca', name: 'Pulseira de Força',  slot: 'pulseira', rarity: 'COMMON',    description: 'Amplifica a força bruta do Digimon parceiro.',                      bonuses: { atk: 7 } },
+  { id: 'pulseira_ouro',  name: 'Pulseira Dourada',   slot: 'pulseira', rarity: 'RARE',      description: 'Pulseira lendária que amplifica múltiplos atributos de batalha.',   bonuses: { atk: 10, spt: 8 } },
+  { id: 'oculos_scanner', name: 'Óculos de Scanner',  slot: 'oculos',   rarity: 'COMMON',    description: 'Analisa inimigos em tempo real. Aumenta o MP do parceiro.',         bonuses: { mp: 8 } },
+  { id: 'oculos_tatico',  name: 'Óculos Tático',      slot: 'oculos',   rarity: 'RARE',      description: 'Óculos com HUD digital avançado e sistema de mira.',                bonuses: { mp: 15, apt: 5 } },
+];
+
+export const EQUIP_SLOTS_ORDER: EquipSlot[] = ['blusa', 'calca', 'sapato', 'brasao', 'digivice', 'pulseira', 'oculos'];
+
+export const DEFAULT_INVENTORY: string[] = [
+  'blusa_tamer', 'calca_treino', 'sapato_tenis', 'brasao_digital', 'digivice_d3', 'pulseira_forca', 'oculos_scanner',
+];
+
 export function expToNextLevel(level: number): number {
   return Math.floor(100 * Math.pow(1.15, level - 1));
 }
