@@ -6,10 +6,13 @@ const workspaceRoot = path.resolve(projectRoot, "../..");
 
 const config = getDefaultConfig(projectRoot);
 
-// pnpm monorepo: watch the entire workspace root and pnpm store
-config.watchFolders = [workspaceRoot];
+// pnpm monorepo: watch workspace packages (not the whole root to avoid temp dirs)
+config.watchFolders = [
+  path.resolve(workspaceRoot, "lib"),
+  path.resolve(workspaceRoot, "node_modules"),
+];
 
-// Let Metro resolve from the project first, then the workspace root
+// Resolve from project first, then workspace root
 config.resolver.nodeModulesPaths = [
   path.resolve(projectRoot, "node_modules"),
   path.resolve(workspaceRoot, "node_modules"),

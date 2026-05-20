@@ -3,6 +3,7 @@ import {
   View, Text, StyleSheet, ScrollView, TouchableOpacity,
   Platform, TextInput, Image,
 } from 'react-native';
+import { Image as ExpoImage } from 'expo-image';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Feather } from '@expo/vector-icons';
 import { useColors } from '@/hooks/useColors';
@@ -10,6 +11,7 @@ import { useGame } from '@/context/GameContext';
 import {
   EQUIP_SLOT_LABELS, EQUIP_SLOT_ICONS, EQUIPMENT_ITEMS, EQUIP_SLOTS_ORDER,
   RARITY_COLORS, RARITY_LABELS, ELEMENTS, CRAFT_RECIPES, EquipSlot, TamerGender,
+  TAMERS,
 } from '@/constants/gameData';
 import EQUIP_ITEM_IMAGES from '@/constants/equipImages';
 
@@ -24,9 +26,11 @@ export default function MochilaScreen() {
   const insets = useSafeAreaInsets();
   const game = useGame();
   const {
-    playerName, gender, inventory, equippedItems, pieces,
+    playerName, gender, tamerId, inventory, equippedItems, pieces,
     setGender, equipItem, unequipItem, setPlayerName, craftItem,
   } = game;
+
+  const selectedTamer = TAMERS.find((t) => t.id === tamerId) ?? null;
 
   const [selectedSlot, setSelectedSlot] = useState<EquipSlot | null>(null);
   const [editingName, setEditingName] = useState(false);
@@ -68,11 +72,21 @@ export default function MochilaScreen() {
       showsVerticalScrollIndicator={false}
     >
       {/* ── Tamer Card ── */}
-      <View style={[styles.tamerCard, { backgroundColor: colors.card, borderColor: colors.border }]}>
+      <View style={[styles.tamerCard, { backgroundColor: colors.card, borderColor: selectedTamer ? selectedTamer.accentColor + '88' : colors.border }]}>
         <View style={styles.tamerAvatarWrap}>
-          <View style={[styles.tamerAvatar, { backgroundColor: colors.primary + '22', borderColor: colors.primary }]}>
-            <Feather name="user" size={40} color={colors.primary} />
-          </View>
+          {selectedTamer ? (
+            <View style={[styles.tamerAvatarImg, { borderColor: selectedTamer.accentColor }]}>
+              <ExpoImage
+                source={selectedTamer.image}
+                style={styles.tamerAvatarImageStyle}
+                contentFit="cover"
+              />
+            </View>
+          ) : (
+            <View style={[styles.tamerAvatar, { backgroundColor: colors.primary + '22', borderColor: colors.primary }]}>
+              <Feather name="user" size={40} color={colors.primary} />
+            </View>
+          )}
           {gender === 'M' && (
             <View style={[styles.genderBadge, { backgroundColor: '#3b82f6' }]}>
               <Text style={styles.genderBadgeText}>♂</Text>
@@ -377,6 +391,14 @@ const styles = StyleSheet.create({
   tamerAvatar: {
     width: 72, height: 72, borderRadius: 36, borderWidth: 2,
     alignItems: 'center', justifyContent: 'center',
+  },
+  tamerAvatarImg: {
+    width: 72, height: 96, borderRadius: 14, borderWidth: 2,
+    overflow: 'hidden' as const,
+  },
+  tamerAvatarImageStyle: {
+    width: '100%' as unknown as number,
+    height: 192,
   },
   genderBadge: {
     position: 'absolute', bottom: -2, right: -2,
