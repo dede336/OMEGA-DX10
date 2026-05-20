@@ -115,7 +115,17 @@ export default function BattleScreen() {
     });
 
     const pFighter = buildFighter(pChar.name, pChar.attribute, pChar.element, pChar.baseStats, owned.level, equipBonuses);
-    const eFighter = buildFighter(eChar.name, eChar.attribute, eChar.element, eChar.baseStats, stage.enemyLevel);
+    let eFighter = buildFighter(eChar.name, eChar.attribute, eChar.element, eChar.baseStats, stage.enemyLevel);
+    if (stage.bossMultipliers) {
+      const bm = stage.bossMultipliers;
+      const newHp  = bm.hp  ? Math.floor(eFighter.stats.hp  * bm.hp)  : eFighter.stats.hp;
+      const newDef = bm.def ? Math.floor(eFighter.stats.def * bm.def) : eFighter.stats.def;
+      eFighter = {
+        ...eFighter,
+        currentHP: newHp,
+        stats: { ...eFighter.stats, hp: newHp, def: newDef },
+      };
+    }
 
     setPlayerFighter(pFighter);
     setEnemyFighter(eFighter);

@@ -36,6 +36,7 @@ export interface MapStage {
   enemyLevel: number;
   expReward: number;
   drops?: StageDrop[];
+  bossMultipliers?: { hp?: number; def?: number };
 }
 
 export interface GameMap {
@@ -271,6 +272,7 @@ export const GAME_MAPS: GameMap[] = [
         enemyCharacterId: 'gulusGammamon',
         enemyLevel: 25,
         expReward: 500,
+        bossMultipliers: { hp: 2, def: 4 / 3 },
         drops: [
           { type: 'bits',  amount: 1000, chance: 1.00 },
           { type: 'piece', id: 'piece_brasao_coragem',   amount: 1, chance: 0.10 },
