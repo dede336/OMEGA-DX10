@@ -10,16 +10,10 @@ import { useColors } from '@/hooks/useColors';
 import { useGame } from '@/context/GameContext';
 import {
   EQUIP_SLOT_LABELS, EQUIP_SLOT_ICONS, EQUIPMENT_ITEMS, EQUIP_SLOTS_ORDER,
-  RARITY_COLORS, RARITY_LABELS, ELEMENTS, EquipSlot, TamerGender,
+  RARITY_COLORS, RARITY_LABELS, ELEMENTS, EquipSlot,
   TAMERS, tamerExpToNextLevel,
 } from '@/constants/gameData';
 import EQUIP_ITEM_IMAGES from '@/constants/equipImages';
-
-const GENDER_OPTIONS: { value: TamerGender; label: string; icon: string }[] = [
-  { value: 'M', label: 'Masculino', icon: 'user' },
-  { value: 'F', label: 'Feminino',  icon: 'user' },
-  { value: 'N', label: 'Neutro',    icon: 'user' },
-];
 
 export default function MochilaScreen() {
   const colors = useColors();
@@ -28,8 +22,12 @@ export default function MochilaScreen() {
   const {
     playerName, gender, tamerId, inventory, equippedItems,
     tamerExp, tamerLevel,
-    setGender, equipItem, unequipItem, setPlayerName,
+    equipItem, unequipItem, setPlayerName,
   } = game;
+
+  const genderColor = gender === 'M' ? '#3b82f6' : gender === 'F' ? '#ec4899' : '#a855f7';
+  const genderSymbol = gender === 'M' ? '♂' : gender === 'F' ? '♀' : '⚧';
+  const genderLabel = gender === 'M' ? 'Masculino' : gender === 'F' ? 'Feminino' : 'Neutro';
 
   const selectedTamer = TAMERS.find((t) => t.id === tamerId) ?? null;
 
@@ -128,7 +126,12 @@ export default function MochilaScreen() {
               <Feather name="edit-2" size={14} color={colors.mutedForeground} style={{ marginLeft: 6, marginTop: 4 }} />
             </TouchableOpacity>
           )}
-          <Text style={[styles.tamerLabel, { color: colors.mutedForeground }]}>Tamer Digital</Text>
+          <View style={styles.tamerMetaRow}>
+            <Text style={[styles.tamerLabel, { color: colors.mutedForeground }]}>Tamer Digital</Text>
+            <View style={[styles.genderPill, { backgroundColor: genderColor + '22', borderColor: genderColor + '66' }]}>
+              <Text style={[styles.genderPillText, { color: genderColor }]}>{genderSymbol} {genderLabel}</Text>
+            </View>
+          </View>
           {/* Tamer XP Bar */}
           <View style={styles.tamerXpRow}>
             <Text style={[styles.tamerXpLabel, { color: colors.mutedForeground }]}>
@@ -150,31 +153,6 @@ export default function MochilaScreen() {
             </Text>
           </View>
         </View>
-      </View>
-
-      {/* ── Gênero ── */}
-      <Text style={[styles.sectionTitle, { color: colors.foreground }]}>Gênero do Tamer</Text>
-      <View style={styles.genderRow}>
-        {GENDER_OPTIONS.map((opt) => {
-          const active = gender === opt.value;
-          const col = opt.value === 'M' ? '#3b82f6' : opt.value === 'F' ? '#ec4899' : '#a855f7';
-          return (
-            <TouchableOpacity
-              key={opt.value}
-              style={[
-                styles.genderBtn,
-                { borderColor: active ? col : colors.border, backgroundColor: active ? col + '22' : colors.card },
-              ]}
-              onPress={() => setGender(opt.value)}
-              activeOpacity={0.8}
-            >
-              <Text style={[styles.genderSymbol, { color: active ? col : colors.mutedForeground }]}>
-                {opt.value === 'M' ? '♂' : opt.value === 'F' ? '♀' : '⚧'}
-              </Text>
-              <Text style={[styles.genderLabel, { color: active ? col : colors.mutedForeground }]}>{opt.label}</Text>
-            </TouchableOpacity>
-          );
-        })}
       </View>
 
       {/* ── Equipamentos ── */}
@@ -373,6 +351,9 @@ const styles = StyleSheet.create({
   },
   genderBadgeText: { color: '#fff', fontSize: 12, fontWeight: '700' as const },
   tamerInfo: { flex: 1 },
+  tamerMetaRow: { flexDirection: 'row', alignItems: 'center', gap: 8, marginTop: 2, flexWrap: 'wrap' },
+  genderPill: { flexDirection: 'row', alignItems: 'center', borderRadius: 8, borderWidth: 1, paddingHorizontal: 7, paddingVertical: 2 },
+  genderPillText: { fontSize: 11, fontWeight: '700' as const },
   nameRow: { flexDirection: 'row', alignItems: 'center' },
   tamerName: { fontSize: 22, fontWeight: '800' as const },
   tamerLabel: { fontSize: 12, marginTop: 2 },
