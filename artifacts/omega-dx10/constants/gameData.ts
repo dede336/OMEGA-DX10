@@ -1,6 +1,6 @@
 export type AttributeId = 'VC' | 'VR' | 'DA' | 'NO' | 'UN';
 export type ElementId = 'FIRE' | 'PLANT' | 'WATER' | 'WIND' | 'EARTH' | 'LIGHTNING' | 'LIGHT' | 'DARK' | 'NULL' | 'ICE';
-export type RarityId = 'COMMON' | 'RARE' | 'EPIC' | 'LEGENDARY';
+export type RarityId = 'COMMON' | 'RARE' | 'EPIC' | 'LEGENDARY' | 'ULTRA';
 
 export interface BaseStats {
   hp: number;
@@ -173,6 +173,7 @@ export const RARITY_COLORS: Record<RarityId, string> = {
   RARE:      '#3b82f6',
   EPIC:      '#8b5cf6',
   LEGENDARY: '#f59e0b',
+  ULTRA:     '#ff3c6e',
 };
 
 export const RARITY_LABELS: Record<RarityId, string> = {
@@ -180,6 +181,7 @@ export const RARITY_LABELS: Record<RarityId, string> = {
   RARE:      'Champion',
   EPIC:      'Ultimate',
   LEGENDARY: 'Mega',
+  ULTRA:     'Ultra',
 };
 
 export function expToNextLevel(level: number): number {
