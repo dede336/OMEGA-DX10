@@ -351,7 +351,6 @@ export const EQUIPMENT_ITEMS: EquipItem[] = [
   { id: 'calca_treino',   name: 'Calça de Treino',    slot: 'calca',    rarity: 'COMMON',    description: 'Calça confortável para treinamento. Aumenta a defesa.',              bonuses: { def: 5 } },
   { id: 'sapato_tenis',   name: 'Tênis de Corrida',   slot: 'sapato',   rarity: 'COMMON',    description: 'Leve e rápido. Aumenta a velocidade do parceiro.',                  bonuses: { spd: 6 } },
   { id: 'brasao_digital',  name: 'Brasão Digital',      slot: 'brasao',   rarity: 'COMMON',    description: 'Símbolo de um Tamer legítimo. Aumenta o HP do parceiro.',                           bonuses: { hp: 15 } },
-  { id: 'brasao_elite',    name: 'Brasão de Elite',     slot: 'brasao',   rarity: 'EPIC',      description: 'Concedido apenas aos melhores Tamers do mundo digital.',                            bonuses: { hp: 35, mp: 20 } },
   { id: 'brasao_coragem',   name: 'Brasão da Coragem',   slot: 'brasao', rarity: 'LEGENDARY', description: 'O Brasão da Coragem de Tai. Aumenta em 20% todos os status de Digimon do tipo Fogo.',                          bonuses: {}, elementBonus: { elements: ['FIRE'],          percent: 0.20 } },
   { id: 'brasao_esperanca', name: 'Brasão da Esperança', slot: 'brasao', rarity: 'LEGENDARY', description: 'O Brasão da Esperança de TK. Aumenta em 20% todos os status de Digimon do tipo Luz.',                           bonuses: {}, elementBonus: { elements: ['LIGHT'],         percent: 0.20 } },
   { id: 'brasao_amizade',   name: 'Brasão da Amizade',   slot: 'brasao', rarity: 'LEGENDARY', description: 'O Brasão da Amizade de Matt. Aumenta em 20% todos os status de Digimon do tipo Água e Gelo.', bonuses: {}, elementBonus: { elements: ['WATER', 'ICE'], percent: 0.20 } },
@@ -668,18 +667,6 @@ export const CRAFT_RECIPES: CraftRecipe[] = [
     resultItemId: 'pulseira_ouro',
     resultItemName: 'Pulseira Dourada',
     resultRarity: 'RARE',
-  },
-  {
-    pieceId: 'piece_caos',
-    pieceName: 'Fragmento do Caos',
-    pieceDescription: 'Drop do Chaos Brain. Usado para forjar itens épicos.',
-    pieceIcon: 'cpu',
-    pieceColor: '#a855f7',
-    requiredCount: 8,
-    bitsCost: 800,
-    resultItemId: 'brasao_elite',
-    resultItemName: 'Brasão de Elite',
-    resultRarity: 'EPIC',
   },
 ];
 
