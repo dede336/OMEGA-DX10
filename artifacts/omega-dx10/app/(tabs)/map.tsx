@@ -212,7 +212,7 @@ export default function MapScreen() {
                             <View key={di} style={styles.rewardRow}>
                               {drop.type === 'bits' ? (
                                 <>
-                                  <Feather name="dollar-sign" size={11} color="#facc15" />
+                                  <Image source={require('../../assets/images/bits-icon.png')} style={{ width: 14, height: 14 }} resizeMode="contain" />
                                   <Text style={[styles.rewardText, { color: '#facc15' }]}>
                                     {drop.amount.toLocaleString()} Bits ({Math.round(drop.chance * 100)}%)
                                   </Text>

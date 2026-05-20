@@ -154,7 +154,7 @@ export default function CraftScreen() {
                   backgroundColor: hasEnoughBits ? '#facc1518' : colors.background,
                   borderColor: hasEnoughBits ? '#facc15' : colors.border,
                 }]}>
-                  <Feather name="dollar-sign" size={12} color={hasEnoughBits ? '#facc15' : colors.mutedForeground} />
+                  <Image source={require('../../assets/images/bits-icon.png')} style={{ width: 16, height: 16, opacity: hasEnoughBits ? 1 : 0.4 }} resizeMode="contain" />
                   <Text style={[styles.craftReqText, { color: hasEnoughBits ? '#facc15' : colors.mutedForeground }]}>
                     {(recipe.bitsCost ?? 0).toLocaleString()} Bits
                   </Text>

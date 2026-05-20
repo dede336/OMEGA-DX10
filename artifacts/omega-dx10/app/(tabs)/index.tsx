@@ -64,7 +64,7 @@ export default function HomeScreen() {
           <Text style={[styles.statLabel, { color: colors.mutedForeground }]}>Estágios</Text>
         </View>
         <View style={[styles.statCard, { backgroundColor: '#facc1522', borderColor: '#facc1566' }]}>
-          <Feather name="dollar-sign" size={20} color="#facc15" />
+          <Image source={require('../../assets/images/bits-icon.png')} style={{ width: 28, height: 28 }} resizeMode="contain" />
           <Text style={[styles.statNum, { color: colors.foreground }]}>{bits >= 1000 ? `${(bits / 1000).toFixed(1)}k` : bits}</Text>
           <Text style={[styles.statLabel, { color: colors.mutedForeground }]}>Bits</Text>
         </View>
