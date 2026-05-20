@@ -6,6 +6,7 @@ import { SymbolView } from "expo-symbols";
 import { Feather } from "@expo/vector-icons";
 import React from "react";
 import { Platform, StyleSheet, View, Image, useColorScheme } from "react-native";
+import { Image as ExpoImage } from "expo-image";
 
 import { useColors } from "@/hooks/useColors";
 
@@ -94,10 +95,10 @@ function ClassicTabLayout() {
         options={{
           title: "Digibank",
           tabBarIcon: ({ color }) => (
-            <Image
-              source={require('../../assets/images/digibank-icon.png')}
+            <ExpoImage
+              source={require('../../assets/images/digimon-icon.gif')}
               style={{ width: 28, height: 28 }}
-              resizeMode="contain"
+              contentFit="contain"
             />
           ),
         }}
