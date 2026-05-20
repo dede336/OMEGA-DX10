@@ -7,6 +7,8 @@ import {
   ScrollView,
   Animated,
   Platform,
+  ImageBackground,
+  Image,
 } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { router, useLocalSearchParams } from 'expo-router';
@@ -24,6 +26,7 @@ import {
   SCANNABLE_CHARACTERS,
   getScaledStats,
 } from '@/constants/gameData';
+import CHARACTER_IMAGES from '@/constants/characterImages';
 import {
   buildFighter,
   enemyChooseAction,
@@ -238,19 +241,36 @@ export default function BattleScreen() {
 
         {/* Enemy preview */}
         {enemyChar && (
-          <View style={[styles.enemyPreviewCard, { backgroundColor: colors.card, borderColor: enemyAttrData ? enemyAttrData.color + '66' : colors.border }]}>
-            <Text style={[styles.sectionLabel, { color: colors.mutedForeground }]}>Inimigo</Text>
-            <CharacterAvatar characterId={stage.enemyCharacterId} size={90} />
-            <Text style={[styles.enemyNameLg, { color: colors.foreground }]}>{enemyChar.name}</Text>
-            <Text style={[styles.enemyLevel, { color: colors.primary }]}>Nível {stage.enemyLevel}</Text>
-            <View style={styles.enemyBadges}>
-              <AttributeBadge attr={enemyChar.attribute} />
-              <View style={{ width: 8 }} />
-              <ElementBadge elem={enemyChar.element} />
-            </View>
-            <View style={[styles.expBadge, { backgroundColor: colors.primary + '22', borderColor: colors.primary }]}>
-              <Feather name="award" size={12} color={colors.primary} />
-              <Text style={[styles.expBadgeText, { color: colors.primary }]}>+{stage.expReward} EXP</Text>
+          <View style={[styles.enemyPreviewCard, { borderColor: enemyAttrData ? enemyAttrData.color + '88' : colors.border, overflow: 'hidden' }]}>
+            {map?.backgroundImage ? (
+              <ImageBackground source={map.backgroundImage} style={styles.previewBg} imageStyle={{ resizeMode: 'cover' }}>
+                <View style={styles.previewBgOverlay}>
+                  <Text style={styles.previewLabel}>INIMIGO</Text>
+                  {CHARACTER_IMAGES[stage.enemyCharacterId] ? (
+                    <Image source={CHARACTER_IMAGES[stage.enemyCharacterId]} style={styles.previewSprite} resizeMode="contain" />
+                  ) : (
+                    <CharacterAvatar characterId={stage.enemyCharacterId} size={90} />
+                  )}
+                </View>
+              </ImageBackground>
+            ) : (
+              <>
+                <Text style={[styles.sectionLabel, { color: colors.mutedForeground }]}>Inimigo</Text>
+                <CharacterAvatar characterId={stage.enemyCharacterId} size={90} />
+              </>
+            )}
+            <View style={[styles.previewInfo, { backgroundColor: colors.card }]}>
+              <Text style={[styles.enemyNameLg, { color: colors.foreground }]}>{enemyChar.name}</Text>
+              <Text style={[styles.enemyLevel, { color: colors.primary }]}>Nível {stage.enemyLevel}</Text>
+              <View style={styles.enemyBadges}>
+                <AttributeBadge attr={enemyChar.attribute} />
+                <View style={{ width: 8 }} />
+                <ElementBadge elem={enemyChar.element} />
+              </View>
+              <View style={[styles.expBadge, { backgroundColor: colors.primary + '22', borderColor: colors.primary }]}>
+                <Feather name="award" size={12} color={colors.primary} />
+                <Text style={[styles.expBadgeText, { color: colors.primary }]}>+{stage.expReward} EXP</Text>
+              </View>
             </View>
           </View>
         )}
@@ -299,17 +319,51 @@ export default function BattleScreen() {
           <Text style={[styles.battleTitle, { color: colors.foreground }]}>{stage.name}</Text>
         </View>
 
-        {/* Enemy */}
-        <View style={[styles.fighterRow, styles.enemySide]}>
-          <View style={styles.fighterInfo}>
-            <Text style={[styles.fighterName, { color: colors.foreground }]}>{enemyFighter.name}</Text>
-            <Text style={[styles.fighterLevel, { color: colors.mutedForeground }]}>Lv {stage.enemyLevel}</Text>
+        {/* Enemy arena */}
+        {map?.backgroundImage ? (
+          <ImageBackground
+            source={map.backgroundImage}
+            style={styles.arena}
+            imageStyle={styles.arenaImage}
+          >
+            <View style={styles.arenaOverlay}>
+              {/* Name + level top-left */}
+              <View style={styles.arenaTopRow}>
+                <View style={styles.arenaNameBadge}>
+                  <Text style={styles.arenaEnemyName}>{enemyFighter.name}</Text>
+                  <Text style={styles.arenaEnemyLevel}>Lv {stage.enemyLevel}</Text>
+                </View>
+              </View>
+              {/* Enemy sprite */}
+              <Animated.View style={[styles.arenaSpriteWrapper, { transform: [{ translateX: enemyShake }] }]}>
+                {CHARACTER_IMAGES[stage.enemyCharacterId] ? (
+                  <Image
+                    source={CHARACTER_IMAGES[stage.enemyCharacterId]}
+                    style={styles.arenaSprite}
+                    resizeMode="contain"
+                  />
+                ) : (
+                  <CharacterAvatar characterId={stage.enemyCharacterId} size={100} />
+                )}
+              </Animated.View>
+              {/* HP bar bottom */}
+              <View style={styles.arenaHpRow}>
+                <HPBar current={enemyFighter.currentHP} max={getScaledStats(enemyChar?.baseStats ?? enemyFighter.stats, stage.enemyLevel).hp} color={enemyAttrData?.color ?? '#ef4444'} />
+              </View>
+            </View>
+          </ImageBackground>
+        ) : (
+          <View style={[styles.fighterRow, styles.enemySide]}>
+            <View style={styles.fighterInfo}>
+              <Text style={[styles.fighterName, { color: colors.foreground }]}>{enemyFighter.name}</Text>
+              <Text style={[styles.fighterLevel, { color: colors.mutedForeground }]}>Lv {stage.enemyLevel}</Text>
+            </View>
+            <Animated.View style={{ transform: [{ translateX: enemyShake }] }}>
+              <CharacterAvatar characterId={stage.enemyCharacterId} size={80} />
+            </Animated.View>
+            <HPBar current={enemyFighter.currentHP} max={getScaledStats(enemyChar?.baseStats ?? enemyFighter.stats, stage.enemyLevel).hp} color={enemyAttrData?.color ?? colors.primary} />
           </View>
-          <Animated.View style={{ transform: [{ translateX: enemyShake }] }}>
-            <CharacterAvatar characterId={stage.enemyCharacterId} size={80} />
-          </Animated.View>
-          <HPBar current={enemyFighter.currentHP} max={getScaledStats(enemyChar?.baseStats ?? enemyFighter.stats, stage.enemyLevel).hp} color={enemyAttrData?.color ?? colors.primary} />
-        </View>
+        )}
 
         {/* Battle log */}
         <ScrollView
@@ -540,4 +594,40 @@ const styles = StyleSheet.create({
   resultBtn: { width: '100%', borderRadius: 12, padding: 16, alignItems: 'center' },
   resultBtnOutline: { width: '100%', borderRadius: 12, padding: 16, alignItems: 'center', borderWidth: 1 },
   resultBtnText: { fontSize: 15, fontWeight: '700' as const },
+  // Select preview with background
+  previewBg: { width: '100%', height: 160 },
+  previewBgOverlay: {
+    flex: 1,
+    backgroundColor: 'rgba(0,0,0,0.25)',
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingTop: 10,
+    gap: 6,
+  },
+  previewLabel: { fontSize: 10, fontWeight: '800' as const, letterSpacing: 1.5, color: '#ffffffcc' },
+  previewSprite: { width: 100, height: 100 },
+  previewInfo: { alignItems: 'center', gap: 8, padding: 14 },
+  // Arena
+  arena: { width: '100%', height: 210 },
+  arenaImage: { resizeMode: 'cover' },
+  arenaOverlay: {
+    flex: 1,
+    backgroundColor: 'rgba(0,0,0,0.18)',
+    justifyContent: 'space-between',
+    paddingHorizontal: 14,
+    paddingTop: 10,
+    paddingBottom: 10,
+  },
+  arenaTopRow: { flexDirection: 'row', alignItems: 'flex-start' },
+  arenaNameBadge: {
+    backgroundColor: 'rgba(0,0,0,0.55)',
+    borderRadius: 10,
+    paddingHorizontal: 12,
+    paddingVertical: 5,
+  },
+  arenaEnemyName: { fontSize: 16, fontWeight: '800' as const, color: '#ffffff' },
+  arenaEnemyLevel: { fontSize: 11, color: '#ffffffaa', fontWeight: '600' as const },
+  arenaSpriteWrapper: { alignItems: 'center', flex: 1, justifyContent: 'center' },
+  arenaSprite: { width: 120, height: 120 },
+  arenaHpRow: { backgroundColor: 'rgba(0,0,0,0.55)', borderRadius: 10, padding: 8 },
 });
