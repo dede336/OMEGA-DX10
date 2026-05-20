@@ -21,6 +21,7 @@ import {
   GAME_MAPS,
   EQUIPMENT_ITEMS,
   EQUIP_SLOTS_ORDER,
+  SCANNABLE_CHARACTERS,
   getScaledStats,
 } from '@/constants/gameData';
 import {
@@ -178,7 +179,9 @@ export default function BattleScreen() {
           gainExp(selectedCharacter.ownedId, stage?.expReward ?? 0);
         }
         clearStage(mapId, stageIndex);
-        if (stage) gainScan(stage.enemyCharacterId, 5);
+        if (stage && SCANNABLE_CHARACTERS.includes(stage.enemyCharacterId)) {
+          gainScan(stage.enemyCharacterId, 5);
+        }
 
         if (stage?.drops) {
           stage.drops.forEach((drop) => {

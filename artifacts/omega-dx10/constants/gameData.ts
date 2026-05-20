@@ -43,6 +43,7 @@ export interface GameMap {
   name: string;
   description: string;
   requiredMapCleared?: string;
+  requiredTamerLevel?: number;
   isDungeon?: boolean;
   stages: MapStage[];
 }
@@ -209,6 +210,7 @@ export const GAME_MAPS: GameMap[] = [
     name: 'Covil do Gulus',
     description: 'Uma dungeon sombria onde GulusGammamon reina. Derrote-o para obter Bits e Fragmentos da Coragem.',
     isDungeon: true,
+    requiredTamerLevel: 25,
     stages: [
       {
         index: 0,

@@ -10,7 +10,7 @@ import { GAME_MAPS, CHARACTERS, ATTRIBUTES, ELEMENTS } from '@/constants/gameDat
 export default function MapScreen() {
   const colors = useColors();
   const insets = useSafeAreaInsets();
-  const { isStageCleared, isMapUnlocked, selectedCharacter, collection } = useGame();
+  const { isStageCleared, isMapUnlocked, selectedCharacter, collection, totalPlayerLevel } = useGame();
   const [expandedMap, setExpandedMap] = useState<string>('map_forest');
 
   const topPad = Platform.OS === 'web' ? 67 : insets.top;
@@ -83,6 +83,11 @@ export default function MapScreen() {
                   {!unlocked && !isDungeon && (
                     <Text style={[styles.lockHint, { color: colors.mutedForeground }]}>
                       Complete o mapa anterior para desbloquear
+                    </Text>
+                  )}
+                  {!unlocked && isDungeon && map.requiredTamerLevel && (
+                    <Text style={[styles.lockHint, { color: '#a78bfa' }]}>
+                      Requer Tamer Lv{map.requiredTamerLevel} (atual: Lv{totalPlayerLevel})
                     </Text>
                   )}
                 </View>

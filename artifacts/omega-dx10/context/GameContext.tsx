@@ -233,12 +233,19 @@ export function GameProvider({ children }: { children: React.ReactNode }) {
   const isMapUnlocked = useCallback(
     (mapId: string) => {
       const map = GAME_MAPS.find((m) => m.id === mapId);
-      if (!map?.requiredMapCleared) return true;
+      if (!map) return false;
+      if (map.requiredTamerLevel) {
+        const tamerLvl = Math.max(1, Math.floor(
+          state.collection.reduce((sum, c) => sum + c.level, 0) / Math.max(1, state.collection.length),
+        ));
+        if (tamerLvl < map.requiredTamerLevel) return false;
+      }
+      if (!map.requiredMapCleared) return true;
       const required = GAME_MAPS.find((m) => m.id === map.requiredMapCleared);
       if (!required) return false;
       return required.stages.every((s) => state.clearedStages[`${map.requiredMapCleared}-${s.index}`]);
     },
-    [state.clearedStages],
+    [state.clearedStages, state.collection],
   );
 
   const totalEquipBonus = useCallback((): Partial<Record<string, number>> => {
