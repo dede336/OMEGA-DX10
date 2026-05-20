@@ -393,12 +393,14 @@ const styles = StyleSheet.create({
     alignItems: 'center', justifyContent: 'center',
   },
   tamerAvatarImg: {
-    width: 72, height: 96, borderRadius: 14, borderWidth: 2,
+    width: 80, height: 80, borderRadius: 40, borderWidth: 2.5,
     overflow: 'hidden' as const,
+    backgroundColor: 'transparent',
   },
   tamerAvatarImageStyle: {
     width: '100%' as unknown as number,
-    height: 192,
+    height: 180,
+    marginTop: -8,
   },
   genderBadge: {
     position: 'absolute', bottom: -2, right: -2,

@@ -338,7 +338,7 @@ export const TAMERS: TamerOption[] = [
     fullName: 'Mimi Tachikawa',
     description: 'Gentil e determinada, sua amizade com seus Digimon é inabalável.',
     accentColor: '#ec4899',
-    image: require('../assets/tamers/mimi.jpg'),
+    image: require('../assets/tamers/mimi_bg.png'),
     forGender: 'F',
   },
   {
@@ -347,7 +347,7 @@ export const TAMERS: TamerOption[] = [
     fullName: 'Sora Takenouchi',
     description: 'Corajosa e protetora, cuida dos seus companheiros em qualquer batalha.',
     accentColor: '#f97316',
-    image: require('../assets/tamers/sora.jpg'),
+    image: require('../assets/tamers/sora_bg.png'),
     forGender: 'F',
   },
   {
@@ -356,7 +356,7 @@ export const TAMERS: TamerOption[] = [
     fullName: 'Hikari Kamiya',
     description: 'Bondosa e iluminada, sua luz guia os Digimon pelo mundo digital.',
     accentColor: '#f59e0b',
-    image: require('../assets/tamers/kari.jpg'),
+    image: require('../assets/tamers/kari_bg.png'),
     forGender: 'F',
   },
   // Male tamers
@@ -375,7 +375,7 @@ export const TAMERS: TamerOption[] = [
     fullName: 'Taichi Kamiya',
     description: 'Destemido e impulsivo, enfrenta qualquer desafio de cabeça.',
     accentColor: '#ef4444',
-    image: require('../assets/tamers/tai.jpg'),
+    image: require('../assets/tamers/tai_bg.png'),
     forGender: 'M',
   },
   {
