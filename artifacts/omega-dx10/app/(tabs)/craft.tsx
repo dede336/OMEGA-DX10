@@ -1,6 +1,6 @@
 import React from 'react';
 import {
-  View, Text, StyleSheet, ScrollView, TouchableOpacity, Platform,
+  View, Text, StyleSheet, ScrollView, TouchableOpacity, Platform, Image,
 } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Feather } from '@expo/vector-icons';
@@ -9,6 +9,7 @@ import { useGame } from '@/context/GameContext';
 import {
   CRAFT_RECIPES, RARITY_COLORS, RARITY_LABELS,
 } from '@/constants/gameData';
+import EQUIP_ITEM_IMAGES from '@/constants/equipImages';
 
 const PIECE_META = [
   { id: 'piece_coragem',          label: 'Coragem',   icon: 'zap',     color: '#ef4444' },
@@ -91,9 +92,19 @@ export default function CraftScreen() {
           >
             {/* Header */}
             <View style={styles.craftCardHeader}>
-              <View style={[styles.craftPieceIcon, { backgroundColor: recipe.pieceColor + '22' }]}>
-                <Feather name={recipe.pieceIcon as any} size={18} color={recipe.pieceColor} />
-              </View>
+              {EQUIP_ITEM_IMAGES[recipe.resultItemId] ? (
+                <View style={[styles.craftPieceIcon, { backgroundColor: rarityColor + '18' }]}>
+                  <Image
+                    source={EQUIP_ITEM_IMAGES[recipe.resultItemId]}
+                    style={styles.craftItemImg}
+                    resizeMode="contain"
+                  />
+                </View>
+              ) : (
+                <View style={[styles.craftPieceIcon, { backgroundColor: recipe.pieceColor + '22' }]}>
+                  <Feather name={recipe.pieceIcon as any} size={18} color={recipe.pieceColor} />
+                </View>
+              )}
               <View style={{ flex: 1 }}>
                 <Text style={[styles.craftResultName, { color: colors.foreground }]}>{recipe.resultItemName}</Text>
                 <View style={styles.craftRarityRow}>
@@ -209,6 +220,7 @@ const styles = StyleSheet.create({
   craftCard: { borderRadius: 16, borderWidth: 1.5, padding: 14, marginBottom: 14, gap: 10 },
   craftCardHeader: { flexDirection: 'row', alignItems: 'center', gap: 12 },
   craftPieceIcon: { width: 44, height: 44, borderRadius: 22, alignItems: 'center', justifyContent: 'center' },
+  craftItemImg: { width: 36, height: 36 },
   craftResultName: { fontSize: 15, fontWeight: '700' as const, marginBottom: 4 },
   craftRarityRow: { flexDirection: 'row' },
   craftRarityBadge: { borderRadius: 6, paddingHorizontal: 8, paddingVertical: 2 },
