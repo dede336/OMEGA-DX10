@@ -124,7 +124,11 @@ function ClassicTabLayout() {
             isIOS ? (
               <SymbolView name="hammer" tintColor={color} size={22} />
             ) : (
-              <Feather name="tool" size={22} color={color} />
+              <Image
+                source={require('../../assets/images/craft-icon.png')}
+                style={{ width: 26, height: 26 }}
+                resizeMode="contain"
+              />
             ),
         }}
       />
