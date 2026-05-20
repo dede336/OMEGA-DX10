@@ -265,7 +265,7 @@ export const GAME_MAPS: GameMap[] = [
     name: 'Covil do Gulus',
     description: 'Uma dungeon sombria onde GulusGammamon reina. Derrote-o para obter Bits e Fragmentos da Coragem.',
     isDungeon: true,
-    requiredTamerLevel: 25,
+    requiredTamerLevel: 15,
     backgroundImage: require('../assets/images/maps/dungeon_gulus.png'),
     stages: [
       {
