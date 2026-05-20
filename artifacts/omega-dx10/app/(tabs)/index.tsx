@@ -5,8 +5,8 @@ import { Feather } from '@expo/vector-icons';
 import { router } from 'expo-router';
 import { useColors } from '@/hooks/useColors';
 import { useGame } from '@/context/GameContext';
-import { CHARACTERS, ATTRIBUTES, ELEMENTS, GAME_MAPS, getScaledStats, expToNextLevel } from '@/constants/gameData';
-import { AttributeBadge, ElementBadge, HPBar } from '@/components/GameComponents';
+import { CHARACTERS, ATTRIBUTES, GAME_MAPS, getScaledStats } from '@/constants/gameData';
+import { AttributeBadge, ElementBadge, HPBar, CharacterAvatar } from '@/components/GameComponents';
 
 export default function HomeScreen() {
   const colors = useColors();
@@ -78,9 +78,7 @@ export default function HomeScreen() {
           style={[styles.activeCard, { backgroundColor: colors.card, borderColor: attrData.color + '66' }]}
         >
           <View style={[styles.activeTopStrip, { backgroundColor: attrData.color + '33' }]}>
-            <View style={[styles.activeAvatar, { backgroundColor: attrData.color + '33', borderColor: attrData.color }]}>
-              <Feather name="zap" size={40} color={attrData.color} />
-            </View>
+            <CharacterAvatar characterId={char.id} size={80} />
             <View style={styles.activeInfo}>
               <Text style={[styles.activeName, { color: colors.foreground }]}>{char.name}</Text>
               <View style={styles.activeBadges}>

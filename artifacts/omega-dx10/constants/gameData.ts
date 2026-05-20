@@ -84,14 +84,14 @@ export const CHARACTERS: Record<string, Character> = {
     baseStats: { hp: 113, mp: 102, atk: 86, def: 59, spt: 53, spd: 63, apt: 22 },
     description: 'Um Digimon do tipo Data coberto por pele de lobo azul. Controla as forças da água.',
   },
-  devimon: {
-    id: 'devimon',
-    name: 'Devimon',
+  demiDevimon: {
+    id: 'demiDevimon',
+    name: 'DemiDevimon',
     rarity: 'COMMON',
     attribute: 'VR',
     element: 'DARK',
     baseStats: { hp: 100, mp: 118, atk: 75, def: 67, spt: 63, spd: 64, apt: 22 },
-    description: 'Um Digimon maligno do tipo Vírus. Manipula as trevas com poder espiritual elevado.',
+    description: 'Um pequeno Digimon maligno do tipo Vírus. Usa suas asas e presas para atacar com poder das trevas.',
   },
 };
 
@@ -103,8 +103,8 @@ export const GAME_MAPS: GameMap[] = [
     description: 'Bosques de dados fragmentados habitados por Digimons selvagens.',
     stages: [
       { index: 0, name: 'Entrada da Floresta', enemyCharacterId: 'agumon',  enemyLevel: 1, expReward: 40,  unlockCharacterId: 'gabumon' },
-      { index: 1, name: 'Clareira dos Dados',  enemyCharacterId: 'gabumon', enemyLevel: 2, expReward: 60,  unlockCharacterId: 'devimon' },
-      { index: 2, name: 'Núcleo da Floresta',  enemyCharacterId: 'devimon', enemyLevel: 4, expReward: 100 },
+      { index: 1, name: 'Clareira dos Dados',  enemyCharacterId: 'gabumon',     enemyLevel: 2, expReward: 60,  unlockCharacterId: 'demiDevimon' },
+      { index: 2, name: 'Núcleo da Floresta',  enemyCharacterId: 'demiDevimon', enemyLevel: 4, expReward: 100 },
     ],
   },
   {
@@ -115,7 +115,7 @@ export const GAME_MAPS: GameMap[] = [
     stages: [
       { index: 0, name: 'Avenida dos Neons',   enemyCharacterId: 'gabumon', enemyLevel: 5, expReward: 130 },
       { index: 1, name: 'Setor Industrial',    enemyCharacterId: 'agumon',  enemyLevel: 7, expReward: 160 },
-      { index: 2, name: 'Torre Central',       enemyCharacterId: 'devimon', enemyLevel: 9, expReward: 220 },
+      { index: 2, name: 'Torre Central',       enemyCharacterId: 'demiDevimon', enemyLevel: 9, expReward: 220 },
     ],
   },
   {
@@ -124,9 +124,9 @@ export const GAME_MAPS: GameMap[] = [
     description: 'Uma dimensão corrompida onde as trevas consomem tudo. Apenas os mais fortes sobrevivem.',
     requiredMapCleared: 'map_city',
     stages: [
-      { index: 0, name: 'Portal das Trevas',  enemyCharacterId: 'devimon', enemyLevel: 12, expReward: 280 },
-      { index: 1, name: 'Abismo Corrompido', enemyCharacterId: 'agumon',  enemyLevel: 14, expReward: 340 },
-      { index: 2, name: 'Trono do Caos',     enemyCharacterId: 'gabumon', enemyLevel: 16, expReward: 450 },
+      { index: 0, name: 'Portal das Trevas',  enemyCharacterId: 'demiDevimon', enemyLevel: 12, expReward: 280 },
+      { index: 1, name: 'Abismo Corrompido', enemyCharacterId: 'agumon',      enemyLevel: 14, expReward: 340 },
+      { index: 2, name: 'Trono do Caos',     enemyCharacterId: 'gabumon',     enemyLevel: 16, expReward: 450 },
     ],
   },
 ];

@@ -14,7 +14,7 @@ import {
   getScaledStats,
   expToNextLevel,
 } from '@/constants/gameData';
-import { AttributeBadge, ElementBadge, StatBar } from '@/components/GameComponents';
+import { AttributeBadge, ElementBadge, StatBar, CharacterAvatar } from '@/components/GameComponents';
 
 export default function CharacterDetailScreen() {
   const colors = useColors();
@@ -60,9 +60,7 @@ export default function CharacterDetailScreen() {
       {/* Hero Card */}
       <View style={[styles.heroCard, { backgroundColor: colors.card, borderColor: attrData.color + '66' }]}>
         <View style={[styles.heroStrip, { backgroundColor: rarityColor + '22' }]}>
-          <View style={[styles.heroAvatar, { backgroundColor: attrData.color + '22', borderColor: attrData.color }]}>
-            <Feather name="zap" size={60} color={attrData.color} />
-          </View>
+          <CharacterAvatar characterId={char.id} size={120} />
         </View>
         <View style={styles.heroInfo}>
           <Text style={[styles.heroName, { color: colors.foreground }]}>{char.name}</Text>

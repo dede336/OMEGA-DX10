@@ -30,7 +30,7 @@ import {
   ActionType,
   SPIRIT_MP_COST,
 } from '@/utils/battleEngine';
-import { HPBar, AttributeBadge, ElementBadge } from '@/components/GameComponents';
+import { HPBar, AttributeBadge, ElementBadge, CharacterAvatar } from '@/components/GameComponents';
 
 type Phase = 'select' | 'battle' | 'result';
 type BattleLog = { text: string; color: string };
@@ -201,11 +201,9 @@ export default function BattleScreen() {
 
         {/* Enemy preview */}
         {enemyChar && (
-          <View style={[styles.enemyPreviewCard, { backgroundColor: colors.card, borderColor: enemyAttrData?.color + '66' ?? colors.border }]}>
+          <View style={[styles.enemyPreviewCard, { backgroundColor: colors.card, borderColor: enemyAttrData ? enemyAttrData.color + '66' : colors.border }]}>
             <Text style={[styles.sectionLabel, { color: colors.mutedForeground }]}>Inimigo</Text>
-            <View style={[styles.enemyAvatarLg, { backgroundColor: (enemyAttrData?.color ?? '#fff') + '22', borderColor: enemyAttrData?.color ?? colors.border }]}>
-              <Feather name="zap" size={44} color={enemyAttrData?.color ?? colors.primary} />
-            </View>
+            <CharacterAvatar characterId={stage.enemyCharacterId} size={90} />
             <Text style={[styles.enemyNameLg, { color: colors.foreground }]}>{enemyChar.name}</Text>
             <Text style={[styles.enemyLevel, { color: colors.primary }]}>Nível {stage.enemyLevel}</Text>
             <View style={styles.enemyBadges}>
@@ -239,9 +237,7 @@ export default function BattleScreen() {
                   },
                 ]}
               >
-                <View style={[styles.selectAvatar, { backgroundColor: (attr?.color ?? '#fff') + '22', borderColor: attr?.color ?? colors.border }]}>
-                  <Feather name="zap" size={32} color={attr?.color ?? colors.primary} />
-                </View>
+                <CharacterAvatar characterId={owned.characterId} size={64} />
                 <Text style={[styles.selectName, { color: colors.foreground }]}>{c?.name}</Text>
                 <Text style={[styles.selectLevel, { color: colors.primary }]}>Lv {owned.level}</Text>
                 <AttributeBadge attr={c?.attribute ?? 'NO'} />
@@ -272,14 +268,8 @@ export default function BattleScreen() {
             <Text style={[styles.fighterName, { color: colors.foreground }]}>{enemyFighter.name}</Text>
             <Text style={[styles.fighterLevel, { color: colors.mutedForeground }]}>Lv {stage.enemyLevel}</Text>
           </View>
-          <Animated.View
-            style={[
-              styles.fighterAvatar,
-              { backgroundColor: (enemyAttrData?.color ?? '#fff') + '22', borderColor: enemyAttrData?.color ?? colors.border },
-              { transform: [{ translateX: enemyShake }] },
-            ]}
-          >
-            <Feather name="zap" size={40} color={enemyAttrData?.color ?? colors.primary} />
+          <Animated.View style={{ transform: [{ translateX: enemyShake }] }}>
+            <CharacterAvatar characterId={stage.enemyCharacterId} size={80} />
           </Animated.View>
           <HPBar current={enemyFighter.currentHP} max={getScaledStats(enemyChar?.baseStats ?? enemyFighter.stats, stage.enemyLevel).hp} color={enemyAttrData?.color ?? colors.primary} />
         </View>
@@ -308,14 +298,8 @@ export default function BattleScreen() {
             <Text style={[styles.fighterName, { color: colors.foreground }]}>{playerFighter.name}</Text>
             <Text style={[styles.fighterLevel, { color: colors.mutedForeground }]}>Lv {pOwned?.level ?? 1}</Text>
           </View>
-          <Animated.View
-            style={[
-              styles.fighterAvatar,
-              { backgroundColor: (pAttr?.color ?? '#fff') + '22', borderColor: pAttr?.color ?? colors.border },
-              { transform: [{ translateX: playerShake }] },
-            ]}
-          >
-            <Feather name="zap" size={40} color={pAttr?.color ?? colors.primary} />
+          <Animated.View style={{ transform: [{ translateX: playerShake }] }}>
+            <CharacterAvatar characterId={pOwned?.characterId ?? ''} size={80} />
           </Animated.View>
         </View>
 

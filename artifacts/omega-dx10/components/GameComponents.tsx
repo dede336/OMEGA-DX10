@@ -1,10 +1,64 @@
 import React from 'react';
-import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, Image } from 'react-native';
 import { Feather } from '@expo/vector-icons';
 import { useColors } from '@/hooks/useColors';
-import { AttributeId, ElementId, ATTRIBUTES, ELEMENTS, RARITY_COLORS, RARITY_LABELS, RarityId, BaseStats } from '@/constants/gameData';
+import {
+  AttributeId, ElementId, ATTRIBUTES, ELEMENTS,
+  RARITY_COLORS, RARITY_LABELS, RarityId, BaseStats,
+  CHARACTERS, expToNextLevel, getScaledStats,
+} from '@/constants/gameData';
+import CHARACTER_IMAGES from '@/constants/characterImages';
 import { OwnedCharacter } from '@/context/GameContext';
-import { CHARACTERS, expToNextLevel, getScaledStats } from '@/constants/gameData';
+
+// ─── CharacterAvatar ───────────────────────────────────────────────────────────
+interface AvatarProps {
+  characterId: string;
+  size?: number;
+  borderColor?: string;
+  bgColor?: string;
+}
+
+export function CharacterAvatar({ characterId, size = 72, borderColor, bgColor }: AvatarProps) {
+  const img = CHARACTER_IMAGES[characterId];
+  const char = CHARACTERS[characterId];
+  const attrData = char ? ATTRIBUTES[char.attribute] : null;
+  const bc = borderColor ?? attrData?.color ?? '#00d4ff';
+  const bg = bgColor ?? (attrData?.color ?? '#00d4ff') + '22';
+
+  return (
+    <View
+      style={[
+        avatarStyles.container,
+        {
+          width: size,
+          height: size,
+          borderRadius: size / 2,
+          borderColor: bc,
+          backgroundColor: bg,
+        },
+      ]}
+    >
+      {img ? (
+        <Image
+          source={img}
+          style={{ width: size * 0.8, height: size * 0.8 }}
+          resizeMode="contain"
+        />
+      ) : (
+        <Feather name="zap" size={size * 0.5} color={bc} />
+      )}
+    </View>
+  );
+}
+
+const avatarStyles = StyleSheet.create({
+  container: {
+    borderWidth: 2,
+    alignItems: 'center',
+    justifyContent: 'center',
+    overflow: 'hidden',
+  },
+});
 
 // ─── AttributeBadge ────────────────────────────────────────────────────────────
 export function AttributeBadge({ attr }: { attr: AttributeId }) {
@@ -33,11 +87,7 @@ const badgeStyles = StyleSheet.create({
     borderRadius: 6,
     borderWidth: 1,
   },
-  text: {
-    fontSize: 11,
-    fontWeight: '700' as const,
-    letterSpacing: 0.5,
-  },
+  text: { fontSize: 11, fontWeight: '700' as const, letterSpacing: 0.5 },
 });
 
 // ─── StatBar ───────────────────────────────────────────────────────────────────
@@ -80,7 +130,6 @@ export function CharacterCard({ owned, onPress, isSelected, compact }: Character
   const expPct = Math.min(1, owned.exp / expNeeded);
   const rarityColor = RARITY_COLORS[char.rarity];
   const attrData = ATTRIBUTES[char.attribute];
-  const elemData = ELEMENTS[char.element];
 
   if (compact) {
     return (
@@ -92,9 +141,7 @@ export function CharacterCard({ owned, onPress, isSelected, compact }: Character
           { backgroundColor: colors.card, borderColor: isSelected ? colors.primary : colors.border },
         ]}
       >
-        <View style={[cardStyles.compactAvatar, { backgroundColor: attrData.color + '22', borderColor: attrData.color }]}>
-          <Feather name="zap" size={24} color={attrData.color} />
-        </View>
+        <CharacterAvatar characterId={owned.characterId} size={52} />
         <Text style={[cardStyles.compactName, { color: colors.foreground }]} numberOfLines={1}>{char.name}</Text>
         <Text style={[cardStyles.compactLevel, { color: colors.primary }]}>Lv {owned.level}</Text>
         {isSelected && <View style={[cardStyles.selectedDot, { backgroundColor: colors.primary }]} />}
@@ -113,10 +160,8 @@ export function CharacterCard({ owned, onPress, isSelected, compact }: Character
     >
       <View style={[cardStyles.topAccent, { backgroundColor: rarityColor }]} />
       <View style={cardStyles.header}>
-        <View style={[cardStyles.avatar, { backgroundColor: attrData.color + '22', borderColor: attrData.color }]}>
-          <Feather name="zap" size={36} color={attrData.color} />
-        </View>
-        <View style={cardStyles.headerInfo}>
+        <CharacterAvatar characterId={owned.characterId} size={80} />
+        <View style={[cardStyles.headerInfo, { marginLeft: 14 }]}>
           <Text style={[cardStyles.name, { color: colors.foreground }]}>{char.name}</Text>
           <Text style={[cardStyles.rarity, { color: rarityColor }]}>{RARITY_LABELS[char.rarity]}</Text>
           <View style={cardStyles.badges}>
@@ -153,23 +198,9 @@ export function CharacterCard({ owned, onPress, isSelected, compact }: Character
 }
 
 const cardStyles = StyleSheet.create({
-  card: {
-    borderRadius: 16,
-    borderWidth: 1,
-    overflow: 'hidden',
-    marginBottom: 14,
-  },
+  card: { borderRadius: 16, borderWidth: 1, overflow: 'hidden', marginBottom: 14 },
   topAccent: { height: 3, width: '100%' },
   header: { flexDirection: 'row', alignItems: 'center', padding: 16 },
-  avatar: {
-    width: 72,
-    height: 72,
-    borderRadius: 36,
-    borderWidth: 2,
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginRight: 14,
-  },
   headerInfo: { flex: 1 },
   name: { fontSize: 20, fontWeight: '700' as const, marginBottom: 2 },
   rarity: { fontSize: 12, fontWeight: '600' as const, marginBottom: 8 },
@@ -186,21 +217,8 @@ const cardStyles = StyleSheet.create({
   expText: { fontSize: 10, width: 60, textAlign: 'right' },
   // Compact
   compact: {
-    width: 90,
-    borderRadius: 12,
-    borderWidth: 1.5,
-    alignItems: 'center',
-    padding: 10,
-    marginRight: 10,
-  },
-  compactAvatar: {
-    width: 48,
-    height: 48,
-    borderRadius: 24,
-    borderWidth: 1.5,
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginBottom: 6,
+    width: 90, borderRadius: 12, borderWidth: 1.5,
+    alignItems: 'center', padding: 10, marginRight: 10,
   },
   compactName: { fontSize: 12, fontWeight: '700' as const, textAlign: 'center', marginBottom: 2 },
   compactLevel: { fontSize: 11, fontWeight: '600' as const },
