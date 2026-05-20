@@ -219,6 +219,19 @@ export default function BattleScreen() {
             addLog('🟣 Fragmento do Caos obtido!', '#a855f7');
           }
         }
+        // Universal sewing material drops (independent 20% each, any stage)
+        if (Math.random() < 0.20) {
+          gainPiece('piece_tecido', 1);
+          addLog('🎨 Tecido Colorido obtido!', '#ec4899');
+        }
+        if (Math.random() < 0.20) {
+          gainPiece('piece_agulha', 1);
+          addLog('🪡 Agulha Média obtida!', '#8b5cf6');
+        }
+        if (Math.random() < 0.20) {
+          gainPiece('piece_linha', 1);
+          addLog('🧵 Linha Colorida obtida!', '#06b6d4');
+        }
       }, 400);
       setBusy(false);
       return;

@@ -311,6 +311,10 @@ export const EQUIPMENT_ITEMS: EquipItem[] = [
   { id: 'pulseira_ouro',  name: 'Pulseira Dourada',   slot: 'pulseira', rarity: 'RARE',      description: 'Pulseira lendária que amplifica múltiplos atributos de batalha.',   bonuses: { atk: 10, spt: 8 } },
   { id: 'oculos_scanner', name: 'Óculos de Scanner',  slot: 'oculos',   rarity: 'COMMON',    description: 'Analisa inimigos em tempo real. Aumenta o MP do parceiro.',         bonuses: { mp: 8 } },
   { id: 'oculos_tatico',  name: 'Óculos Tático',      slot: 'oculos',   rarity: 'RARE',      description: 'Óculos com HUD digital avançado e sistema de mira.',                bonuses: { mp: 15, apt: 5 } },
+  // ── Artesanal (crafted from sewing materials) ─────────────────────────────
+  { id: 'jaqueta_artesanal', name: 'Jaqueta Artesanal', slot: 'blusa',  rarity: 'RARE', description: 'Jaqueta costurada à mão com tecido digital colorido. Equilibra ataque e defesa.', bonuses: { atk: 8, def: 7 } },
+  { id: 'calca_artesanal',   name: 'Calça Artesanal',   slot: 'calca',  rarity: 'RARE', description: 'Calça costurada com agulha de precisão digital. Alta resistência e agilidade.',    bonuses: { def: 10, spd: 4 } },
+  { id: 'sapato_artesanal',  name: 'Tênis Artesanal',   slot: 'sapato', rarity: 'RARE', description: 'Tênis montado com linha digital reforçada. Velocidade e ataque aprimorados.',        bonuses: { spd: 10, atk: 3 } },
 ];
 
 export const EQUIP_SLOTS_ORDER: EquipSlot[] = ['blusa', 'calca', 'sapato', 'brasao', 'digivice', 'pulseira', 'oculos'];
@@ -484,6 +488,43 @@ export const CRAFT_RECIPES: CraftRecipe[] = [
     bitsCost: 400,
     resultItemId: 'oculos_tatico',
     resultItemName: 'Óculos Tático',
+    resultRarity: 'RARE',
+  },
+  // ── Universal sewing drops: piece_tecido / piece_agulha / piece_linha ───────
+  {
+    pieceId: 'piece_tecido',
+    pieceName: 'Tecido Colorido',
+    pieceDescription: 'Drop universal de qualquer fase. Usado para forjar a Jaqueta Artesanal.',
+    pieceIcon: 'layers',
+    pieceColor: '#ec4899',
+    requiredCount: 15,
+    bitsCost: 0,
+    resultItemId: 'jaqueta_artesanal',
+    resultItemName: 'Jaqueta Artesanal',
+    resultRarity: 'RARE',
+  },
+  {
+    pieceId: 'piece_agulha',
+    pieceName: 'Agulha Média',
+    pieceDescription: 'Drop universal de qualquer fase. Usado para forjar a Calça Artesanal.',
+    pieceIcon: 'edit-2',
+    pieceColor: '#8b5cf6',
+    requiredCount: 15,
+    bitsCost: 0,
+    resultItemId: 'calca_artesanal',
+    resultItemName: 'Calça Artesanal',
+    resultRarity: 'RARE',
+  },
+  {
+    pieceId: 'piece_linha',
+    pieceName: 'Linha Colorida',
+    pieceDescription: 'Drop universal de qualquer fase. Usado para forjar o Tênis Artesanal.',
+    pieceIcon: 'wind',
+    pieceColor: '#06b6d4',
+    requiredCount: 15,
+    bitsCost: 0,
+    resultItemId: 'sapato_artesanal',
+    resultItemName: 'Tênis Artesanal',
     resultRarity: 'RARE',
   },
   // ── Chaos Brain drops: piece_caos ────────────────────────────────────────

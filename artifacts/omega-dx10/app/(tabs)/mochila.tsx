@@ -319,10 +319,13 @@ export default function MochilaScreen() {
       {/* Fragment inventory summary */}
       <View style={[styles.fragmentSummaryRow, { backgroundColor: colors.card, borderColor: colors.border }]}>
         {[
-          { id: 'piece_coragem',        label: 'Coragem', icon: 'zap',     color: '#ef4444' },
-          { id: 'piece_brasao_coragem', label: 'Brasão',  icon: 'sun',     color: '#f97316' },
-          { id: 'piece_gelo',           label: 'Gelo',    icon: 'droplet', color: '#38bdf8' },
-          { id: 'piece_caos',           label: 'Caos',    icon: 'cpu',     color: '#a855f7' },
+          { id: 'piece_coragem',        label: 'Coragem', icon: 'zap',      color: '#ef4444' },
+          { id: 'piece_brasao_coragem', label: 'Brasão',  icon: 'sun',      color: '#f97316' },
+          { id: 'piece_gelo',           label: 'Gelo',    icon: 'droplet',  color: '#38bdf8' },
+          { id: 'piece_caos',           label: 'Caos',    icon: 'cpu',      color: '#a855f7' },
+          { id: 'piece_tecido',         label: 'Tecido',  icon: 'layers',   color: '#ec4899' },
+          { id: 'piece_agulha',         label: 'Agulha',  icon: 'edit-2',   color: '#8b5cf6' },
+          { id: 'piece_linha',          label: 'Linha',   icon: 'wind',     color: '#06b6d4' },
         ].map((p) => (
           <View key={p.id} style={styles.fragmentSummaryItem}>
             <View style={[styles.fragmentSummaryIcon, { backgroundColor: p.color + '22' }]}>
@@ -554,7 +557,7 @@ const styles = StyleSheet.create({
   fragmentFill: { height: 8, borderRadius: 4 },
   fragmentCount: { fontSize: 13, fontWeight: '700' as const, minWidth: 45, textAlign: 'right' as const },
   // craft summary
-  fragmentSummaryRow: { flexDirection: 'row', justifyContent: 'space-around', borderRadius: 16, borderWidth: 1, padding: 16, marginBottom: 16 },
+  fragmentSummaryRow: { flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'center', gap: 12, borderRadius: 16, borderWidth: 1, padding: 16, marginBottom: 16 },
   fragmentSummaryItem: { alignItems: 'center', gap: 4 },
   fragmentSummaryIcon: { width: 36, height: 36, borderRadius: 18, alignItems: 'center', justifyContent: 'center' },
   fragmentSummaryCount: { fontSize: 18, fontWeight: '800' as const },
