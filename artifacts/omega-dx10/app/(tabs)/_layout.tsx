@@ -50,6 +50,9 @@ function ClassicTabLayout() {
         tabBarInactiveTintColor: colors.mutedForeground,
         headerShown: false,
         tabBarPosition: "top",
+        tabBarIconStyle: { marginBottom: 0 },
+        tabBarLabelStyle: { fontSize: 10, marginTop: 2 },
+        tabBarItemStyle: { flexDirection: 'column', alignItems: 'center', justifyContent: 'center', paddingVertical: 4 },
         tabBarStyle: {
           backgroundColor: isIOS ? "transparent" : colors.background,
           borderTopWidth: 0,
@@ -102,7 +105,8 @@ function ClassicTabLayout() {
           tabBarIcon: ({ color }) => (
             <Image
               source={require('../../assets/images/mochila-icon.png')}
-              style={{ width: 26, height: 26, tintColor: color }}
+              style={{ width: 26, height: 26 }}
+              tintColor={color}
               resizeMode="contain"
             />
           ),

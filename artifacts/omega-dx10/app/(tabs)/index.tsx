@@ -141,7 +141,8 @@ export default function HomeScreen() {
         >
           <Image
             source={require('../../assets/images/digibank-icon.png')}
-            style={[styles.actionMapIcon, { tintColor: colors.accent }]}
+            style={styles.actionMapIcon}
+            tintColor={colors.accent}
             resizeMode="contain"
           />
           <Text style={[styles.actionLabel, { color: colors.accent }]}>Digibank</Text>
@@ -153,7 +154,8 @@ export default function HomeScreen() {
         >
           <Image
             source={require('../../assets/images/mochila-icon.png')}
-            style={[styles.actionMapIcon, { tintColor: '#f59e0b' }]}
+            style={styles.actionMapIcon}
+            tintColor="#f59e0b"
             resizeMode="contain"
           />
           <Text style={[styles.actionLabel, { color: '#f59e0b' }]}>Mochila</Text>
