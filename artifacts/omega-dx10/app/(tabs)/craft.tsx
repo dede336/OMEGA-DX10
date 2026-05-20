@@ -21,6 +21,7 @@ const PIECE_META = [
   { id: 'piece_tecido',           label: 'Tecido',    icon: 'layers',  color: '#ec4899' },
   { id: 'piece_agulha',           label: 'Agulha',    icon: 'edit-2',  color: '#8b5cf6' },
   { id: 'piece_linha',            label: 'Linha',     icon: 'wind',    color: '#06b6d4' },
+  { id: 'piece_brasao_confianca', label: 'Confiança', icon: 'shield',  color: '#94a3b8' },
 ];
 
 export default function CraftScreen() {

@@ -1,5 +1,5 @@
 export type AttributeId = 'VC' | 'VR' | 'DA' | 'NO' | 'UN';
-export type ElementId = 'FIRE' | 'PLANT' | 'WATER' | 'WIND' | 'EARTH' | 'LIGHTNING' | 'LIGHT' | 'DARK' | 'NULL' | 'ICE';
+export type ElementId = 'FIRE' | 'PLANT' | 'WATER' | 'WIND' | 'EARTH' | 'LIGHTNING' | 'LIGHT' | 'DARK' | 'NULL' | 'ICE' | 'METAL';
 export type RarityId = 'COMMON' | 'RARE' | 'EPIC' | 'LEGENDARY' | 'ULTRA';
 
 export interface BaseStats {
@@ -73,6 +73,7 @@ export const ELEMENTS: Record<ElementId, { label: string; color: string; beats: 
   DARK:      { label: 'Trevas',    color: '#8b5cf6', beats: 'LIGHT',     weakTo: 'LIGHT' },
   NULL:      { label: 'Nulo',      color: '#6b7280', beats: null,        weakTo: null },
   ICE:       { label: 'Gelo',      color: '#a8d8f0', beats: 'WIND',      weakTo: 'FIRE' },
+  METAL:     { label: 'Metal',     color: '#94a3b8', beats: 'PLANT',     weakTo: 'FIRE' },
 };
 
 // ─── Characters ───────────────────────────────────────────────────────────────
@@ -352,6 +353,7 @@ export const EQUIPMENT_ITEMS: EquipItem[] = [
   { id: 'brasao_coragem',   name: 'Brasão da Coragem',   slot: 'brasao', rarity: 'LEGENDARY', description: 'O Brasão da Coragem de Tai. Aumenta em 20% todos os status de Digimon do tipo Fogo.',                          bonuses: {}, elementBonus: { elements: ['FIRE'],          percent: 0.20 } },
   { id: 'brasao_esperanca', name: 'Brasão da Esperança', slot: 'brasao', rarity: 'LEGENDARY', description: 'O Brasão da Esperança de TK. Aumenta em 20% todos os status de Digimon do tipo Luz.',                           bonuses: {}, elementBonus: { elements: ['LIGHT'],         percent: 0.20 } },
   { id: 'brasao_amizade',   name: 'Brasão da Amizade',   slot: 'brasao', rarity: 'LEGENDARY', description: 'O Brasão da Amizade de Matt. Aumenta em 20% todos os status de Digimon do tipo Água e Gelo.', bonuses: {}, elementBonus: { elements: ['WATER', 'ICE'], percent: 0.20 } },
+  { id: 'brasao_confianca', name: 'Brasão da Confiança', slot: 'brasao', rarity: 'LEGENDARY', description: 'O Brasão da Confiança. Aumenta em 20% todos os status de Digimon do tipo Água e Metal.', bonuses: {}, elementBonus: { elements: ['WATER', 'METAL'], percent: 0.20 } },
   { id: 'digivice_d3',    name: 'Digivice D-3',       slot: 'digivice', rarity: 'COMMON',    description: 'Digivice padrão. Potencializa o espírito do parceiro.',             bonuses: { spt: 6 } },
   { id: 'digivice_x',    name: 'Digivice X',          slot: 'digivice', rarity: 'LEGENDARY', description: 'Versão X do Digivice. Poder muito além dos limites conhecidos.',    bonuses: { spt: 20, atk: 12, mp: 25 } },
   { id: 'pulseira_forca', name: 'Pulseira de Força',  slot: 'pulseira', rarity: 'COMMON',    description: 'Amplifica a força bruta do Digimon parceiro.',                      bonuses: { atk: 7 } },
@@ -535,6 +537,18 @@ export const CRAFT_RECIPES: CraftRecipe[] = [
     bitsCost: 50000,
     resultItemId: 'brasao_amizade',
     resultItemName: 'Brasão da Amizade',
+    resultRarity: 'LEGENDARY',
+  },
+  {
+    pieceId: 'piece_brasao_confianca',
+    pieceName: 'Fragmento da Confiança',
+    pieceDescription: 'Fragmento raro necessário para forjar o lendário Brasão da Confiança.',
+    pieceIcon: 'shield',
+    pieceColor: '#94a3b8',
+    requiredCount: 50,
+    bitsCost: 50000,
+    resultItemId: 'brasao_confianca',
+    resultItemName: 'Brasão da Confiança',
     resultRarity: 'LEGENDARY',
   },
   // ── Acess Glacier drops: piece_gelo ──────────────────────────────────────
