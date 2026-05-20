@@ -1,11 +1,12 @@
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Platform } from 'react-native';
+import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Platform, Image, ImageBackground } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Feather } from '@expo/vector-icons';
 import { router } from 'expo-router';
 import { useColors } from '@/hooks/useColors';
 import { useGame } from '@/context/GameContext';
 import { GAME_MAPS, CHARACTERS, ATTRIBUTES, ELEMENTS } from '@/constants/gameData';
+import CHARACTER_IMAGES from '@/constants/characterImages';
 
 export default function MapScreen() {
   const colors = useColors();
@@ -17,9 +18,7 @@ export default function MapScreen() {
   const bottomPad = Platform.OS === 'web' ? 34 : insets.bottom;
 
   function handleStagePress(mapId: string, stageIndex: number) {
-    if (!selectedCharacter) {
-      return;
-    }
+    if (!selectedCharacter) return;
     router.push(`/battle?mapId=${mapId}&stageIndex=${stageIndex}`);
   }
 
@@ -44,14 +43,16 @@ export default function MapScreen() {
           const expanded = expandedMap === map.id;
           const clearedInMap = map.stages.filter((s) => isStageCleared(map.id, s.index)).length;
           const allCleared = clearedInMap === map.stages.length;
-
           const isDungeon = map.isDungeon === true;
           const dungeonBorderColor = '#8b5cf6';
+          const borderColor = isDungeon
+            ? dungeonBorderColor
+            : unlocked ? (allCleared ? '#22c55e' : colors.border) : colors.border + '44';
 
           return (
             <View key={map.id} style={[
               styles.mapCard,
-              { backgroundColor: isDungeon ? '#1a0f2e' : colors.card, borderColor: isDungeon ? dungeonBorderColor : (unlocked ? (allCleared ? '#22c55e' : colors.border) : colors.border + '44') },
+              { borderColor, backgroundColor: isDungeon ? '#1a0f2e' : colors.card },
             ]}>
               {isDungeon && (
                 <View style={[styles.dungeonBanner, { backgroundColor: dungeonBorderColor + '33', borderBottomColor: dungeonBorderColor + '55' }]}>
@@ -59,52 +60,104 @@ export default function MapScreen() {
                   <Text style={[styles.dungeonBannerText, { color: dungeonBorderColor }]}>DUNGEON — Boss Encounter</Text>
                 </View>
               )}
+
+              {/* Map header tap area */}
               <TouchableOpacity
-                activeOpacity={0.8}
+                activeOpacity={0.85}
                 onPress={() => unlocked && setExpandedMap(expanded ? '' : map.id)}
-                style={styles.mapHeader}
               >
-                <View style={[styles.mapIcon, { backgroundColor: isDungeon ? dungeonBorderColor + '33' : (unlocked ? (allCleared ? '#22c55e22' : colors.secondary) : '#ffffff11') }]}>
-                  {isDungeon ? (
-                    <Feather name="shield-off" size={24} color={dungeonBorderColor} />
-                  ) : unlocked ? (
-                    allCleared ? (
-                      <Feather name="check-circle" size={24} color="#22c55e" />
-                    ) : (
-                      <Feather name="map" size={24} color={colors.primary} />
-                    )
-                  ) : (
-                    <Feather name="lock" size={24} color={colors.mutedForeground} />
-                  )}
-                </View>
-                <View style={styles.mapInfo}>
-                  <Text style={[styles.mapName, { color: isDungeon ? '#c4b5fd' : (unlocked ? colors.foreground : colors.mutedForeground) }]}>{map.name}</Text>
-                  <Text style={[styles.mapDesc, { color: colors.mutedForeground }]} numberOfLines={2}>{map.description}</Text>
-                  {!unlocked && !isDungeon && (
-                    <Text style={[styles.lockHint, { color: colors.mutedForeground }]}>
-                      Complete o mapa anterior para desbloquear
-                    </Text>
-                  )}
-                  {!unlocked && isDungeon && map.requiredTamerLevel && (
-                    <Text style={[styles.lockHint, { color: '#a78bfa' }]}>
-                      Requer Tamer Lv{map.requiredTamerLevel} (atual: Lv{totalPlayerLevel})
-                    </Text>
-                  )}
-                </View>
-                <View style={styles.mapRight}>
-                  <Text style={[styles.mapProgress, { color: allCleared ? '#22c55e' : colors.primary }]}>
-                    {clearedInMap}/{map.stages.length}
-                  </Text>
-                  {unlocked && (
-                    <Feather
-                      name={expanded ? 'chevron-up' : 'chevron-down'}
-                      size={18}
-                      color={colors.mutedForeground}
-                    />
-                  )}
-                </View>
+                {/* Background image banner */}
+                {map.backgroundImage ? (
+                  <ImageBackground
+                    source={map.backgroundImage}
+                    style={styles.mapBanner}
+                    imageStyle={styles.mapBannerImage}
+                  >
+                    <View style={styles.mapBannerOverlay}>
+                      <View style={[styles.mapBannerIcon, { backgroundColor: unlocked ? (allCleared ? '#22c55e' : '#ffffff33') : '#00000066' }]}>
+                        {unlocked ? (
+                          allCleared ? (
+                            <Feather name="check-circle" size={22} color="#22c55e" />
+                          ) : (
+                            <Feather name="map" size={22} color="#ffffff" />
+                          )
+                        ) : (
+                          <Feather name="lock" size={22} color="#ffffffaa" />
+                        )}
+                      </View>
+                      <View style={styles.mapBannerInfo}>
+                        <Text style={styles.mapBannerName}>{map.name}</Text>
+                        <Text style={styles.mapBannerDesc} numberOfLines={1}>{map.description}</Text>
+                        {!unlocked && !isDungeon && (
+                          <Text style={styles.mapBannerLock}>Complete o mapa anterior para desbloquear</Text>
+                        )}
+                        {!unlocked && isDungeon && map.requiredTamerLevel && (
+                          <Text style={[styles.mapBannerLock, { color: '#c4b5fd' }]}>
+                            Requer Tamer Lv{map.requiredTamerLevel} (atual: Lv{totalPlayerLevel})
+                          </Text>
+                        )}
+                      </View>
+                      <View style={styles.mapBannerRight}>
+                        <Text style={[styles.mapProgress, { color: allCleared ? '#22c55e' : '#ffffff' }]}>
+                          {clearedInMap}/{map.stages.length}
+                        </Text>
+                        {unlocked && (
+                          <Feather
+                            name={expanded ? 'chevron-up' : 'chevron-down'}
+                            size={18}
+                            color="#ffffffaa"
+                          />
+                        )}
+                      </View>
+                    </View>
+                  </ImageBackground>
+                ) : (
+                  /* Plain header for maps without a background */
+                  <View style={styles.mapHeader}>
+                    <View style={[styles.mapIcon, { backgroundColor: isDungeon ? dungeonBorderColor + '33' : (unlocked ? (allCleared ? '#22c55e22' : colors.secondary) : '#ffffff11') }]}>
+                      {isDungeon ? (
+                        <Feather name="shield-off" size={24} color={dungeonBorderColor} />
+                      ) : unlocked ? (
+                        allCleared ? (
+                          <Feather name="check-circle" size={24} color="#22c55e" />
+                        ) : (
+                          <Feather name="map" size={24} color={colors.primary} />
+                        )
+                      ) : (
+                        <Feather name="lock" size={24} color={colors.mutedForeground} />
+                      )}
+                    </View>
+                    <View style={styles.mapInfo}>
+                      <Text style={[styles.mapName, { color: isDungeon ? '#c4b5fd' : (unlocked ? colors.foreground : colors.mutedForeground) }]}>{map.name}</Text>
+                      <Text style={[styles.mapDesc, { color: colors.mutedForeground }]} numberOfLines={2}>{map.description}</Text>
+                      {!unlocked && !isDungeon && (
+                        <Text style={[styles.lockHint, { color: colors.mutedForeground }]}>
+                          Complete o mapa anterior para desbloquear
+                        </Text>
+                      )}
+                      {!unlocked && isDungeon && map.requiredTamerLevel && (
+                        <Text style={[styles.lockHint, { color: '#a78bfa' }]}>
+                          Requer Tamer Lv{map.requiredTamerLevel} (atual: Lv{totalPlayerLevel})
+                        </Text>
+                      )}
+                    </View>
+                    <View style={styles.mapRight}>
+                      <Text style={[styles.mapProgress, { color: allCleared ? '#22c55e' : colors.primary }]}>
+                        {clearedInMap}/{map.stages.length}
+                      </Text>
+                      {unlocked && (
+                        <Feather
+                          name={expanded ? 'chevron-up' : 'chevron-down'}
+                          size={18}
+                          color={colors.mutedForeground}
+                        />
+                      )}
+                    </View>
+                  </View>
+                )}
               </TouchableOpacity>
 
+              {/* Stage list */}
               {expanded && unlocked && (
                 <View style={[styles.stagesContainer, { borderTopColor: colors.border }]}>
                   {map.stages.map((stage) => {
@@ -112,6 +165,7 @@ export default function MapScreen() {
                     const enemyChar = CHARACTERS[stage.enemyCharacterId];
                     const enemyAttr = enemyChar ? ATTRIBUTES[enemyChar.attribute] : null;
                     const enemyElem = enemyChar ? ELEMENTS[enemyChar.element] : null;
+                    const enemyImg = CHARACTER_IMAGES[stage.enemyCharacterId];
                     const canPlay = !!selectedCharacter;
 
                     return (
@@ -121,10 +175,11 @@ export default function MapScreen() {
                         onPress={() => canPlay && handleStagePress(map.id, stage.index)}
                         style={[
                           styles.stageRow,
-                          { borderBottomColor: colors.border },
+                          { borderBottomColor: colors.border, backgroundColor: isDungeon ? '#2a0f4e22' : 'transparent' },
                           cleared && { backgroundColor: '#22c55e11' },
                         ]}
                       >
+                        {/* Number / cleared indicator */}
                         <View style={[styles.stageNum, { backgroundColor: cleared ? '#22c55e22' : colors.secondary, borderColor: cleared ? '#22c55e' : colors.border }]}>
                           {cleared ? (
                             <Feather name="check" size={14} color="#22c55e" />
@@ -132,8 +187,10 @@ export default function MapScreen() {
                             <Text style={[styles.stageNumText, { color: colors.mutedForeground }]}>{stage.index + 1}</Text>
                           )}
                         </View>
+
+                        {/* Info */}
                         <View style={styles.stageInfo}>
-                          <Text style={[styles.stageName, { color: colors.foreground }]}>{stage.name}</Text>
+                          <Text style={[styles.stageName, { color: isDungeon ? '#e9d5ff' : colors.foreground }]}>{stage.name}</Text>
                           {enemyChar && (
                             <View style={styles.enemyRow}>
                               <Feather name="zap" size={12} color={enemyAttr?.color ?? colors.mutedForeground} />
@@ -148,9 +205,7 @@ export default function MapScreen() {
                           {!cleared && !isDungeon && (
                             <View style={styles.rewardRow}>
                               <Feather name="cpu" size={11} color="#3b82f6" />
-                              <Text style={[styles.rewardText, { color: '#3b82f6' }]}>
-                                +5% scan do inimigo
-                              </Text>
+                              <Text style={[styles.rewardText, { color: '#3b82f6' }]}>+5% scan do inimigo</Text>
                             </View>
                           )}
                           {isDungeon && stage.drops && stage.drops.map((drop, di) => (
@@ -173,12 +228,16 @@ export default function MapScreen() {
                             </View>
                           ))}
                         </View>
+
+                        {/* Enemy sprite */}
                         <View style={styles.stageRight}>
                           <View style={[styles.expTag, { backgroundColor: colors.primary + '22' }]}>
                             <Text style={[styles.expText, { color: colors.primary }]}>+{stage.expReward} EXP</Text>
                           </View>
-                          {canPlay && (
-                            <Feather name="chevron-right" size={16} color={cleared ? '#22c55e' : colors.mutedForeground} />
+                          {enemyImg && (
+                            <View style={[styles.enemySpriteWrapper, { backgroundColor: (enemyAttr?.color ?? '#6b7280') + '22', borderColor: (enemyAttr?.color ?? '#6b7280') + '55' }]}>
+                              <Image source={enemyImg} style={styles.enemySprite} resizeMode="contain" />
+                            </View>
                           )}
                         </View>
                       </TouchableOpacity>
@@ -209,6 +268,26 @@ const styles = StyleSheet.create({
   warnText: { fontSize: 11, fontWeight: '600' as const },
   content: { padding: 20, gap: 14 },
   mapCard: { borderRadius: 16, borderWidth: 1, overflow: 'hidden' },
+
+  /* Background image banner */
+  mapBanner: { width: '100%', height: 120 },
+  mapBannerImage: { resizeMode: 'cover' },
+  mapBannerOverlay: {
+    flex: 1,
+    flexDirection: 'row',
+    alignItems: 'center',
+    padding: 14,
+    gap: 12,
+    backgroundColor: 'rgba(0,0,0,0.42)',
+  },
+  mapBannerIcon: { width: 44, height: 44, borderRadius: 22, alignItems: 'center', justifyContent: 'center' },
+  mapBannerInfo: { flex: 1 },
+  mapBannerName: { fontSize: 18, fontWeight: '800' as const, color: '#ffffff', marginBottom: 3 },
+  mapBannerDesc: { fontSize: 11, color: '#ffffffbb', lineHeight: 14 },
+  mapBannerLock: { fontSize: 10, color: '#facc15cc', marginTop: 3 },
+  mapBannerRight: { alignItems: 'center', gap: 4 },
+
+  /* Plain header (no bg image) */
   mapHeader: { flexDirection: 'row', alignItems: 'center', padding: 16, gap: 14 },
   mapIcon: { width: 52, height: 52, borderRadius: 26, alignItems: 'center', justifyContent: 'center' },
   mapInfo: { flex: 1 },
@@ -217,8 +296,10 @@ const styles = StyleSheet.create({
   lockHint: { fontSize: 11, marginTop: 4 },
   mapRight: { alignItems: 'center', gap: 4 },
   mapProgress: { fontSize: 16, fontWeight: '800' as const },
+
   dungeonBanner: { flexDirection: 'row', alignItems: 'center', gap: 6, paddingHorizontal: 16, paddingVertical: 7, borderBottomWidth: 1 },
   dungeonBannerText: { fontSize: 11, fontWeight: '700' as const, letterSpacing: 0.6 },
+
   stagesContainer: { borderTopWidth: 1 },
   stageRow: { flexDirection: 'row', alignItems: 'center', padding: 14, borderBottomWidth: 1, gap: 12 },
   stageNum: { width: 32, height: 32, borderRadius: 16, alignItems: 'center', justifyContent: 'center', borderWidth: 1 },
@@ -231,7 +312,9 @@ const styles = StyleSheet.create({
   elemTagText: { fontSize: 10, fontWeight: '700' as const },
   rewardRow: { flexDirection: 'row', alignItems: 'center', gap: 4 },
   rewardText: { fontSize: 11, fontWeight: '600' as const },
-  stageRight: { alignItems: 'center', gap: 6 },
+  stageRight: { alignItems: 'center', gap: 8 },
   expTag: { borderRadius: 8, paddingHorizontal: 8, paddingVertical: 3 },
   expText: { fontSize: 11, fontWeight: '700' as const },
+  enemySpriteWrapper: { width: 56, height: 56, borderRadius: 10, borderWidth: 1, alignItems: 'center', justifyContent: 'center', overflow: 'hidden' },
+  enemySprite: { width: 50, height: 50 },
 });

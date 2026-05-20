@@ -45,6 +45,7 @@ export interface GameMap {
   requiredMapCleared?: string;
   requiredTamerLevel?: number;
   isDungeon?: boolean;
+  backgroundImage?: number;
   stages: MapStage[];
 }
 
@@ -175,8 +176,9 @@ export const CODEX_ORDER: string[] = ['agumon', 'greymon', 'metalGreymon', 'warG
 export const GAME_MAPS: GameMap[] = [
   {
     id: 'map_forest',
-    name: 'Floresta Digital',
-    description: 'Bosques de dados fragmentados habitados por Digimons selvagens.',
+    name: 'Chip Forest',
+    description: 'Uma floresta de dados ancestrais onde Digimons selvagens habitam entre raízes digitais.',
+    backgroundImage: require('../assets/images/maps/chip_forest.png'),
     stages: [
       { index: 0, name: 'Entrada da Floresta', enemyCharacterId: 'agumon',      enemyLevel: 1,  expReward: 40  },
       { index: 1, name: 'Clareira dos Dados',  enemyCharacterId: 'gabumon',     enemyLevel: 2,  expReward: 60  },
