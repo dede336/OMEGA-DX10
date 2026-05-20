@@ -3,6 +3,7 @@ import React, { createContext, useCallback, useContext, useEffect, useState } fr
 import {
   CHARACTERS, EVOLUTIONS, GAME_MAPS, expToNextLevel,
   EquipSlot, TamerGender, EQUIP_SLOTS_ORDER, DEFAULT_INVENTORY,
+  CRAFT_RECIPES, CraftRecipe,
 } from '@/constants/gameData';
 
 export interface OwnedCharacter {
@@ -28,6 +29,7 @@ interface GameState {
   scanProgress: Record<string, number>;
   inventory: string[];
   equippedItems: EquippedItems;
+  pieces: Record<string, number>;
 }
 
 interface GameContextValue extends GameState {
@@ -47,6 +49,8 @@ interface GameContextValue extends GameState {
   equipItem: (slot: EquipSlot, itemId: string) => void;
   unequipItem: (slot: EquipSlot) => void;
   totalEquipBonus: () => Partial<Record<string, number>>;
+  gainPiece: (pieceId: string, amount?: number) => void;
+  craftItem: (recipe: CraftRecipe) => boolean;
 }
 
 const STORAGE_KEY = 'omega_dx10_save_v2';
@@ -60,6 +64,7 @@ const defaultState: GameState = {
   scanProgress: {},
   inventory: DEFAULT_INVENTORY,
   equippedItems: defaultEquipped,
+  pieces: {},
 };
 
 const GameContext = createContext<GameContextValue | null>(null);
@@ -80,6 +85,7 @@ export function GameProvider({ children }: { children: React.ReactNode }) {
             gender: parsed.gender ?? 'M',
             inventory: parsed.inventory ?? DEFAULT_INVENTORY,
             equippedItems: { ...defaultEquipped, ...(parsed.equippedItems ?? {}) },
+            pieces: parsed.pieces ?? {},
           });
         } catch {}
       }
@@ -186,6 +192,29 @@ export function GameProvider({ children }: { children: React.ReactNode }) {
     }));
   }, []);
 
+  const gainPiece = useCallback((pieceId: string, amount = 1) => {
+    setState((prev) => ({
+      ...prev,
+      pieces: { ...prev.pieces, [pieceId]: (prev.pieces[pieceId] ?? 0) + amount },
+    }));
+  }, []);
+
+  const craftItem = useCallback((recipe: CraftRecipe): boolean => {
+    let success = false;
+    setState((prev) => {
+      const current = prev.pieces[recipe.pieceId] ?? 0;
+      if (current < recipe.requiredCount) return prev;
+      if (prev.inventory.includes(recipe.resultItemId)) return prev;
+      success = true;
+      return {
+        ...prev,
+        pieces: { ...prev.pieces, [recipe.pieceId]: current - recipe.requiredCount },
+        inventory: [...prev.inventory, recipe.resultItemId],
+      };
+    });
+    return success;
+  }, []);
+
   const isStageCleared = useCallback(
     (mapId: string, stageIndex: number) => {
       return !!state.clearedStages[`${mapId}-${stageIndex}`];
@@ -245,6 +274,8 @@ export function GameProvider({ children }: { children: React.ReactNode }) {
         equipItem,
         unequipItem,
         totalEquipBonus,
+        gainPiece,
+        craftItem,
       }}
     >
       {children}

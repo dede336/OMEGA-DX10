@@ -9,7 +9,7 @@ import { useColors } from '@/hooks/useColors';
 import { useGame } from '@/context/GameContext';
 import {
   EQUIP_SLOT_LABELS, EQUIP_SLOT_ICONS, EQUIPMENT_ITEMS, EQUIP_SLOTS_ORDER,
-  RARITY_COLORS, RARITY_LABELS, ELEMENTS, EquipSlot, TamerGender,
+  RARITY_COLORS, RARITY_LABELS, ELEMENTS, CRAFT_RECIPES, EquipSlot, TamerGender,
 } from '@/constants/gameData';
 import EQUIP_ITEM_IMAGES from '@/constants/equipImages';
 
@@ -24,8 +24,8 @@ export default function MochilaScreen() {
   const insets = useSafeAreaInsets();
   const game = useGame();
   const {
-    playerName, gender, inventory, equippedItems,
-    setGender, equipItem, unequipItem, setPlayerName,
+    playerName, gender, inventory, equippedItems, pieces,
+    setGender, equipItem, unequipItem, setPlayerName, craftItem,
   } = game;
 
   const [selectedSlot, setSelectedSlot] = useState<EquipSlot | null>(null);
@@ -278,6 +278,70 @@ export default function MochilaScreen() {
         </View>
       )}
 
+      {/* ── Fragmentos & Crafting ── */}
+      <Text style={[styles.sectionTitle, { color: colors.foreground }]}>Fragmentos</Text>
+      {CRAFT_RECIPES.map((recipe) => {
+        const count = pieces[recipe.pieceId] ?? 0;
+        const canCraft = count >= recipe.requiredCount && !inventory.includes(recipe.resultItemId);
+        const alreadyCrafted = inventory.includes(recipe.resultItemId);
+        const progress = Math.min(1, count / recipe.requiredCount);
+        const resultRarityColor = RARITY_COLORS['LEGENDARY'];
+
+        return (
+          <View
+            key={recipe.pieceId}
+            style={[styles.fragmentCard, { backgroundColor: colors.card, borderColor: canCraft ? resultRarityColor : colors.border }]}
+          >
+            <View style={styles.fragmentTop}>
+              <Image
+                source={EQUIP_ITEM_IMAGES['brasao_coragem']}
+                style={styles.fragmentImg}
+                resizeMode="contain"
+              />
+              <View style={{ flex: 1 }}>
+                <Text style={[styles.fragmentName, { color: colors.foreground }]}>{recipe.pieceName}</Text>
+                <Text style={[styles.fragmentDesc, { color: colors.mutedForeground }]}>{recipe.pieceDescription}</Text>
+              </View>
+            </View>
+
+            <View style={styles.fragmentProgressRow}>
+              <View style={[styles.fragmentTrack, { backgroundColor: colors.border }]}>
+                <View style={[styles.fragmentFill, { width: `${progress * 100}%` as any, backgroundColor: resultRarityColor }]} />
+              </View>
+              <Text style={[styles.fragmentCount, { color: resultRarityColor }]}>
+                {count}/{recipe.requiredCount}
+              </Text>
+            </View>
+
+            {alreadyCrafted ? (
+              <View style={[styles.craftedBadge, { backgroundColor: '#22c55e22', borderColor: '#22c55e66' }]}>
+                <Feather name="check-circle" size={14} color="#22c55e" />
+                <Text style={[styles.craftedText, { color: '#22c55e' }]}>Brasão já forjado — está na sua mochila!</Text>
+              </View>
+            ) : (
+              <TouchableOpacity
+                style={[
+                  styles.craftBtn,
+                  {
+                    backgroundColor: canCraft ? resultRarityColor + '33' : colors.background,
+                    borderColor: canCraft ? resultRarityColor : colors.border,
+                    opacity: canCraft ? 1 : 0.5,
+                  },
+                ]}
+                onPress={() => { if (canCraft) craftItem(recipe); }}
+                activeOpacity={canCraft ? 0.75 : 1}
+                disabled={!canCraft}
+              >
+                <Feather name="zap" size={14} color={canCraft ? resultRarityColor : colors.mutedForeground} />
+                <Text style={[styles.craftBtnText, { color: canCraft ? resultRarityColor : colors.mutedForeground }]}>
+                  {canCraft ? `Forjar ${recipe.resultItemName}` : `Colete ${recipe.requiredCount - count} mais fragmentos`}
+                </Text>
+              </TouchableOpacity>
+            )}
+          </View>
+        );
+      })}
+
       {/* ── Total Bonus ── */}
       {bonusEntries.length > 0 && (
         <>
@@ -381,6 +445,19 @@ const styles = StyleSheet.create({
   },
   equipBtnText: { fontSize: 12, fontWeight: '700' as const },
 
+  fragmentCard: { borderRadius: 16, borderWidth: 1.5, padding: 16, marginBottom: 16, gap: 12 },
+  fragmentTop: { flexDirection: 'row', alignItems: 'center', gap: 12 },
+  fragmentImg: { width: 52, height: 52 },
+  fragmentName: { fontSize: 15, fontWeight: '700' as const, marginBottom: 3 },
+  fragmentDesc: { fontSize: 12, lineHeight: 17 },
+  fragmentProgressRow: { flexDirection: 'row', alignItems: 'center', gap: 10 },
+  fragmentTrack: { flex: 1, height: 8, borderRadius: 4, overflow: 'hidden' as const },
+  fragmentFill: { height: 8, borderRadius: 4 },
+  fragmentCount: { fontSize: 13, fontWeight: '700' as const, minWidth: 45, textAlign: 'right' as const },
+  craftBtn: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 8, borderRadius: 12, borderWidth: 1.5, paddingVertical: 12 },
+  craftBtnText: { fontSize: 13, fontWeight: '700' as const },
+  craftedBadge: { flexDirection: 'row', alignItems: 'center', gap: 8, borderRadius: 10, borderWidth: 1, paddingHorizontal: 12, paddingVertical: 8 },
+  craftedText: { fontSize: 12, fontWeight: '600' as const },
   bonusCard: { borderRadius: 16, borderWidth: 1, padding: 16, marginBottom: 16 },
   bonusGrid: { flexDirection: 'row', flexWrap: 'wrap', gap: 8, marginBottom: 10 },
   bonusChip: {

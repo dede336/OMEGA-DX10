@@ -264,7 +264,28 @@ export const EQUIPMENT_ITEMS: EquipItem[] = [
 export const EQUIP_SLOTS_ORDER: EquipSlot[] = ['blusa', 'calca', 'sapato', 'brasao', 'digivice', 'pulseira', 'oculos'];
 
 export const DEFAULT_INVENTORY: string[] = [
-  'blusa_tamer', 'calca_treino', 'sapato_tenis', 'brasao_digital', 'brasao_coragem', 'digivice_d3', 'pulseira_forca', 'oculos_scanner',
+  'blusa_tamer', 'calca_treino', 'sapato_tenis', 'brasao_digital', 'digivice_d3', 'pulseira_forca', 'oculos_scanner',
+];
+
+// ─── Crafting / Pieces ─────────────────────────────────────────────────────────
+export interface CraftRecipe {
+  pieceId: string;
+  pieceName: string;
+  pieceDescription: string;
+  requiredCount: number;
+  resultItemId: string;
+  resultItemName: string;
+}
+
+export const CRAFT_RECIPES: CraftRecipe[] = [
+  {
+    pieceId: 'piece_brasao_coragem',
+    pieceName: 'Fragmento da Coragem',
+    pieceDescription: 'Um fragmento do lendário Brasão da Coragem. Colete 50 para forjar o item completo.',
+    requiredCount: 50,
+    resultItemId: 'brasao_coragem',
+    resultItemName: 'Brasão da Coragem',
+  },
 ];
 
 export function expToNextLevel(level: number): number {

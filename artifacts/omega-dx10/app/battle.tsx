@@ -42,7 +42,7 @@ export default function BattleScreen() {
   const colors = useColors();
   const insets = useSafeAreaInsets();
   const params = useLocalSearchParams<{ mapId: string; stageIndex: string }>();
-  const { collection, selectedCharacter, setSelectedCharacter, gainExp, clearStage, isStageCleared, gainScan, equippedItems } = useGame();
+  const { collection, selectedCharacter, setSelectedCharacter, gainExp, clearStage, isStageCleared, gainScan, equippedItems, gainPiece } = useGame();
 
   const mapId = params.mapId ?? '';
   const stageIndex = Number(params.stageIndex ?? '0');
@@ -179,6 +179,7 @@ export default function BattleScreen() {
         }
         clearStage(mapId, stageIndex);
         if (stage) gainScan(stage.enemyCharacterId, 5);
+        if (Math.random() < 0.25) gainPiece('piece_brasao_coragem', 1);
       }, 400);
       setBusy(false);
       return;
