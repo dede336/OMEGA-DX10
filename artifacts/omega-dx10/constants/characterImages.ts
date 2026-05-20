@@ -8,6 +8,7 @@ const CHARACTER_IMAGES: Record<string, any> = {
   warGreymon:     require('../assets/images/characters/warGreymon.gif'),
   garurumon:      require('../assets/images/characters/garurumon.gif'),
   wereGarurumon:  require('../assets/images/characters/wereGarurumon.gif'),
+  metalGarurumon: require('../assets/images/characters/metalGarurumon.gif'),
   gulusGammamon:  require('../assets/images/characters/gulusGammamon.gif'),
 };
 

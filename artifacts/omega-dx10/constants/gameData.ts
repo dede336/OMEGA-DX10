@@ -130,6 +130,15 @@ export const CHARACTERS: Record<string, Character> = {
     baseStats: { hp: 200, mp: 220, atk: 130, def: 115, spt: 80, spd: 100, apt: 30 },
     description: 'A forma Ultimate do Garurumon. Um guerreiro humanoide do gelo com força devastadora e velocidade surpreendente.',
   },
+  metalGarurumon: {
+    id: 'metalGarurumon',
+    name: 'MetalGarurumon',
+    rarity: 'LEGENDARY',
+    attribute: 'VC',
+    element: 'ICE',
+    baseStats: { hp: 312, mp: 338, atk: 167, def: 121, spt: 124, spd: 131, apt: 72 },
+    description: 'A forma Mega do WereGarurumon. Um lobo metálico blindado com mísseis de gelo, considerado um dos Digimon mais poderosos do tipo Vacina.',
+  },
   gulusGammamon: {
     id: 'gulusGammamon',
     name: 'GulusGammamon',
@@ -174,15 +183,16 @@ export const EVOLUTIONS: Record<string, { evolvesTo: string; requiredLevel: numb
   greymon:      { evolvesTo: 'metalGreymon',  requiredLevel: 34, label: 'MetalGreymon' },
   metalGreymon: { evolvesTo: 'warGreymon',    requiredLevel: 52, label: 'WarGreymon' },
   gabumon:      { evolvesTo: 'garurumon',     requiredLevel: 19, label: 'Garurumon' },
-  garurumon:    { evolvesTo: 'wereGarurumon', requiredLevel: 35, label: 'WereGarurumon' },
-  demiDevimon:  { evolvesTo: 'devimon',       requiredLevel: 21, label: 'Devimon' },
+  garurumon:    { evolvesTo: 'wereGarurumon',   requiredLevel: 35, label: 'WereGarurumon' },
+  wereGarurumon:{ evolvesTo: 'metalGarurumon', requiredLevel: 52, label: 'MetalGarurumon' },
+  demiDevimon:  { evolvesTo: 'devimon',         requiredLevel: 21, label: 'Devimon' },
 };
 
 // Characters that can be scanned (encountered as enemies in battle)
 export const SCANNABLE_CHARACTERS: string[] = ['agumon', 'gabumon', 'demiDevimon'];
 
 // Display order in the Codex (grouped by evolution line)
-export const CODEX_ORDER: string[] = ['agumon', 'greymon', 'metalGreymon', 'warGreymon', 'gabumon', 'garurumon', 'wereGarurumon', 'demiDevimon', 'devimon', 'gulusGammamon'];
+export const CODEX_ORDER: string[] = ['agumon', 'greymon', 'metalGreymon', 'warGreymon', 'gabumon', 'garurumon', 'wereGarurumon', 'metalGarurumon', 'demiDevimon', 'devimon', 'gulusGammamon'];
 
 // ─── Maps & Stages ─────────────────────────────────────────────────────────────
 export const GAME_MAPS: GameMap[] = [
