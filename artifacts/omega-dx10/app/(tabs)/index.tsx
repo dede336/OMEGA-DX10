@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Platform } from 'react-native';
+import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Platform, Image } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Feather } from '@expo/vector-icons';
 import { router } from 'expo-router';
@@ -43,10 +43,11 @@ export default function HomeScreen() {
 
       {/* Logo / Title */}
       <View style={[styles.titleCard, { backgroundColor: colors.card, borderColor: colors.border }]}>
-        <View style={styles.titleGlow}>
-          <Text style={[styles.gameTitle, { color: colors.primary }]}>OMEGA</Text>
-          <Text style={[styles.gameTitleSub, { color: colors.accent }]}>DX10</Text>
-        </View>
+        <Image
+          source={require('../../assets/images/logo.png')}
+          style={styles.logoImage}
+          resizeMode="contain"
+        />
         <Text style={[styles.gameSubtitle, { color: colors.mutedForeground }]}>Colecione. Evolua. Conquiste.</Text>
       </View>
 
@@ -154,14 +155,13 @@ const styles = StyleSheet.create({
   titleCard: {
     borderRadius: 16,
     borderWidth: 1,
-    padding: 24,
+    paddingVertical: 20,
+    paddingHorizontal: 24,
     alignItems: 'center',
     marginBottom: 20,
   },
-  titleGlow: { flexDirection: 'row', alignItems: 'flex-end', gap: 8 },
-  gameTitle: { fontSize: 42, fontWeight: '900' as const, letterSpacing: 2 },
-  gameTitleSub: { fontSize: 28, fontWeight: '900' as const, marginBottom: 4 },
-  gameSubtitle: { fontSize: 13, marginTop: 6, letterSpacing: 1 },
+  logoImage: { width: '100%', height: 110 },
+  gameSubtitle: { fontSize: 13, marginTop: 4, letterSpacing: 1 },
   statsRow: { flexDirection: 'row', gap: 10, marginBottom: 24 },
   statCard: {
     flex: 1,
