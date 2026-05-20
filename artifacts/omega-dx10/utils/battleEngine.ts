@@ -88,14 +88,48 @@ export function whoGoesFirst(player: BattleFighter, enemy: BattleFighter): 'play
   return Math.random() < 0.5 ? 'player' : 'enemy';
 }
 
+export interface EquipBonuses {
+  flat: Partial<BaseStats>;
+  elementPct?: { element: ElementId; percent: number };
+}
+
 export function buildFighter(
   name: string,
   attribute: AttributeId,
   element: ElementId,
   baseStats: BaseStats,
   level: number,
+  equipBonuses?: EquipBonuses,
 ): BattleFighter {
-  const stats = getScaledStats(baseStats, level);
+  let stats = getScaledStats(baseStats, level);
+
+  if (equipBonuses) {
+    const { flat, elementPct } = equipBonuses;
+
+    stats = {
+      hp:  stats.hp  + (flat.hp  ?? 0),
+      mp:  stats.mp  + (flat.mp  ?? 0),
+      atk: stats.atk + (flat.atk ?? 0),
+      def: stats.def + (flat.def ?? 0),
+      spt: stats.spt + (flat.spt ?? 0),
+      spd: stats.spd + (flat.spd ?? 0),
+      apt: stats.apt + (flat.apt ?? 0),
+    };
+
+    if (elementPct && element === elementPct.element) {
+      const m = 1 + elementPct.percent;
+      stats = {
+        hp:  Math.floor(stats.hp  * m),
+        mp:  Math.floor(stats.mp  * m),
+        atk: Math.floor(stats.atk * m),
+        def: Math.floor(stats.def * m),
+        spt: Math.floor(stats.spt * m),
+        spd: Math.floor(stats.spd * m),
+        apt: Math.floor(stats.apt * m),
+      };
+    }
+  }
+
   return { name, attribute, element, stats, currentHP: stats.hp, currentMP: stats.mp };
 }
 

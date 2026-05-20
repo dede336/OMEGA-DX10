@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import {
   View, Text, StyleSheet, ScrollView, TouchableOpacity,
-  Platform, TextInput,
+  Platform, TextInput, Image,
 } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Feather } from '@expo/vector-icons';
@@ -9,8 +9,9 @@ import { useColors } from '@/hooks/useColors';
 import { useGame } from '@/context/GameContext';
 import {
   EQUIP_SLOT_LABELS, EQUIP_SLOT_ICONS, EQUIPMENT_ITEMS, EQUIP_SLOTS_ORDER,
-  RARITY_COLORS, RARITY_LABELS, EquipSlot, TamerGender,
+  RARITY_COLORS, RARITY_LABELS, ELEMENTS, EquipSlot, TamerGender,
 } from '@/constants/gameData';
+import EQUIP_ITEM_IMAGES from '@/constants/equipImages';
 
 const GENDER_OPTIONS: { value: TamerGender; label: string; icon: string }[] = [
   { value: 'M', label: 'Masculino', icon: 'user' },
@@ -216,6 +217,11 @@ export default function MochilaScreen() {
                 .map(([k, v]) => `+${v} ${k.toUpperCase()}`)
                 .join('  ');
 
+              const itemImg = EQUIP_ITEM_IMAGES[item.id];
+              const elemBonus = item.elementBonus;
+              const elemLabel = elemBonus ? ELEMENTS[elemBonus.element]?.label : null;
+              const elemColor = elemBonus ? ELEMENTS[elemBonus.element]?.color : null;
+
               return (
                 <TouchableOpacity
                   key={item.id}
@@ -230,7 +236,11 @@ export default function MochilaScreen() {
                   activeOpacity={0.8}
                 >
                   <View style={styles.pickerItemLeft}>
-                    <View style={[styles.pickerRarityDot, { backgroundColor: rc }]} />
+                    {itemImg ? (
+                      <Image source={itemImg} style={styles.pickerItemImg} resizeMode="contain" />
+                    ) : (
+                      <View style={[styles.pickerRarityDot, { backgroundColor: rc }]} />
+                    )}
                     <View style={{ flex: 1 }}>
                       <View style={styles.pickerItemNameRow}>
                         <Text style={[styles.pickerItemName, { color: colors.foreground }]}>{item.name}</Text>
@@ -238,7 +248,16 @@ export default function MochilaScreen() {
                           <Text style={[styles.rarityPillText, { color: rc }]}>{RARITY_LABELS[item.rarity]}</Text>
                         </View>
                       </View>
-                      <Text style={[styles.pickerItemBonus, { color: rc }]}>{bonusStr}</Text>
+                      {bonusStr.length > 0 && (
+                        <Text style={[styles.pickerItemBonus, { color: rc }]}>{bonusStr}</Text>
+                      )}
+                      {elemBonus && elemLabel && elemColor && (
+                        <View style={[styles.elemBonusRow, { backgroundColor: elemColor + '22', borderColor: elemColor + '55' }]}>
+                          <Text style={[styles.elemBonusText, { color: elemColor }]}>
+                            ✦ +{Math.round(elemBonus.percent * 100)}% todos os stats — {elemLabel}
+                          </Text>
+                        </View>
+                      )}
                       <Text style={[styles.pickerItemDesc, { color: colors.mutedForeground }]} numberOfLines={2}>
                         {item.description}
                       </Text>
@@ -349,6 +368,9 @@ const styles = StyleSheet.create({
   },
   pickerItemLeft: { flex: 1, flexDirection: 'row', alignItems: 'flex-start', gap: 10 },
   pickerRarityDot: { width: 8, height: 8, borderRadius: 4, marginTop: 6 },
+  pickerItemImg: { width: 44, height: 44 },
+  elemBonusRow: { borderRadius: 8, borderWidth: 1, paddingHorizontal: 8, paddingVertical: 4, marginBottom: 4, alignSelf: 'flex-start' as const },
+  elemBonusText: { fontSize: 11, fontWeight: '700' as const },
   pickerItemNameRow: { flexDirection: 'row', alignItems: 'center', flexWrap: 'wrap', marginBottom: 3 },
   pickerItemName: { fontSize: 14, fontWeight: '700' as const },
   pickerItemBonus: { fontSize: 12, fontWeight: '700' as const, marginBottom: 3 },

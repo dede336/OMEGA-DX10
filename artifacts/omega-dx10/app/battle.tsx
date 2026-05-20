@@ -19,6 +19,8 @@ import {
   ATTRIBUTES,
   ELEMENTS,
   GAME_MAPS,
+  EQUIPMENT_ITEMS,
+  EQUIP_SLOTS_ORDER,
   getScaledStats,
 } from '@/constants/gameData';
 import {
@@ -28,6 +30,7 @@ import {
   whoGoesFirst,
   BattleFighter,
   ActionType,
+  EquipBonuses,
   SPIRIT_MP_COST,
 } from '@/utils/battleEngine';
 import { HPBar, AttributeBadge, ElementBadge, CharacterAvatar } from '@/components/GameComponents';
@@ -39,7 +42,7 @@ export default function BattleScreen() {
   const colors = useColors();
   const insets = useSafeAreaInsets();
   const params = useLocalSearchParams<{ mapId: string; stageIndex: string }>();
-  const { collection, selectedCharacter, setSelectedCharacter, gainExp, clearStage, isStageCleared, gainScan } = useGame();
+  const { collection, selectedCharacter, setSelectedCharacter, gainExp, clearStage, isStageCleared, gainScan, equippedItems } = useGame();
 
   const mapId = params.mapId ?? '';
   const stageIndex = Number(params.stageIndex ?? '0');
@@ -84,7 +87,21 @@ export default function BattleScreen() {
     const eChar = CHARACTERS[stage.enemyCharacterId];
     if (!pChar || !eChar) return;
 
-    const pFighter = buildFighter(pChar.name, pChar.attribute, pChar.element, pChar.baseStats, owned.level);
+    const equipBonuses: EquipBonuses = { flat: {} };
+    EQUIP_SLOTS_ORDER.forEach((slot) => {
+      const itemId = equippedItems[slot];
+      if (!itemId) return;
+      const item = EQUIPMENT_ITEMS.find((i) => i.id === itemId);
+      if (!item) return;
+      Object.entries(item.bonuses).forEach(([k, v]) => {
+        (equipBonuses.flat as Record<string, number>)[k] = ((equipBonuses.flat as Record<string, number>)[k] ?? 0) + (v ?? 0);
+      });
+      if (item.elementBonus && !equipBonuses.elementPct) {
+        equipBonuses.elementPct = item.elementBonus;
+      }
+    });
+
+    const pFighter = buildFighter(pChar.name, pChar.attribute, pChar.element, pChar.baseStats, owned.level, equipBonuses);
     const eFighter = buildFighter(eChar.name, eChar.attribute, eChar.element, eChar.baseStats, stage.enemyLevel);
 
     setPlayerFighter(pFighter);
