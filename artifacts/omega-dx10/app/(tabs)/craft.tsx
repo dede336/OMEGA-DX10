@@ -12,18 +12,17 @@ import {
 import EQUIP_ITEM_IMAGES from '@/constants/equipImages';
 
 const PIECE_META = [
-  { id: 'piece_brasao_coragem',   label: 'Coragem Piece',       icon: 'sun',     color: '#f97316', itemId: 'brasao_coragem' },
-  { id: 'piece_brasao_esperanca', label: 'Esperança Piece',     icon: 'sun',     color: '#eab308', itemId: 'brasao_esperanca' },
-  { id: 'piece_brasao_amizade',   label: 'Amizade Piece',       icon: 'users',   color: '#3b82f6', itemId: 'brasao_amizade' },
-  { id: 'piece_caos',             label: 'Caos',                icon: 'cpu',     color: '#a855f7' },
-  { id: 'piece_tecido',           label: 'Tecido arco-íris',    icon: 'layers',  color: '#ec4899', image: require('../../assets/images/tecido-arco-iris.png') },
-  { id: 'piece_agulha',           label: 'Agulha Média',        icon: 'edit-2',  color: '#8b5cf6', image: require('../../assets/images/agulha-media.png') },
-  { id: 'piece_linha',            label: 'Linha arco-íris',     icon: 'wind',    color: '#06b6d4', image: require('../../assets/images/linha-arco-iris.png') },
-  { id: 'piece_brasao_confianca', label: 'Confiança Piece',     icon: 'shield',  color: '#94a3b8', itemId: 'brasao_confianca' },
-  { id: 'piece_brasao_pureza',    label: 'Pureza Piece',        icon: 'droplet', color: '#22c55e', itemId: 'brasao_pureza' },
-  { id: 'piece_brasao_amor',      label: 'Amor Piece',          icon: 'heart',   color: '#f43f5e', itemId: 'brasao_amor' },
-  { id: 'piece_brasao_luz',       label: 'Luz Piece',           icon: 'star',    color: '#c084fc', itemId: 'brasao_luz' },
-  { id: 'piece_brasao_conhecimento', label: 'Conhecimento Piece', icon: 'book',  color: '#a855f7', itemId: 'brasao_conhecimento' },
+  { id: 'piece_brasao_coragem',      label: 'Coragem Piece',       icon: 'sun',     color: '#f97316', itemId: 'brasao_coragem' },
+  { id: 'piece_brasao_esperanca',    label: 'Esperança Piece',     icon: 'sun',     color: '#eab308', itemId: 'brasao_esperanca' },
+  { id: 'piece_brasao_amizade',      label: 'Amizade Piece',       icon: 'users',   color: '#3b82f6', itemId: 'brasao_amizade' },
+  { id: 'piece_brasao_confianca',    label: 'Confiança Piece',     icon: 'shield',  color: '#94a3b8', itemId: 'brasao_confianca' },
+  { id: 'piece_brasao_pureza',       label: 'Pureza Piece',        icon: 'droplet', color: '#22c55e', itemId: 'brasao_pureza' },
+  { id: 'piece_brasao_amor',         label: 'Amor Piece',          icon: 'heart',   color: '#f43f5e', itemId: 'brasao_amor' },
+  { id: 'piece_brasao_luz',          label: 'Luz Piece',           icon: 'star',    color: '#c084fc', itemId: 'brasao_luz' },
+  { id: 'piece_brasao_conhecimento', label: 'Conhecimento Piece',  icon: 'book',    color: '#a855f7', itemId: 'brasao_conhecimento' },
+  { id: 'piece_agulha',              label: 'Agulha Média',        icon: 'edit-2',  color: '#8b5cf6', image: require('../../assets/images/agulha-media.png') },
+  { id: 'piece_tecido',              label: 'Tecido arco-íris',    icon: 'layers',  color: '#ec4899', image: require('../../assets/images/tecido-arco-iris.png') },
+  { id: 'piece_linha',               label: 'Linha arco-íris',     icon: 'wind',    color: '#06b6d4', image: require('../../assets/images/linha-arco-iris.png') },
 ];
 
 export default function CraftScreen() {
