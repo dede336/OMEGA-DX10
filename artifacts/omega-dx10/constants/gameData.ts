@@ -233,7 +233,7 @@ export const GAME_MAPS: GameMap[] = [
         expReward: 500,
         drops: [
           { type: 'bits',  amount: 1000, chance: 1.00 },
-          { type: 'piece', id: 'piece_brasao_coragem', amount: 1, chance: 0.30 },
+          { type: 'piece', id: 'piece_brasao_coragem', amount: 1, chance: 0.10 },
         ],
       },
     ],
