@@ -10,7 +10,7 @@ import { useColors } from '@/hooks/useColors';
 import { useGame } from '@/context/GameContext';
 import {
   EQUIP_SLOT_LABELS, EQUIP_SLOT_ICONS, EQUIPMENT_ITEMS, EQUIP_SLOTS_ORDER,
-  RARITY_COLORS, RARITY_LABELS, ELEMENTS, CRAFT_RECIPES, EquipSlot, TamerGender,
+  RARITY_COLORS, RARITY_LABELS, ELEMENTS, EquipSlot, TamerGender,
   TAMERS, tamerExpToNextLevel,
 } from '@/constants/gameData';
 import EQUIP_ITEM_IMAGES from '@/constants/equipImages';
@@ -26,9 +26,9 @@ export default function MochilaScreen() {
   const insets = useSafeAreaInsets();
   const game = useGame();
   const {
-    playerName, gender, tamerId, inventory, equippedItems, pieces, bits,
+    playerName, gender, tamerId, inventory, equippedItems,
     tamerExp, tamerLevel,
-    setGender, equipItem, unequipItem, setPlayerName, craftItem,
+    setGender, equipItem, unequipItem, setPlayerName,
   } = game;
 
   const selectedTamer = TAMERS.find((t) => t.id === tamerId) ?? null;
@@ -319,165 +319,6 @@ export default function MochilaScreen() {
         </View>
       )}
 
-      {/* ── Fragmentos & Crafting ── */}
-      <Text style={[styles.sectionTitle, { color: colors.foreground }]}>Crafting</Text>
-
-      {/* Fragment inventory summary */}
-      <View style={[styles.fragmentSummaryRow, { backgroundColor: colors.card, borderColor: colors.border }]}>
-        {[
-          { id: 'piece_coragem',        label: 'Coragem', icon: 'zap',      color: '#ef4444' },
-          { id: 'piece_brasao_coragem',   label: 'Coragem', icon: 'sun',   color: '#f97316' },
-          { id: 'piece_brasao_esperanca', label: 'Esperança', icon: 'sun', color: '#eab308' },
-          { id: 'piece_brasao_amizade',   label: 'Amizade', icon: 'users', color: '#3b82f6' },
-          { id: 'piece_gelo',           label: 'Gelo',    icon: 'droplet',  color: '#38bdf8' },
-          { id: 'piece_caos',           label: 'Caos',    icon: 'cpu',      color: '#a855f7' },
-          { id: 'piece_tecido',         label: 'Tecido',  icon: 'layers',   color: '#ec4899' },
-          { id: 'piece_agulha',         label: 'Agulha',  icon: 'edit-2',   color: '#8b5cf6' },
-          { id: 'piece_linha',          label: 'Linha',   icon: 'wind',     color: '#06b6d4' },
-        ].map((p) => (
-          <View key={p.id} style={styles.fragmentSummaryItem}>
-            <View style={[styles.fragmentSummaryIcon, { backgroundColor: p.color + '22' }]}>
-              <Feather name={p.icon as any} size={16} color={p.color} />
-            </View>
-            <Text style={[styles.fragmentSummaryCount, { color: colors.foreground }]}>{pieces[p.id] ?? 0}</Text>
-            <Text style={[styles.fragmentSummaryLabel, { color: colors.mutedForeground }]}>{p.label}</Text>
-          </View>
-        ))}
-      </View>
-
-      {/* Recipe cards */}
-      {CRAFT_RECIPES.map((recipe, idx) => {
-        const isMulti = !!(recipe.pieceRequirements && recipe.pieceRequirements.length > 0);
-        const alreadyCrafted = inventory.includes(recipe.resultItemId);
-        const hasEnoughBits = bits >= (recipe.bitsCost ?? 0);
-
-        let hasEnoughPieces: boolean;
-        let progress: number;
-        let singleCount = 0;
-
-        if (isMulti) {
-          hasEnoughPieces = recipe.pieceRequirements!.every((r) => (pieces[r.pieceId] ?? 0) >= r.count);
-          progress = Math.min(...recipe.pieceRequirements!.map((r) => Math.min(1, (pieces[r.pieceId] ?? 0) / r.count)));
-        } else {
-          singleCount = pieces[recipe.pieceId] ?? 0;
-          hasEnoughPieces = singleCount >= recipe.requiredCount;
-          progress = Math.min(1, singleCount / recipe.requiredCount);
-        }
-
-        const canCraft = hasEnoughPieces && hasEnoughBits && !alreadyCrafted;
-        const rarityColor = RARITY_COLORS[recipe.resultRarity];
-        const rarityLabel = RARITY_LABELS[recipe.resultRarity];
-
-        let btnLabel: string;
-        if (canCraft) {
-          btnLabel = `Forjar ${recipe.resultItemName}`;
-        } else if (!hasEnoughPieces) {
-          btnLabel = isMulti ? 'Faltam materiais' : `Faltam ${recipe.requiredCount - singleCount} fragmentos`;
-        } else {
-          btnLabel = `Faltam ${((recipe.bitsCost ?? 0) - bits).toLocaleString()} Bits`;
-        }
-
-        return (
-          <View
-            key={`${recipe.resultItemId}-${idx}`}
-            style={[styles.craftCard, { backgroundColor: colors.card, borderColor: alreadyCrafted ? '#22c55e66' : canCraft ? rarityColor + '88' : colors.border }]}
-          >
-            {/* Header */}
-            <View style={styles.craftCardHeader}>
-              <View style={[styles.craftPieceIcon, { backgroundColor: recipe.pieceColor + '22' }]}>
-                <Feather name={recipe.pieceIcon as any} size={18} color={recipe.pieceColor} />
-              </View>
-              <View style={{ flex: 1 }}>
-                <Text style={[styles.craftResultName, { color: colors.foreground }]}>{recipe.resultItemName}</Text>
-                <View style={styles.craftRarityRow}>
-                  <View style={[styles.craftRarityBadge, { backgroundColor: rarityColor + '22' }]}>
-                    <Text style={[styles.craftRarityText, { color: rarityColor }]}>{rarityLabel}</Text>
-                  </View>
-                </View>
-              </View>
-            </View>
-
-            {/* Requirements */}
-            <View style={styles.craftReqRow}>
-              {isMulti ? (
-                recipe.pieceRequirements!.map((req) => {
-                  const cnt = pieces[req.pieceId] ?? 0;
-                  const met = cnt >= req.count;
-                  return (
-                    <View key={req.pieceId} style={[styles.craftReqChip, {
-                      backgroundColor: met ? req.pieceColor + '18' : colors.background,
-                      borderColor: met ? req.pieceColor : colors.border,
-                    }]}>
-                      <Feather name={req.pieceIcon as any} size={12} color={met ? req.pieceColor : colors.mutedForeground} />
-                      <Text style={[styles.craftReqText, { color: met ? req.pieceColor : colors.mutedForeground }]}>
-                        {cnt}/{req.count} {req.pieceName.split(' ')[0]}
-                      </Text>
-                    </View>
-                  );
-                })
-              ) : (
-                <View style={[styles.craftReqChip, {
-                  backgroundColor: hasEnoughPieces ? recipe.pieceColor + '18' : colors.background,
-                  borderColor: hasEnoughPieces ? recipe.pieceColor : colors.border,
-                }]}>
-                  <Feather name={recipe.pieceIcon as any} size={12} color={hasEnoughPieces ? recipe.pieceColor : colors.mutedForeground} />
-                  <Text style={[styles.craftReqText, { color: hasEnoughPieces ? recipe.pieceColor : colors.mutedForeground }]}>
-                    {singleCount}/{recipe.requiredCount} {recipe.pieceName.split(' ')[1]}
-                  </Text>
-                </View>
-              )}
-              {/* Bits cost */}
-              {(recipe.bitsCost ?? 0) > 0 && (
-                <View style={[styles.craftReqChip, {
-                  backgroundColor: hasEnoughBits ? '#facc1518' : colors.background,
-                  borderColor: hasEnoughBits ? '#facc15' : colors.border,
-                }]}>
-                  <Feather name="dollar-sign" size={12} color={hasEnoughBits ? '#facc15' : colors.mutedForeground} />
-                  <Text style={[styles.craftReqText, { color: hasEnoughBits ? '#facc15' : colors.mutedForeground }]}>
-                    {(recipe.bitsCost ?? 0).toLocaleString()} Bits
-                  </Text>
-                </View>
-              )}
-            </View>
-
-            {/* Progress bar */}
-            <View style={styles.craftProgressRow}>
-              <View style={[styles.craftProgressTrack, { backgroundColor: colors.border }]}>
-                <View style={[styles.craftProgressFill, { width: `${progress * 100}%` as any, backgroundColor: recipe.pieceColor }]} />
-              </View>
-              {isMulti ? (
-                <Text style={[styles.craftProgressLabel, { color: recipe.pieceColor }]}>{Math.round(progress * 100)}%</Text>
-              ) : (
-                <Text style={[styles.craftProgressLabel, { color: recipe.pieceColor }]}>{singleCount}/{recipe.requiredCount}</Text>
-              )}
-            </View>
-
-            {/* Button */}
-            {alreadyCrafted ? (
-              <View style={[styles.craftedBadge, { backgroundColor: '#22c55e22', borderColor: '#22c55e66' }]}>
-                <Feather name="check-circle" size={14} color="#22c55e" />
-                <Text style={[styles.craftedText, { color: '#22c55e' }]}>{recipe.resultItemName} forjado — na mochila!</Text>
-              </View>
-            ) : (
-              <TouchableOpacity
-                style={[styles.craftBtn, {
-                  backgroundColor: canCraft ? rarityColor + '28' : colors.background,
-                  borderColor: canCraft ? rarityColor : colors.border,
-                  opacity: canCraft ? 1 : 0.5,
-                }]}
-                onPress={() => { if (canCraft) craftItem(recipe); }}
-                activeOpacity={canCraft ? 0.75 : 1}
-                disabled={!canCraft}
-              >
-                <Feather name="tool" size={14} color={canCraft ? rarityColor : colors.mutedForeground} />
-                <Text style={[styles.craftBtnText, { color: canCraft ? rarityColor : colors.mutedForeground }]}>
-                  {btnLabel}
-                </Text>
-              </TouchableOpacity>
-            )}
-          </View>
-        );
-      })}
 
       {/* ── Total Bonus ── */}
       {bonusEntries.length > 0 && (

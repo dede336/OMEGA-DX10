@@ -24,6 +24,10 @@ function NativeTabLayout() {
         <Icon sf={{ default: "backpack", selected: "backpack.fill" }} />
         <Label>Mochila</Label>
       </NativeTabs.Trigger>
+      <NativeTabs.Trigger name="craft">
+        <Icon sf={{ default: "hammer", selected: "hammer.fill" }} />
+        <Label>Craft</Label>
+      </NativeTabs.Trigger>
       <NativeTabs.Trigger name="map">
         <Icon sf={{ default: "map", selected: "map.fill" }} />
         <Label>Mundo</Label>
@@ -101,6 +105,18 @@ function ClassicTabLayout() {
               resizeMode="contain"
             />
           ),
+        }}
+      />
+      <Tabs.Screen
+        name="craft"
+        options={{
+          title: "Craft",
+          tabBarIcon: ({ color }) =>
+            isIOS ? (
+              <SymbolView name="hammer" tintColor={color} size={22} />
+            ) : (
+              <Feather name="tool" size={22} color={color} />
+            ),
         }}
       />
       <Tabs.Screen
