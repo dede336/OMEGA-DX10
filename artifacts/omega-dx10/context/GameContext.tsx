@@ -1,6 +1,6 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import React, { createContext, useCallback, useContext, useEffect, useState } from 'react';
-import { CHARACTERS, GAME_MAPS, expToNextLevel } from '@/constants/gameData';
+import { CHARACTERS, EVOLUTIONS, GAME_MAPS, expToNextLevel } from '@/constants/gameData';
 
 export interface OwnedCharacter {
   ownedId: string;
@@ -14,6 +14,7 @@ interface GameState {
   collection: OwnedCharacter[];
   clearedStages: Record<string, boolean>;
   selectedOwnedId: string | null;
+  scanProgress: Record<string, number>;
 }
 
 interface GameContextValue extends GameState {
@@ -25,16 +26,20 @@ interface GameContextValue extends GameState {
   setPlayerName: (name: string) => void;
   isStageCleared: (mapId: string, stageIndex: number) => boolean;
   isMapUnlocked: (mapId: string) => boolean;
+  gainScan: (characterId: string, amount: number) => void;
+  createFromScan: (characterId: string) => void;
+  evolveDigimon: (ownedId: string) => void;
   totalPlayerLevel: number;
 }
 
-const STORAGE_KEY = 'omega_dx10_save';
+const STORAGE_KEY = 'omega_dx10_save_v2';
 
 const defaultState: GameState = {
   playerName: 'Tamer',
   collection: [{ ownedId: 'owned_agumon_0', characterId: 'agumon', level: 1, exp: 0 }],
   clearedStages: {},
   selectedOwnedId: 'owned_agumon_0',
+  scanProgress: {},
 };
 
 const GameContext = createContext<GameContextValue | null>(null);
@@ -47,8 +52,12 @@ export function GameProvider({ children }: { children: React.ReactNode }) {
     AsyncStorage.getItem(STORAGE_KEY).then((raw) => {
       if (raw) {
         try {
-          const parsed = JSON.parse(raw) as GameState;
-          setState(parsed);
+          const parsed = JSON.parse(raw) as Partial<GameState>;
+          setState({
+            ...defaultState,
+            ...parsed,
+            scanProgress: parsed.scanProgress ?? {},
+          });
         } catch {}
       }
       setLoaded(true);
@@ -90,18 +99,41 @@ export function GameProvider({ children }: { children: React.ReactNode }) {
     setState((prev) => {
       if (prev.clearedStages[key]) return prev;
       const clearedStages = { ...prev.clearedStages, [key]: true };
-      // Unlock character if stage reward has one
-      const map = GAME_MAPS.find((m) => m.id === mapId);
-      const stage = map?.stages[stageIndex];
-      let collection = prev.collection;
-      if (stage?.unlockCharacterId) {
-        const alreadyOwned = collection.some((c) => c.characterId === stage.unlockCharacterId);
-        if (!alreadyOwned) {
-          const ownedId = `owned_${stage.unlockCharacterId}_${Date.now()}`;
-          collection = [...collection, { ownedId, characterId: stage.unlockCharacterId, level: 1, exp: 0 }];
-        }
-      }
-      return { ...prev, clearedStages, collection };
+      return { ...prev, clearedStages };
+    });
+  }, []);
+
+  const gainScan = useCallback((characterId: string, amount: number) => {
+    setState((prev) => {
+      const current = prev.scanProgress[characterId] ?? 0;
+      if (current >= 100) return prev;
+      const next = Math.min(100, current + amount);
+      return { ...prev, scanProgress: { ...prev.scanProgress, [characterId]: next } };
+    });
+  }, []);
+
+  const createFromScan = useCallback((characterId: string) => {
+    setState((prev) => {
+      const scan = prev.scanProgress[characterId] ?? 0;
+      if (scan < 100) return prev;
+      if (prev.collection.some((c) => c.characterId === characterId)) return prev;
+      const ownedId = `owned_${characterId}_${Date.now()}`;
+      return {
+        ...prev,
+        collection: [...prev.collection, { ownedId, characterId, level: 1, exp: 0 }],
+      };
+    });
+  }, []);
+
+  const evolveDigimon = useCallback((ownedId: string) => {
+    setState((prev) => {
+      const updated = prev.collection.map((c) => {
+        if (c.ownedId !== ownedId) return c;
+        const evo = EVOLUTIONS[c.characterId];
+        if (!evo || c.level < evo.requiredLevel) return c;
+        return { ...c, characterId: evo.evolvesTo, level: 1, exp: 0 };
+      });
+      return { ...prev, collection: updated };
     });
   }, []);
 
@@ -149,6 +181,9 @@ export function GameProvider({ children }: { children: React.ReactNode }) {
         setPlayerName,
         isStageCleared,
         isMapUnlocked,
+        gainScan,
+        createFromScan,
+        evolveDigimon,
         totalPlayerLevel,
       }}
     >

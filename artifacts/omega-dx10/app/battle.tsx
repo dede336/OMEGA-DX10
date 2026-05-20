@@ -39,7 +39,7 @@ export default function BattleScreen() {
   const colors = useColors();
   const insets = useSafeAreaInsets();
   const params = useLocalSearchParams<{ mapId: string; stageIndex: string }>();
-  const { collection, selectedCharacter, setSelectedCharacter, gainExp, clearStage, isStageCleared } = useGame();
+  const { collection, selectedCharacter, setSelectedCharacter, gainExp, clearStage, isStageCleared, gainScan } = useGame();
 
   const mapId = params.mapId ?? '';
   const stageIndex = Number(params.stageIndex ?? '0');
@@ -161,6 +161,7 @@ export default function BattleScreen() {
           gainExp(selectedCharacter.ownedId, stage?.expReward ?? 0);
         }
         clearStage(mapId, stageIndex);
+        if (stage) gainScan(stage.enemyCharacterId, 5);
       }, 400);
       setBusy(false);
       return;
@@ -344,11 +345,11 @@ export default function BattleScreen() {
               <Text style={[styles.rewardText, { color: colors.primary }]}>+{stage.expReward} EXP ganhos!</Text>
             </View>
           )}
-          {won && stage?.unlockCharacterId && (
-            <View style={[styles.rewardBox, { backgroundColor: '#f59e0b22', borderColor: '#f59e0b' }]}>
-              <Feather name="gift" size={16} color="#f59e0b" />
-              <Text style={[styles.rewardText, { color: '#f59e0b' }]}>
-                {CHARACTERS[stage.unlockCharacterId]?.name} desbloqueado!
+          {won && stage && (
+            <View style={[styles.rewardBox, { backgroundColor: '#3b82f622', borderColor: '#3b82f6' }]}>
+              <Feather name="cpu" size={16} color="#3b82f6" />
+              <Text style={[styles.rewardText, { color: '#3b82f6' }]}>
+                +5% scan de {CHARACTERS[stage.enemyCharacterId]?.name ?? 'Digimon'}!
               </Text>
             </View>
           )}

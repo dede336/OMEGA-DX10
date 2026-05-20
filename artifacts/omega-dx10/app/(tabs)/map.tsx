@@ -126,11 +126,11 @@ export default function MapScreen() {
                               </View>
                             </View>
                           )}
-                          {stage.unlockCharacterId && !cleared && (
+                          {!cleared && (
                             <View style={styles.rewardRow}>
-                              <Feather name="gift" size={11} color="#f59e0b" />
-                              <Text style={[styles.rewardText, { color: '#f59e0b' }]}>
-                                Desbloqueia {CHARACTERS[stage.unlockCharacterId]?.name}
+                              <Feather name="cpu" size={11} color="#3b82f6" />
+                              <Text style={[styles.rewardText, { color: '#3b82f6' }]}>
+                                +5% scan do inimigo
                               </Text>
                             </View>
                           )}

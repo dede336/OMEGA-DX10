@@ -28,7 +28,6 @@ export interface MapStage {
   enemyCharacterId: string;
   enemyLevel: number;
   expReward: number;
-  unlockCharacterId?: string;
 }
 
 export interface GameMap {
@@ -40,8 +39,6 @@ export interface GameMap {
 }
 
 // ─── Attributes ────────────────────────────────────────────────────────────────
-// VC beats VR, VR beats DA, DA beats VC (triangle)
-// UN beats NO, UN has no weakness
 export const ATTRIBUTES: Record<AttributeId, { label: string; abbr: string; color: string; beats: AttributeId | null; weakTo: AttributeId | null }> = {
   VC: { label: 'Vacina',       abbr: 'VC', color: '#22c55e', beats: 'VR', weakTo: 'DA' },
   VR: { label: 'Vírus',        abbr: 'VR', color: '#ef4444', beats: 'DA', weakTo: 'VC' },
@@ -51,7 +48,6 @@ export const ATTRIBUTES: Record<AttributeId, { label: string; abbr: string; colo
 };
 
 // ─── Elements ──────────────────────────────────────────────────────────────────
-// FIRE>PLANT>WATER>FIRE | WIND>EARTH>LIGHTNING>WIND | LIGHT<>DARK | NULL=neutral
 export const ELEMENTS: Record<ElementId, { label: string; color: string; beats: ElementId | null; weakTo: ElementId | null }> = {
   FIRE:      { label: 'Fogo',      color: '#ff6b35', beats: 'PLANT',     weakTo: 'WATER' },
   PLANT:     { label: 'Planta',    color: '#22c55e', beats: 'WATER',     weakTo: 'FIRE' },
@@ -93,7 +89,27 @@ export const CHARACTERS: Record<string, Character> = {
     baseStats: { hp: 100, mp: 118, atk: 75, def: 67, spt: 63, spd: 64, apt: 22 },
     description: 'Um pequeno Digimon maligno do tipo Vírus. Usa suas asas e presas para atacar com poder das trevas.',
   },
+  greymon: {
+    id: 'greymon',
+    name: 'Greymon',
+    rarity: 'RARE',
+    attribute: 'VC',
+    element: 'FIRE',
+    baseStats: { hp: 170, mp: 165, atk: 115, def: 92, spt: 72, spd: 80, apt: 35 },
+    description: 'A poderosa evolução do Agumon. Um Digimon de nível Champion do tipo Vacina com força de fogo devastadora.',
+  },
 };
+
+// ─── Evolution paths ──────────────────────────────────────────────────────────
+export const EVOLUTIONS: Record<string, { evolvesTo: string; requiredLevel: number; label: string }> = {
+  agumon: { evolvesTo: 'greymon', requiredLevel: 16, label: 'Greymon' },
+};
+
+// Characters that can be scanned (encountered as enemies in battle)
+export const SCANNABLE_CHARACTERS: string[] = ['agumon', 'gabumon', 'demiDevimon'];
+
+// Display order in the Codex
+export const CODEX_ORDER: string[] = ['agumon', 'gabumon', 'demiDevimon', 'greymon'];
 
 // ─── Maps & Stages ─────────────────────────────────────────────────────────────
 export const GAME_MAPS: GameMap[] = [
@@ -102,9 +118,9 @@ export const GAME_MAPS: GameMap[] = [
     name: 'Floresta Digital',
     description: 'Bosques de dados fragmentados habitados por Digimons selvagens.',
     stages: [
-      { index: 0, name: 'Entrada da Floresta', enemyCharacterId: 'agumon',  enemyLevel: 1, expReward: 40,  unlockCharacterId: 'gabumon' },
-      { index: 1, name: 'Clareira dos Dados',  enemyCharacterId: 'gabumon',     enemyLevel: 2, expReward: 60,  unlockCharacterId: 'demiDevimon' },
-      { index: 2, name: 'Núcleo da Floresta',  enemyCharacterId: 'demiDevimon', enemyLevel: 4, expReward: 100 },
+      { index: 0, name: 'Entrada da Floresta', enemyCharacterId: 'agumon',      enemyLevel: 1,  expReward: 40  },
+      { index: 1, name: 'Clareira dos Dados',  enemyCharacterId: 'gabumon',     enemyLevel: 2,  expReward: 60  },
+      { index: 2, name: 'Núcleo da Floresta',  enemyCharacterId: 'demiDevimon', enemyLevel: 4,  expReward: 100 },
     ],
   },
   {
@@ -113,9 +129,9 @@ export const GAME_MAPS: GameMap[] = [
     description: 'Metrópole de circuitos onde Digimons evoluídos patrulham as ruas digitais.',
     requiredMapCleared: 'map_forest',
     stages: [
-      { index: 0, name: 'Avenida dos Neons',   enemyCharacterId: 'gabumon', enemyLevel: 5, expReward: 130 },
-      { index: 1, name: 'Setor Industrial',    enemyCharacterId: 'agumon',  enemyLevel: 7, expReward: 160 },
-      { index: 2, name: 'Torre Central',       enemyCharacterId: 'demiDevimon', enemyLevel: 9, expReward: 220 },
+      { index: 0, name: 'Avenida dos Neons',   enemyCharacterId: 'gabumon',     enemyLevel: 5,  expReward: 130 },
+      { index: 1, name: 'Setor Industrial',    enemyCharacterId: 'agumon',      enemyLevel: 7,  expReward: 160 },
+      { index: 2, name: 'Torre Central',       enemyCharacterId: 'demiDevimon', enemyLevel: 9,  expReward: 220 },
     ],
   },
   {
@@ -124,9 +140,9 @@ export const GAME_MAPS: GameMap[] = [
     description: 'Uma dimensão corrompida onde as trevas consomem tudo. Apenas os mais fortes sobrevivem.',
     requiredMapCleared: 'map_city',
     stages: [
-      { index: 0, name: 'Portal das Trevas',  enemyCharacterId: 'demiDevimon', enemyLevel: 12, expReward: 280 },
-      { index: 1, name: 'Abismo Corrompido', enemyCharacterId: 'agumon',      enemyLevel: 14, expReward: 340 },
-      { index: 2, name: 'Trono do Caos',     enemyCharacterId: 'gabumon',     enemyLevel: 16, expReward: 450 },
+      { index: 0, name: 'Portal das Trevas',   enemyCharacterId: 'demiDevimon', enemyLevel: 12, expReward: 280 },
+      { index: 1, name: 'Abismo Corrompido',   enemyCharacterId: 'agumon',      enemyLevel: 14, expReward: 340 },
+      { index: 2, name: 'Trono do Caos',       enemyCharacterId: 'gabumon',     enemyLevel: 16, expReward: 450 },
     ],
   },
 ];
@@ -145,12 +161,10 @@ export const RARITY_LABELS: Record<RarityId, string> = {
   LEGENDARY: 'Lendário',
 };
 
-// EXP needed to reach next level
 export function expToNextLevel(level: number): number {
   return Math.floor(100 * Math.pow(1.15, level - 1));
 }
 
-// Scale stats by level (5% per level)
 export function getScaledStats(base: BaseStats, level: number): BaseStats {
   const mult = 1 + (level - 1) * 0.05;
   return {

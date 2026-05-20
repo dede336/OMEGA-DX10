@@ -16,9 +16,10 @@ interface AvatarProps {
   size?: number;
   borderColor?: string;
   bgColor?: string;
+  dimmed?: boolean;
 }
 
-export function CharacterAvatar({ characterId, size = 72, borderColor, bgColor }: AvatarProps) {
+export function CharacterAvatar({ characterId, size = 72, borderColor, bgColor, dimmed }: AvatarProps) {
   const img = CHARACTER_IMAGES[characterId];
   const char = CHARACTERS[characterId];
   const attrData = char ? ATTRIBUTES[char.attribute] : null;
@@ -35,6 +36,7 @@ export function CharacterAvatar({ characterId, size = 72, borderColor, bgColor }
           borderRadius: size / 2,
           borderColor: bc,
           backgroundColor: bg,
+          opacity: dimmed ? 0.45 : 1,
         },
       ]}
     >
@@ -129,7 +131,6 @@ export function CharacterCard({ owned, onPress, isSelected, compact }: Character
   const expNeeded = expToNextLevel(owned.level);
   const expPct = Math.min(1, owned.exp / expNeeded);
   const rarityColor = RARITY_COLORS[char.rarity];
-  const attrData = ATTRIBUTES[char.attribute];
 
   if (compact) {
     return (
@@ -215,7 +216,6 @@ const cardStyles = StyleSheet.create({
   expTrack: { flex: 1, height: 4, borderRadius: 2, overflow: 'hidden' },
   expFill: { height: '100%', borderRadius: 2 },
   expText: { fontSize: 10, width: 60, textAlign: 'right' },
-  // Compact
   compact: {
     width: 90, borderRadius: 12, borderWidth: 1.5,
     alignItems: 'center', padding: 10, marginRight: 10,
@@ -223,6 +223,123 @@ const cardStyles = StyleSheet.create({
   compactName: { fontSize: 12, fontWeight: '700' as const, textAlign: 'center', marginBottom: 2 },
   compactLevel: { fontSize: 11, fontWeight: '600' as const },
   selectedDot: { width: 6, height: 6, borderRadius: 3, marginTop: 4 },
+});
+
+// ─── ScanCard ──────────────────────────────────────────────────────────────────
+interface ScanCardProps {
+  characterId: string;
+  scanPct: number;
+  onCreate: () => void;
+}
+
+export function ScanCard({ characterId, scanPct, onCreate }: ScanCardProps) {
+  const colors = useColors();
+  const char = CHARACTERS[characterId];
+  if (!char) return null;
+
+  const rarityColor = RARITY_COLORS[char.rarity];
+  const complete = scanPct >= 100;
+  const pct = Math.min(100, scanPct);
+
+  return (
+    <View style={[scanStyles.card, { backgroundColor: colors.card, borderColor: complete ? colors.primary : colors.border }]}>
+      <View style={[scanStyles.topAccent, { backgroundColor: rarityColor + (complete ? 'ff' : '55') }]} />
+      <View style={scanStyles.header}>
+        <CharacterAvatar characterId={characterId} size={80} dimmed={!complete} />
+        <View style={[scanStyles.info, { marginLeft: 14 }]}>
+          <Text style={[scanStyles.name, { color: complete ? colors.foreground : colors.mutedForeground }]}>{char.name}</Text>
+          <Text style={[scanStyles.rarity, { color: rarityColor }]}>{RARITY_LABELS[char.rarity]}</Text>
+          <View style={scanStyles.badges}>
+            <AttributeBadge attr={char.attribute} />
+            <View style={{ width: 6 }} />
+            <ElementBadge elem={char.element} />
+          </View>
+        </View>
+        <View style={scanStyles.pctBox}>
+          <Text style={[scanStyles.pctNum, { color: complete ? colors.primary : colors.mutedForeground }]}>
+            {Math.round(pct)}%
+          </Text>
+          <Text style={[scanStyles.pctLabel, { color: colors.mutedForeground }]}>scan</Text>
+        </View>
+      </View>
+
+      <View style={[scanStyles.progressRow, { paddingHorizontal: 16, paddingBottom: complete ? 8 : 16 }]}>
+        <View style={[scanStyles.track, { backgroundColor: colors.border }]}>
+          <View style={[
+            scanStyles.fill,
+            { width: `${pct}%` as any, backgroundColor: complete ? colors.primary : '#3b82f6' },
+          ]} />
+        </View>
+        <Text style={[scanStyles.trackLabel, { color: colors.mutedForeground }]}>
+          {complete ? 'Scan completo!' : `${Math.round(pct)}/100`}
+        </Text>
+      </View>
+
+      {complete && (
+        <TouchableOpacity
+          onPress={onCreate}
+          activeOpacity={0.8}
+          style={[scanStyles.createBtn, { backgroundColor: colors.primary, marginHorizontal: 16, marginBottom: 14 }]}
+        >
+          <Feather name="plus-circle" size={16} color={colors.primaryForeground} />
+          <Text style={[scanStyles.createBtnText, { color: colors.primaryForeground }]}>Criar Digimon</Text>
+        </TouchableOpacity>
+      )}
+    </View>
+  );
+}
+
+const scanStyles = StyleSheet.create({
+  card: { borderRadius: 16, borderWidth: 1, overflow: 'hidden', marginBottom: 14 },
+  topAccent: { height: 3, width: '100%' },
+  header: { flexDirection: 'row', alignItems: 'center', padding: 16, paddingBottom: 12 },
+  info: { flex: 1 },
+  name: { fontSize: 20, fontWeight: '700' as const, marginBottom: 2 },
+  rarity: { fontSize: 12, fontWeight: '600' as const, marginBottom: 8 },
+  badges: { flexDirection: 'row', flexWrap: 'wrap', gap: 6 },
+  pctBox: { alignItems: 'center', minWidth: 52 },
+  pctNum: { fontSize: 22, fontWeight: '800' as const },
+  pctLabel: { fontSize: 10, fontWeight: '600' as const, marginTop: 2 },
+  progressRow: { gap: 4 },
+  track: { height: 8, borderRadius: 4, overflow: 'hidden' },
+  fill: { height: '100%', borderRadius: 4 },
+  trackLabel: { fontSize: 11, textAlign: 'right' },
+  createBtn: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 8, borderRadius: 10, paddingVertical: 12 },
+  createBtnText: { fontSize: 15, fontWeight: '700' as const },
+});
+
+// ─── LockedCard ────────────────────────────────────────────────────────────────
+interface LockedCardProps {
+  hint: string;
+  label?: string;
+}
+
+export function LockedCard({ hint, label = 'Evolução Especial' }: LockedCardProps) {
+  const colors = useColors();
+  return (
+    <View style={[lockedStyles.card, { backgroundColor: colors.card, borderColor: colors.border }]}>
+      <View style={[lockedStyles.topAccent, { backgroundColor: '#f59e0b55' }]} />
+      <View style={lockedStyles.inner}>
+        <View style={[lockedStyles.avatar, { borderColor: colors.border, backgroundColor: colors.muted }]}>
+          <Feather name="lock" size={32} color={colors.mutedForeground} />
+        </View>
+        <View style={lockedStyles.info}>
+          <Text style={[lockedStyles.label, { color: '#f59e0b' }]}>{label}</Text>
+          <Text style={[lockedStyles.hint, { color: colors.mutedForeground }]}>{hint}</Text>
+        </View>
+      </View>
+    </View>
+  );
+}
+
+const lockedStyles = StyleSheet.create({
+  card: { borderRadius: 16, borderWidth: 1, overflow: 'hidden', marginBottom: 14 },
+  topAccent: { height: 3, width: '100%' },
+  inner: { flexDirection: 'row', alignItems: 'center', padding: 16, gap: 16 },
+  avatar: { width: 80, height: 80, borderRadius: 40, borderWidth: 2, alignItems: 'center', justifyContent: 'center' },
+  info: { flex: 1 },
+  label: { fontSize: 14, fontWeight: '700' as const, marginBottom: 6 },
+  hint: { fontSize: 13, lineHeight: 18 },
 });
 
 // ─── HPBar ─────────────────────────────────────────────────────────────────────
