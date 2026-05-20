@@ -54,7 +54,7 @@ export default function HomeScreen() {
       {/* Stats Row */}
       <View style={styles.statsRow}>
         <View style={[styles.statCard, { backgroundColor: colors.card, borderColor: colors.border }]}>
-          <Feather name="users" size={20} color={colors.primary} />
+          <Image source={require('../../assets/images/digimon-icon.gif')} style={{ width: 28, height: 28 }} resizeMode="contain" />
           <Text style={[styles.statNum, { color: colors.foreground }]}>{collection.length}</Text>
           <Text style={[styles.statLabel, { color: colors.mutedForeground }]}>Digimons</Text>
         </View>
