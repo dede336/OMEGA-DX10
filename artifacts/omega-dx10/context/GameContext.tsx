@@ -93,13 +93,6 @@ export function GameProvider({ children }: { children: React.ReactNode }) {
         try {
           const parsed = JSON.parse(raw) as Partial<GameState & { playerName?: string }>;
           const hadPreviousSave = !!parsed.playerName && parsed.playerName !== '';
-          // Migrate old piece keys
-          const rawPieces = parsed.pieces ?? {};
-          const migratedPieces: Record<string, number> = { ...rawPieces };
-          if (migratedPieces['piece_brasao_coragem']) {
-            migratedPieces['piece_coragem'] = (migratedPieces['piece_coragem'] ?? 0) + migratedPieces['piece_brasao_coragem'];
-            delete migratedPieces['piece_brasao_coragem'];
-          }
           setState({
             ...defaultState,
             ...parsed,
@@ -107,7 +100,7 @@ export function GameProvider({ children }: { children: React.ReactNode }) {
             gender: parsed.gender ?? 'M',
             inventory: parsed.inventory ?? DEFAULT_INVENTORY,
             equippedItems: { ...defaultEquipped, ...(parsed.equippedItems ?? {}) },
-            pieces: migratedPieces,
+            pieces: parsed.pieces ?? {},
             bits: parsed.bits ?? 0,
             tamerExp: parsed.tamerExp ?? 0,
             tamerLevel: parsed.tamerLevel ?? 1,

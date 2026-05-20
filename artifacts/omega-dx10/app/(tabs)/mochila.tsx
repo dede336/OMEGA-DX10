@@ -319,9 +319,10 @@ export default function MochilaScreen() {
       {/* Fragment inventory summary */}
       <View style={[styles.fragmentSummaryRow, { backgroundColor: colors.card, borderColor: colors.border }]}>
         {[
-          { id: 'piece_coragem', label: 'Coragem', icon: 'zap',     color: '#ef4444' },
-          { id: 'piece_gelo',    label: 'Gelo',    icon: 'droplet', color: '#38bdf8' },
-          { id: 'piece_caos',    label: 'Caos',    icon: 'cpu',     color: '#a855f7' },
+          { id: 'piece_coragem',        label: 'Coragem', icon: 'zap',     color: '#ef4444' },
+          { id: 'piece_brasao_coragem', label: 'Brasão',  icon: 'sun',     color: '#f97316' },
+          { id: 'piece_gelo',           label: 'Gelo',    icon: 'droplet', color: '#38bdf8' },
+          { id: 'piece_caos',           label: 'Caos',    icon: 'cpu',     color: '#a855f7' },
         ].map((p) => (
           <View key={p.id} style={styles.fragmentSummaryItem}>
             <View style={[styles.fragmentSummaryIcon, { backgroundColor: p.color + '22' }]}>
