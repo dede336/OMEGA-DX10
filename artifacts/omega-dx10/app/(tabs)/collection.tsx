@@ -29,7 +29,7 @@ export default function CollectionScreen() {
   return (
     <View style={[styles.container, { backgroundColor: colors.background }]}>
       <View style={[styles.header, { paddingTop: topPad + 16, borderBottomColor: colors.border }]}>
-        <Text style={[styles.title, { color: colors.foreground }]}>Codex</Text>
+        <Text style={[styles.title, { color: colors.foreground }]}>Digibank</Text>
         <View style={[styles.countBadge, { backgroundColor: colors.primary + '22', borderColor: colors.primary }]}>
           <Text style={[styles.countText, { color: colors.primary }]}>{ownedCount} / {totalCount}</Text>
         </View>

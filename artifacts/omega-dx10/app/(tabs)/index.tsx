@@ -140,7 +140,7 @@ export default function HomeScreen() {
           activeOpacity={0.8}
         >
           <Feather name="grid" size={22} color={colors.accent} />
-          <Text style={[styles.actionLabel, { color: colors.accent }]}>Codex</Text>
+          <Text style={[styles.actionLabel, { color: colors.accent }]}>Digibank</Text>
         </TouchableOpacity>
       </View>
     </ScrollView>
