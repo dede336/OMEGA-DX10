@@ -136,7 +136,11 @@ function ClassicTabLayout() {
             isIOS ? (
               <SymbolView name="map" tintColor={color} size={22} />
             ) : (
-              <Feather name="map" size={22} color={color} />
+              <Image
+                source={require('../../assets/images/map-icon.png')}
+                style={{ width: 26, height: 26 }}
+                resizeMode="contain"
+              />
             ),
         }}
       />
