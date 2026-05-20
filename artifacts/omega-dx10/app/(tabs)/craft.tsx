@@ -12,19 +12,19 @@ import {
 import EQUIP_ITEM_IMAGES from '@/constants/equipImages';
 
 const PIECE_META = [
-  { id: 'piece_coragem',          label: 'Coragem',   icon: 'zap',     color: '#ef4444' },
-  { id: 'piece_brasao_coragem',   label: 'Coragem Piece',    icon: 'sun',     color: '#f97316' },
-  { id: 'piece_brasao_esperanca', label: 'Esperança Piece',  icon: 'sun',     color: '#eab308' },
-  { id: 'piece_brasao_amizade',   label: 'Amizade Piece',    icon: 'users',   color: '#3b82f6' },
-  { id: 'piece_caos',             label: 'Caos',      icon: 'cpu',     color: '#a855f7' },
-  { id: 'piece_tecido',           label: 'Tecido',    icon: 'layers',  color: '#ec4899' },
-  { id: 'piece_agulha',           label: 'Agulha',    icon: 'edit-2',  color: '#8b5cf6' },
-  { id: 'piece_linha',            label: 'Linha',     icon: 'wind',    color: '#06b6d4' },
-  { id: 'piece_brasao_confianca', label: 'Confiança Piece',    icon: 'shield',  color: '#94a3b8' },
-  { id: 'piece_brasao_pureza',    label: 'Pureza Piece',       icon: 'droplet', color: '#22c55e' },
-  { id: 'piece_brasao_amor',      label: 'Amor Piece',         icon: 'heart',   color: '#f43f5e' },
-  { id: 'piece_brasao_luz',       label: 'Luz Piece',          icon: 'star',    color: '#c084fc' },
-  { id: 'piece_brasao_conhecimento', label: 'Conhecimento Piece', icon: 'book', color: '#a855f7' },
+  { id: 'piece_coragem',          label: 'Coragem',             icon: 'zap',     color: '#ef4444' },
+  { id: 'piece_brasao_coragem',   label: 'Coragem Piece',       icon: 'sun',     color: '#f97316', itemId: 'brasao_coragem' },
+  { id: 'piece_brasao_esperanca', label: 'Esperança Piece',     icon: 'sun',     color: '#eab308', itemId: 'brasao_esperanca' },
+  { id: 'piece_brasao_amizade',   label: 'Amizade Piece',       icon: 'users',   color: '#3b82f6', itemId: 'brasao_amizade' },
+  { id: 'piece_caos',             label: 'Caos',                icon: 'cpu',     color: '#a855f7' },
+  { id: 'piece_tecido',           label: 'Tecido',              icon: 'layers',  color: '#ec4899' },
+  { id: 'piece_agulha',           label: 'Agulha',              icon: 'edit-2',  color: '#8b5cf6' },
+  { id: 'piece_linha',            label: 'Linha',               icon: 'wind',    color: '#06b6d4' },
+  { id: 'piece_brasao_confianca', label: 'Confiança Piece',     icon: 'shield',  color: '#94a3b8', itemId: 'brasao_confianca' },
+  { id: 'piece_brasao_pureza',    label: 'Pureza Piece',        icon: 'droplet', color: '#22c55e', itemId: 'brasao_pureza' },
+  { id: 'piece_brasao_amor',      label: 'Amor Piece',          icon: 'heart',   color: '#f43f5e', itemId: 'brasao_amor' },
+  { id: 'piece_brasao_luz',       label: 'Luz Piece',           icon: 'star',    color: '#c084fc', itemId: 'brasao_luz' },
+  { id: 'piece_brasao_conhecimento', label: 'Conhecimento Piece', icon: 'book',  color: '#a855f7', itemId: 'brasao_conhecimento' },
 ];
 
 export default function CraftScreen() {
@@ -44,15 +44,27 @@ export default function CraftScreen() {
       {/* ── Fragmentos ── */}
       <Text style={[styles.sectionTitle, { color: colors.foreground }]}>Fragmentos</Text>
       <View style={[styles.fragmentSummaryRow, { backgroundColor: colors.card, borderColor: colors.border }]}>
-        {PIECE_META.map((p) => (
-          <View key={p.id} style={styles.fragmentSummaryItem}>
-            <View style={[styles.fragmentSummaryIcon, { backgroundColor: p.color + '22' }]}>
-              <Feather name={p.icon as any} size={16} color={p.color} />
+        {PIECE_META.map((p) => {
+          const img = (p as any).itemId ? EQUIP_ITEM_IMAGES[(p as any).itemId] : null;
+          return (
+            <View key={p.id} style={styles.fragmentSummaryItem}>
+              <View style={[styles.fragmentSummaryIcon, { backgroundColor: p.color + '22' }]}>
+                {img ? (
+                  <>
+                    <Image source={img} style={{ width: 24, height: 24 }} resizeMode="contain" />
+                    <View style={styles.puzzleOverlay}>
+                      <Text style={styles.puzzleEmoji}>🧩</Text>
+                    </View>
+                  </>
+                ) : (
+                  <Feather name={p.icon as any} size={16} color={p.color} />
+                )}
+              </View>
+              <Text style={[styles.fragmentSummaryCount, { color: colors.foreground }]}>{pieces[p.id] ?? 0}</Text>
+              <Text style={[styles.fragmentSummaryLabel, { color: colors.mutedForeground }]}>{p.label}</Text>
             </View>
-            <Text style={[styles.fragmentSummaryCount, { color: colors.foreground }]}>{pieces[p.id] ?? 0}</Text>
-            <Text style={[styles.fragmentSummaryLabel, { color: colors.mutedForeground }]}>{p.label}</Text>
-          </View>
-        ))}
+          );
+        })}
       </View>
 
       {/* ── Receitas ── */}
@@ -217,7 +229,9 @@ const styles = StyleSheet.create({
     gap: 12, borderRadius: 16, borderWidth: 1, padding: 16, marginBottom: 24,
   },
   fragmentSummaryItem: { alignItems: 'center', gap: 4 },
-  fragmentSummaryIcon: { width: 36, height: 36, borderRadius: 18, alignItems: 'center', justifyContent: 'center' },
+  fragmentSummaryIcon: { width: 36, height: 36, borderRadius: 18, alignItems: 'center', justifyContent: 'center', position: 'relative' as const, overflow: 'visible' as const },
+  puzzleOverlay: { position: 'absolute' as const, bottom: -4, right: -4 },
+  puzzleEmoji: { fontSize: 12 },
   fragmentSummaryCount: { fontSize: 18, fontWeight: '800' as const },
   fragmentSummaryLabel: { fontSize: 11 },
 
