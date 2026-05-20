@@ -213,6 +213,7 @@ export const GAME_MAPS: GameMap[] = [
     description: 'Uma dungeon sombria onde GulusGammamon reina. Derrote-o para obter Bits e Fragmentos da Coragem.',
     isDungeon: true,
     requiredTamerLevel: 25,
+    backgroundImage: require('../assets/images/maps/dungeon_gulus.png'),
     stages: [
       {
         index: 0,
