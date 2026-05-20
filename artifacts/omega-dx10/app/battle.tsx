@@ -186,6 +186,11 @@ export default function BattleScreen() {
           gainScan(stage.enemyCharacterId, 5);
         }
 
+        if (map?.bitsReward) {
+          gainBits(map.bitsReward);
+          addLog(`💰 +${map.bitsReward.toLocaleString()} Bits!`, '#facc15');
+        }
+
         if (stage?.drops) {
           stage.drops.forEach((drop) => {
             if (Math.random() < drop.chance) {
@@ -198,7 +203,7 @@ export default function BattleScreen() {
               }
             }
           });
-        } else if (Math.random() < 0.25) {
+        } else if (!map?.bitsReward && Math.random() < 0.25) {
           gainPiece('piece_brasao_coragem', 1);
         }
       }, 400);
