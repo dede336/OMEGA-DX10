@@ -127,7 +127,11 @@ export default function HomeScreen() {
           onPress={() => router.push('/(tabs)/map')}
           activeOpacity={0.8}
         >
-          <Feather name="map" size={22} color={colors.primary} />
+          <Image
+            source={require('../../assets/images/map-icon.png')}
+            style={styles.actionMapIcon}
+            resizeMode="contain"
+          />
           <Text style={[styles.actionLabel, { color: colors.primary }]}>Aventura</Text>
         </TouchableOpacity>
         <TouchableOpacity
@@ -193,4 +197,5 @@ const styles = StyleSheet.create({
   actionsRow: { flexDirection: 'row', gap: 12 },
   actionBtn: { flex: 1, borderRadius: 14, borderWidth: 1.5, padding: 18, alignItems: 'center', gap: 8 },
   actionLabel: { fontSize: 13, fontWeight: '700' as const },
+  actionMapIcon: { width: 52, height: 52 },
 });
