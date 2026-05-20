@@ -1,5 +1,5 @@
 export type AttributeId = 'VC' | 'VR' | 'DA' | 'NO' | 'UN';
-export type ElementId = 'FIRE' | 'PLANT' | 'WATER' | 'WIND' | 'EARTH' | 'LIGHTNING' | 'LIGHT' | 'DARK' | 'NULL';
+export type ElementId = 'FIRE' | 'PLANT' | 'WATER' | 'WIND' | 'EARTH' | 'LIGHTNING' | 'LIGHT' | 'DARK' | 'NULL' | 'ICE';
 export type RarityId = 'COMMON' | 'RARE' | 'EPIC' | 'LEGENDARY';
 
 export interface BaseStats {
@@ -58,6 +58,7 @@ export const ELEMENTS: Record<ElementId, { label: string; color: string; beats: 
   LIGHT:     { label: 'Luz',       color: '#fde68a', beats: 'DARK',      weakTo: 'DARK' },
   DARK:      { label: 'Trevas',    color: '#8b5cf6', beats: 'LIGHT',     weakTo: 'LIGHT' },
   NULL:      { label: 'Nulo',      color: '#6b7280', beats: null,        weakTo: null },
+  ICE:       { label: 'Gelo',      color: '#a8d8f0', beats: 'WIND',      weakTo: 'FIRE' },
 };
 
 // ─── Characters ───────────────────────────────────────────────────────────────
@@ -89,6 +90,24 @@ export const CHARACTERS: Record<string, Character> = {
     baseStats: { hp: 100, mp: 118, atk: 75, def: 67, spt: 63, spd: 64, apt: 22 },
     description: 'Um pequeno Digimon maligno do tipo Vírus. Usa suas asas e presas para atacar com poder das trevas.',
   },
+  garurumon: {
+    id: 'garurumon',
+    name: 'Garurumon',
+    rarity: 'RARE',
+    attribute: 'VC',
+    element: 'ICE',
+    baseStats: { hp: 144, mp: 107, atk: 91, def: 80, spt: 53, spd: 61, apt: 22 },
+    description: 'A evolução feroz do Gabumon. Um lobo de gelo do tipo Vacina com mandíbulas poderosas capazes de congelar qualquer inimigo.',
+  },
+  wereGarurumon: {
+    id: 'wereGarurumon',
+    name: 'WereGarurumon',
+    rarity: 'EPIC',
+    attribute: 'VC',
+    element: 'ICE',
+    baseStats: { hp: 200, mp: 220, atk: 130, def: 115, spt: 80, spd: 100, apt: 30 },
+    description: 'A forma Ultimate do Garurumon. Um guerreiro humanoide do gelo com força devastadora e velocidade surpreendente.',
+  },
   greymon: {
     id: 'greymon',
     name: 'Greymon',
@@ -102,14 +121,16 @@ export const CHARACTERS: Record<string, Character> = {
 
 // ─── Evolution paths ──────────────────────────────────────────────────────────
 export const EVOLUTIONS: Record<string, { evolvesTo: string; requiredLevel: number; label: string }> = {
-  agumon: { evolvesTo: 'greymon', requiredLevel: 16, label: 'Greymon' },
+  agumon:    { evolvesTo: 'greymon',      requiredLevel: 16, label: 'Greymon' },
+  gabumon:   { evolvesTo: 'garurumon',    requiredLevel: 19, label: 'Garurumon' },
+  garurumon: { evolvesTo: 'wereGarurumon', requiredLevel: 35, label: 'WereGarurumon' },
 };
 
 // Characters that can be scanned (encountered as enemies in battle)
 export const SCANNABLE_CHARACTERS: string[] = ['agumon', 'gabumon', 'demiDevimon'];
 
-// Display order in the Codex
-export const CODEX_ORDER: string[] = ['agumon', 'gabumon', 'demiDevimon', 'greymon'];
+// Display order in the Codex (grouped by evolution line)
+export const CODEX_ORDER: string[] = ['agumon', 'greymon', 'gabumon', 'garurumon', 'wereGarurumon', 'demiDevimon'];
 
 // ─── Maps & Stages ─────────────────────────────────────────────────────────────
 export const GAME_MAPS: GameMap[] = [

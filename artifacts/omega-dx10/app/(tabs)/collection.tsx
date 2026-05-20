@@ -8,6 +8,13 @@ import { useGame } from '@/context/GameContext';
 import { CHARACTERS, EVOLUTIONS, SCANNABLE_CHARACTERS, CODEX_ORDER } from '@/constants/gameData';
 import { CharacterCard, ScanCard, LockedCard } from '@/components/GameComponents';
 
+// Reverse map: evolvesTo → { fromId, requiredLevel, fromName }
+const EVOLVES_FROM: Record<string, { fromName: string; requiredLevel: number }> = {};
+Object.entries(EVOLUTIONS).forEach(([fromId, evo]) => {
+  const fromChar = CHARACTERS[fromId];
+  EVOLVES_FROM[evo.evolvesTo] = { fromName: fromChar?.name ?? fromId, requiredLevel: evo.requiredLevel };
+});
+
 export default function CollectionScreen() {
   const colors = useColors();
   const insets = useSafeAreaInsets();
@@ -38,6 +45,7 @@ export default function CollectionScreen() {
           const scan = scanProgress[charId] ?? 0;
           const evo = owned ? EVOLUTIONS[owned.characterId] : undefined;
           const canEvolve = owned && evo && owned.level >= evo.requiredLevel;
+          const evolvesFrom = EVOLVES_FROM[charId];
 
           if (owned) {
             return (
@@ -54,7 +62,7 @@ export default function CollectionScreen() {
                   <TouchableOpacity
                     activeOpacity={0.8}
                     onPress={() => evolveDigimon(owned.ownedId)}
-                    style={[styles.evolveBtn, { backgroundColor: '#f59e0b', marginTop: -8 }]}
+                    style={[styles.evolveBtn, { backgroundColor: '#f59e0b' }]}
                   >
                     <Feather name="arrow-up-circle" size={18} color="#000" />
                     <Text style={styles.evolveBtnText}>
@@ -85,16 +93,22 @@ export default function CollectionScreen() {
             );
           }
 
+          // Locked evolution-only Digimon
+          const rarity = CHARACTERS[charId]?.rarity;
+          const rarityLabel = rarity === 'EPIC' ? 'Ultimate' : rarity === 'RARE' ? 'Champion' : 'Evolução';
+          const hint = evolvesFrom
+            ? `Evolua ${evolvesFrom.fromName} para o Nível ${evolvesFrom.requiredLevel}`
+            : 'Desbloqueie por evolução';
+
           return (
             <LockedCard
               key={charId}
-              label="Evolução Champion"
-              hint="Evolua um Agumon para o Nível 16 para desbloquear"
+              label={`Evolução ${rarityLabel}`}
+              hint={hint}
             />
           );
         })}
 
-        {/* Scanner info banner */}
         <View style={[styles.infoBanner, { backgroundColor: colors.card, borderColor: colors.border }]}>
           <Feather name="cpu" size={16} color={colors.primary} />
           <Text style={[styles.infoText, { color: colors.mutedForeground }]}>
@@ -121,7 +135,7 @@ const styles = StyleSheet.create({
   title: { fontSize: 28, fontWeight: '800' as const },
   countBadge: { borderWidth: 1, borderRadius: 10, paddingHorizontal: 12, paddingVertical: 4 },
   countText: { fontSize: 13, fontWeight: '700' as const },
-  list: { paddingHorizontal: 20, paddingTop: 16, gap: 0 },
+  list: { paddingHorizontal: 20, paddingTop: 16 },
   evolveBtn: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -130,7 +144,7 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     paddingVertical: 12,
     marginBottom: 14,
-    marginTop: -4,
+    marginTop: -8,
   },
   evolveBtnText: { fontSize: 14, fontWeight: '700' as const, color: '#000' },
   evoHint: {
@@ -142,7 +156,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 14,
     paddingVertical: 10,
     marginBottom: 14,
-    marginTop: -4,
+    marginTop: -8,
   },
   evoHintText: { fontSize: 12, flex: 1, lineHeight: 16 },
   infoBanner: {
