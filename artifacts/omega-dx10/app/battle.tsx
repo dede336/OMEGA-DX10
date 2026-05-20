@@ -46,7 +46,7 @@ export default function BattleScreen() {
   const colors = useColors();
   const insets = useSafeAreaInsets();
   const params = useLocalSearchParams<{ mapId: string; stageIndex: string }>();
-  const { collection, selectedCharacter, setSelectedCharacter, gainExp, clearStage, isStageCleared, gainScan, equippedItems, gainPiece, gainBits } = useGame();
+  const { collection, selectedCharacter, setSelectedCharacter, gainExp, clearStage, isStageCleared, gainScan, equippedItems, gainPiece, gainBits, gainTamerExp } = useGame();
 
   const mapId = params.mapId ?? '';
   const stageIndex = Number(params.stageIndex ?? '0');
@@ -189,6 +189,10 @@ export default function BattleScreen() {
         if (map?.bitsReward) {
           gainBits(map.bitsReward);
           addLog(`💰 +${map.bitsReward.toLocaleString()} Bits!`, '#facc15');
+        }
+        if (map?.tamerExpReward) {
+          gainTamerExp(map.tamerExpReward);
+          addLog(`⭐ +${map.tamerExpReward} XP Tamer!`, '#a78bfa');
         }
 
         if (stage?.drops) {

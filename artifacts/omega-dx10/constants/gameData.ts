@@ -47,6 +47,7 @@ export interface GameMap {
   isDungeon?: boolean;
   backgroundImage?: number;
   bitsReward?: number;
+  tamerExpReward?: number;
   stages: MapStage[];
 }
 
@@ -181,6 +182,7 @@ export const GAME_MAPS: GameMap[] = [
     description: 'Uma floresta de dados ancestrais onde Digimons selvagens habitam entre raízes digitais.',
     backgroundImage: require('../assets/images/maps/chip_forest.png'),
     bitsReward: 100,
+    tamerExpReward: 5,
     stages: [
       { index: 0, name: 'Entrada da Floresta', enemyCharacterId: 'agumon',      enemyLevel: 1,  expReward: 40  },
       { index: 1, name: 'Clareira dos Dados',  enemyCharacterId: 'gabumon',     enemyLevel: 2,  expReward: 60  },
@@ -194,6 +196,7 @@ export const GAME_MAPS: GameMap[] = [
     backgroundImage: require('../assets/images/maps/acess_glacier.png'),
     requiredMapCleared: 'map_forest',
     bitsReward: 250,
+    tamerExpReward: 10,
     stages: [
       { index: 0, name: 'Avenida dos Neons',   enemyCharacterId: 'gabumon',     enemyLevel: 5,  expReward: 130 },
       { index: 1, name: 'Setor Industrial',    enemyCharacterId: 'agumon',      enemyLevel: 7,  expReward: 160 },
@@ -207,6 +210,7 @@ export const GAME_MAPS: GameMap[] = [
     backgroundImage: require('../assets/images/maps/chaos_brain.png'),
     requiredMapCleared: 'map_city',
     bitsReward: 500,
+    tamerExpReward: 15,
     stages: [
       { index: 0, name: 'Portal das Trevas',   enemyCharacterId: 'demiDevimon', enemyLevel: 12, expReward: 280 },
       { index: 1, name: 'Abismo Corrompido',   enemyCharacterId: 'agumon',      enemyLevel: 14, expReward: 340 },
@@ -415,6 +419,10 @@ export const CRAFT_RECIPES: CraftRecipe[] = [
 
 export function expToNextLevel(level: number): number {
   return Math.floor(100 * Math.pow(1.15, level - 1));
+}
+
+export function tamerExpToNextLevel(level: number): number {
+  return 20 * Math.pow(2, level - 1);
 }
 
 export function getScaledStats(base: BaseStats, level: number): BaseStats {

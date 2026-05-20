@@ -11,7 +11,7 @@ import { useGame } from '@/context/GameContext';
 import {
   EQUIP_SLOT_LABELS, EQUIP_SLOT_ICONS, EQUIPMENT_ITEMS, EQUIP_SLOTS_ORDER,
   RARITY_COLORS, RARITY_LABELS, ELEMENTS, CRAFT_RECIPES, EquipSlot, TamerGender,
-  TAMERS,
+  TAMERS, tamerExpToNextLevel,
 } from '@/constants/gameData';
 import EQUIP_ITEM_IMAGES from '@/constants/equipImages';
 
@@ -27,6 +27,7 @@ export default function MochilaScreen() {
   const game = useGame();
   const {
     playerName, gender, tamerId, inventory, equippedItems, pieces,
+    tamerExp, tamerLevel,
     setGender, equipItem, unequipItem, setPlayerName, craftItem,
   } = game;
 
@@ -128,6 +129,26 @@ export default function MochilaScreen() {
             </TouchableOpacity>
           )}
           <Text style={[styles.tamerLabel, { color: colors.mutedForeground }]}>Tamer Digital</Text>
+          {/* Tamer XP Bar */}
+          <View style={styles.tamerXpRow}>
+            <Text style={[styles.tamerXpLabel, { color: colors.mutedForeground }]}>
+              Lv {tamerLevel}
+            </Text>
+            <View style={[styles.tamerXpBarBg, { backgroundColor: colors.border }]}>
+              <View
+                style={[
+                  styles.tamerXpBarFill,
+                  {
+                    backgroundColor: selectedTamer?.accentColor ?? colors.primary,
+                    width: `${Math.min(100, (tamerExp / tamerExpToNextLevel(tamerLevel)) * 100)}%`,
+                  },
+                ]}
+              />
+            </View>
+            <Text style={[styles.tamerXpNum, { color: colors.mutedForeground }]}>
+              {tamerExp}/{tamerExpToNextLevel(tamerLevel)}
+            </Text>
+          </View>
         </View>
       </View>
 
@@ -412,6 +433,11 @@ const styles = StyleSheet.create({
   nameRow: { flexDirection: 'row', alignItems: 'center' },
   tamerName: { fontSize: 22, fontWeight: '800' as const },
   tamerLabel: { fontSize: 12, marginTop: 2 },
+  tamerXpRow: { flexDirection: 'row', alignItems: 'center', marginTop: 6, gap: 6 },
+  tamerXpLabel: { fontSize: 11, fontWeight: '700' as const, minWidth: 28 },
+  tamerXpBarBg: { flex: 1, height: 6, borderRadius: 3, overflow: 'hidden' as const },
+  tamerXpBarFill: { height: 6, borderRadius: 3 },
+  tamerXpNum: { fontSize: 10, minWidth: 36, textAlign: 'right' as const },
   nameEditRow: { flexDirection: 'row', alignItems: 'center', gap: 8 },
   nameInput: {
     flex: 1, fontSize: 20, fontWeight: '700' as const,

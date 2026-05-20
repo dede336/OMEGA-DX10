@@ -1,7 +1,7 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import React, { createContext, useCallback, useContext, useEffect, useState } from 'react';
 import {
-  CHARACTERS, EVOLUTIONS, GAME_MAPS, expToNextLevel,
+  CHARACTERS, EVOLUTIONS, GAME_MAPS, expToNextLevel, tamerExpToNextLevel,
   EquipSlot, TamerGender, EQUIP_SLOTS_ORDER, DEFAULT_INVENTORY,
   CRAFT_RECIPES, CraftRecipe,
 } from '@/constants/gameData';
@@ -33,6 +33,8 @@ interface GameState {
   equippedItems: EquippedItems;
   pieces: Record<string, number>;
   bits: number;
+  tamerExp: number;
+  tamerLevel: number;
 }
 
 interface GameContextValue extends GameState {
@@ -57,6 +59,7 @@ interface GameContextValue extends GameState {
   gainPiece: (pieceId: string, amount?: number) => void;
   craftItem: (recipe: CraftRecipe) => boolean;
   gainBits: (amount: number) => void;
+  gainTamerExp: (amount: number) => void;
 }
 
 const STORAGE_KEY = 'omega_dx10_save_v2';
@@ -74,6 +77,8 @@ const defaultState: GameState = {
   equippedItems: defaultEquipped,
   pieces: {},
   bits: 0,
+  tamerExp: 0,
+  tamerLevel: 1,
 };
 
 const GameContext = createContext<GameContextValue | null>(null);
@@ -97,6 +102,8 @@ export function GameProvider({ children }: { children: React.ReactNode }) {
             equippedItems: { ...defaultEquipped, ...(parsed.equippedItems ?? {}) },
             pieces: parsed.pieces ?? {},
             bits: parsed.bits ?? 0,
+            tamerExp: parsed.tamerExp ?? 0,
+            tamerLevel: parsed.tamerLevel ?? 1,
             tamerId: parsed.tamerId ?? null,
             isOnboarded: parsed.isOnboarded ?? hadPreviousSave,
           });
@@ -213,6 +220,18 @@ export function GameProvider({ children }: { children: React.ReactNode }) {
     setState((prev) => ({ ...prev, bits: prev.bits + amount }));
   }, []);
 
+  const gainTamerExp = useCallback((amount: number) => {
+    setState((prev) => {
+      let { tamerExp, tamerLevel } = prev;
+      tamerExp += amount;
+      while (tamerExp >= tamerExpToNextLevel(tamerLevel)) {
+        tamerExp -= tamerExpToNextLevel(tamerLevel);
+        tamerLevel += 1;
+      }
+      return { ...prev, tamerExp, tamerLevel };
+    });
+  }, []);
+
   const gainPiece = useCallback((pieceId: string, amount = 1) => {
     setState((prev) => ({
       ...prev,
@@ -248,10 +267,7 @@ export function GameProvider({ children }: { children: React.ReactNode }) {
       const map = GAME_MAPS.find((m) => m.id === mapId);
       if (!map) return false;
       if (map.requiredTamerLevel) {
-        const tamerLvl = Math.max(1, Math.floor(
-          state.collection.reduce((sum, c) => sum + c.level, 0) / Math.max(1, state.collection.length),
-        ));
-        if (tamerLvl < map.requiredTamerLevel) return false;
+        if (state.tamerLevel < map.requiredTamerLevel) return false;
       }
       if (!map.requiredMapCleared) return true;
       const required = GAME_MAPS.find((m) => m.id === map.requiredMapCleared);
@@ -276,9 +292,7 @@ export function GameProvider({ children }: { children: React.ReactNode }) {
     return result;
   }, [state.equippedItems]);
 
-  const totalPlayerLevel = Math.max(1, Math.floor(
-    state.collection.reduce((sum, c) => sum + c.level, 0) / Math.max(1, state.collection.length),
-  ));
+  const totalPlayerLevel = state.tamerLevel;
 
   const selectedCharacter = state.collection.find((c) => c.ownedId === state.selectedOwnedId) ?? null;
 
@@ -305,6 +319,7 @@ export function GameProvider({ children }: { children: React.ReactNode }) {
         gainPiece,
         craftItem,
         gainBits,
+        gainTamerExp,
         isLoaded: loaded,
         completeOnboarding,
       }}
