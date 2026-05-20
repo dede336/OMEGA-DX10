@@ -323,16 +323,70 @@ export interface CraftRecipe {
 export interface TamerOption {
   id: string;
   name: string;
+  fullName: string;
   description: string;
   accentColor: string;
-  image: null; // images will be added later
+  image: number;
+  forGender: 'M' | 'F' | 'N';
 }
 
 export const TAMERS: TamerOption[] = [
-  { id: 'tamer_brave',   name: 'Coragem',    description: 'Lutador destemido, enfrenta qualquer desafio de frente.',   accentColor: '#ef4444', image: null },
-  { id: 'tamer_wisdom',  name: 'Sabedoria',  description: 'Estrategista nato, vence com inteligência e planejamento.', accentColor: '#3b82f6', image: null },
-  { id: 'tamer_nature',  name: 'Natureza',   description: 'Em sintonia com o mundo digital, cuida de seus parceiros.', accentColor: '#22c55e', image: null },
-  { id: 'tamer_shadow',  name: 'Sombra',     description: 'Misterioso e veloz, age nas trevas e surpreende inimigos.',  accentColor: '#8b5cf6', image: null },
+  // Female tamers
+  {
+    id: 'tamer_mimi',
+    name: 'Mimi',
+    fullName: 'Mimi Tachikawa',
+    description: 'Gentil e determinada, sua amizade com seus Digimon é inabalável.',
+    accentColor: '#ec4899',
+    image: require('../assets/tamers/mimi.jpg'),
+    forGender: 'F',
+  },
+  {
+    id: 'tamer_sora',
+    name: 'Sora',
+    fullName: 'Sora Takenouchi',
+    description: 'Corajosa e protetora, cuida dos seus companheiros em qualquer batalha.',
+    accentColor: '#f97316',
+    image: require('../assets/tamers/sora.jpg'),
+    forGender: 'F',
+  },
+  {
+    id: 'tamer_kari',
+    name: 'Kari',
+    fullName: 'Hikari Kamiya',
+    description: 'Bondosa e iluminada, sua luz guia os Digimon pelo mundo digital.',
+    accentColor: '#f59e0b',
+    image: require('../assets/tamers/kari.jpg'),
+    forGender: 'F',
+  },
+  // Male tamers
+  {
+    id: 'tamer_matt',
+    name: 'Matt',
+    fullName: 'Yamato Ishida',
+    description: 'Frio e determinado, lidera com amizade e força inabalável.',
+    accentColor: '#3b82f6',
+    image: require('../assets/tamers/matt.png'),
+    forGender: 'M',
+  },
+  {
+    id: 'tamer_tai',
+    name: 'Tai',
+    fullName: 'Taichi Kamiya',
+    description: 'Destemido e impulsivo, enfrenta qualquer desafio de cabeça.',
+    accentColor: '#ef4444',
+    image: require('../assets/tamers/tai.jpg'),
+    forGender: 'M',
+  },
+  {
+    id: 'tamer_tk',
+    name: 'TK',
+    fullName: 'Takeru Takaishi',
+    description: 'Esperançoso e resiliente, sua esperança nunca se apaga nas trevas.',
+    accentColor: '#22c55e',
+    image: require('../assets/tamers/tk.png'),
+    forGender: 'M',
+  },
 ];
 
 export const CRAFT_RECIPES: CraftRecipe[] = [
