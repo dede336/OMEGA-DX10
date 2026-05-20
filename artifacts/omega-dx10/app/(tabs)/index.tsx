@@ -59,7 +59,7 @@ export default function HomeScreen() {
           <Text style={[styles.statLabel, { color: colors.mutedForeground }]}>Digimons</Text>
         </View>
         <View style={[styles.statCard, { backgroundColor: colors.card, borderColor: colors.border }]}>
-          <Feather name="map" size={20} color="#22c55e" />
+          <Image source={require('../../assets/images/stages-icon.png')} style={{ width: 28, height: 28 }} resizeMode="contain" />
           <Text style={[styles.statNum, { color: colors.foreground }]}>{clearedCount}/{totalStages}</Text>
           <Text style={[styles.statLabel, { color: colors.mutedForeground }]}>Estágios</Text>
         </View>
