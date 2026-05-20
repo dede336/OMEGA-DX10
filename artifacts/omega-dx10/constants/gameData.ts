@@ -319,6 +319,22 @@ export interface CraftRecipe {
   resultItemName: string;
 }
 
+// ─── Tamers ───────────────────────────────────────────────────────────────────
+export interface TamerOption {
+  id: string;
+  name: string;
+  description: string;
+  accentColor: string;
+  image: null; // images will be added later
+}
+
+export const TAMERS: TamerOption[] = [
+  { id: 'tamer_brave',   name: 'Coragem',    description: 'Lutador destemido, enfrenta qualquer desafio de frente.',   accentColor: '#ef4444', image: null },
+  { id: 'tamer_wisdom',  name: 'Sabedoria',  description: 'Estrategista nato, vence com inteligência e planejamento.', accentColor: '#3b82f6', image: null },
+  { id: 'tamer_nature',  name: 'Natureza',   description: 'Em sintonia com o mundo digital, cuida de seus parceiros.', accentColor: '#22c55e', image: null },
+  { id: 'tamer_shadow',  name: 'Sombra',     description: 'Misterioso e veloz, age nas trevas e surpreende inimigos.',  accentColor: '#8b5cf6', image: null },
+];
+
 export const CRAFT_RECIPES: CraftRecipe[] = [
   {
     pieceId: 'piece_brasao_coragem',

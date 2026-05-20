@@ -23,6 +23,8 @@ const defaultEquipped: EquippedItems = {
 interface GameState {
   playerName: string;
   gender: TamerGender;
+  tamerId: string | null;
+  isOnboarded: boolean;
   collection: OwnedCharacter[];
   clearedStages: Record<string, boolean>;
   selectedOwnedId: string | null;
@@ -34,7 +36,9 @@ interface GameState {
 }
 
 interface GameContextValue extends GameState {
+  isLoaded: boolean;
   selectedCharacter: OwnedCharacter | null;
+  completeOnboarding: (name: string, gender: TamerGender, tamerId: string) => void;
   addToCollection: (characterId: string) => void;
   gainExp: (ownedId: string, amount: number) => void;
   clearStage: (mapId: string, stageIndex: number) => void;
@@ -58,8 +62,10 @@ interface GameContextValue extends GameState {
 const STORAGE_KEY = 'omega_dx10_save_v2';
 
 const defaultState: GameState = {
-  playerName: 'Tamer',
+  playerName: '',
   gender: 'M',
+  tamerId: null,
+  isOnboarded: false,
   collection: [{ ownedId: 'owned_agumon_0', characterId: 'agumon', level: 1, exp: 0 }],
   clearedStages: {},
   selectedOwnedId: 'owned_agumon_0',
@@ -80,7 +86,8 @@ export function GameProvider({ children }: { children: React.ReactNode }) {
     AsyncStorage.getItem(STORAGE_KEY).then((raw) => {
       if (raw) {
         try {
-          const parsed = JSON.parse(raw) as Partial<GameState>;
+          const parsed = JSON.parse(raw) as Partial<GameState & { playerName?: string }>;
+          const hadPreviousSave = !!parsed.playerName && parsed.playerName !== '';
           setState({
             ...defaultState,
             ...parsed,
@@ -90,6 +97,8 @@ export function GameProvider({ children }: { children: React.ReactNode }) {
             equippedItems: { ...defaultEquipped, ...(parsed.equippedItems ?? {}) },
             pieces: parsed.pieces ?? {},
             bits: parsed.bits ?? 0,
+            tamerId: parsed.tamerId ?? null,
+            isOnboarded: parsed.isOnboarded ?? hadPreviousSave,
           });
         } catch {}
       }
@@ -196,6 +205,10 @@ export function GameProvider({ children }: { children: React.ReactNode }) {
     }));
   }, []);
 
+  const completeOnboarding = useCallback((name: string, gender: TamerGender, tamerId: string) => {
+    setState((prev) => ({ ...prev, playerName: name, gender, tamerId, isOnboarded: true }));
+  }, []);
+
   const gainBits = useCallback((amount: number) => {
     setState((prev) => ({ ...prev, bits: prev.bits + amount }));
   }, []);
@@ -292,6 +305,8 @@ export function GameProvider({ children }: { children: React.ReactNode }) {
         gainPiece,
         craftItem,
         gainBits,
+        isLoaded: loaded,
+        completeOnboarding,
       }}
     >
       {children}
