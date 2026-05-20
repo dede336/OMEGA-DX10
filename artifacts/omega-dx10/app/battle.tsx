@@ -42,7 +42,7 @@ export default function BattleScreen() {
   const colors = useColors();
   const insets = useSafeAreaInsets();
   const params = useLocalSearchParams<{ mapId: string; stageIndex: string }>();
-  const { collection, selectedCharacter, setSelectedCharacter, gainExp, clearStage, isStageCleared, gainScan, equippedItems, gainPiece } = useGame();
+  const { collection, selectedCharacter, setSelectedCharacter, gainExp, clearStage, isStageCleared, gainScan, equippedItems, gainPiece, gainBits } = useGame();
 
   const mapId = params.mapId ?? '';
   const stageIndex = Number(params.stageIndex ?? '0');
@@ -179,7 +179,22 @@ export default function BattleScreen() {
         }
         clearStage(mapId, stageIndex);
         if (stage) gainScan(stage.enemyCharacterId, 5);
-        if (Math.random() < 0.25) gainPiece('piece_brasao_coragem', 1);
+
+        if (stage?.drops) {
+          stage.drops.forEach((drop) => {
+            if (Math.random() < drop.chance) {
+              if (drop.type === 'bits') {
+                gainBits(drop.amount);
+                addLog(`💰 +${drop.amount.toLocaleString()} Bits!`, '#facc15');
+              } else if (drop.type === 'piece' && drop.id) {
+                gainPiece(drop.id, drop.amount);
+                addLog(`✦ Fragmento da Coragem obtido!`, '#f59e0b');
+              }
+            }
+          });
+        } else if (Math.random() < 0.25) {
+          gainPiece('piece_brasao_coragem', 1);
+        }
       }, 400);
       setBusy(false);
       return;

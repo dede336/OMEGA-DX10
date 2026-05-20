@@ -30,6 +30,7 @@ interface GameState {
   inventory: string[];
   equippedItems: EquippedItems;
   pieces: Record<string, number>;
+  bits: number;
 }
 
 interface GameContextValue extends GameState {
@@ -51,6 +52,7 @@ interface GameContextValue extends GameState {
   totalEquipBonus: () => Partial<Record<string, number>>;
   gainPiece: (pieceId: string, amount?: number) => void;
   craftItem: (recipe: CraftRecipe) => boolean;
+  gainBits: (amount: number) => void;
 }
 
 const STORAGE_KEY = 'omega_dx10_save_v2';
@@ -65,6 +67,7 @@ const defaultState: GameState = {
   inventory: DEFAULT_INVENTORY,
   equippedItems: defaultEquipped,
   pieces: {},
+  bits: 0,
 };
 
 const GameContext = createContext<GameContextValue | null>(null);
@@ -86,6 +89,7 @@ export function GameProvider({ children }: { children: React.ReactNode }) {
             inventory: parsed.inventory ?? DEFAULT_INVENTORY,
             equippedItems: { ...defaultEquipped, ...(parsed.equippedItems ?? {}) },
             pieces: parsed.pieces ?? {},
+            bits: parsed.bits ?? 0,
           });
         } catch {}
       }
@@ -192,6 +196,10 @@ export function GameProvider({ children }: { children: React.ReactNode }) {
     }));
   }, []);
 
+  const gainBits = useCallback((amount: number) => {
+    setState((prev) => ({ ...prev, bits: prev.bits + amount }));
+  }, []);
+
   const gainPiece = useCallback((pieceId: string, amount = 1) => {
     setState((prev) => ({
       ...prev,
@@ -276,6 +284,7 @@ export function GameProvider({ children }: { children: React.ReactNode }) {
         totalEquipBonus,
         gainPiece,
         craftItem,
+        gainBits,
       }}
     >
       {children}

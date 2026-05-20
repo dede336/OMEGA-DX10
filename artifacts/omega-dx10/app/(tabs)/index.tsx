@@ -12,7 +12,7 @@ export default function HomeScreen() {
   const colors = useColors();
   const insets = useSafeAreaInsets();
   const game = useGame();
-  const { selectedCharacter, collection, clearedStages, playerName, totalPlayerLevel } = game;
+  const { selectedCharacter, collection, clearedStages, playerName, totalPlayerLevel, bits } = game;
 
   const totalStages = GAME_MAPS.reduce((s, m) => s + m.stages.length, 0);
   const clearedCount = Object.keys(clearedStages).length;
@@ -63,10 +63,10 @@ export default function HomeScreen() {
           <Text style={[styles.statNum, { color: colors.foreground }]}>{clearedCount}/{totalStages}</Text>
           <Text style={[styles.statLabel, { color: colors.mutedForeground }]}>Estágios</Text>
         </View>
-        <View style={[styles.statCard, { backgroundColor: colors.card, borderColor: colors.border }]}>
-          <Feather name="star" size={20} color="#facc15" />
-          <Text style={[styles.statNum, { color: colors.foreground }]}>{GAME_MAPS.length}</Text>
-          <Text style={[styles.statLabel, { color: colors.mutedForeground }]}>Mapas</Text>
+        <View style={[styles.statCard, { backgroundColor: '#facc1522', borderColor: '#facc1566' }]}>
+          <Feather name="dollar-sign" size={20} color="#facc15" />
+          <Text style={[styles.statNum, { color: colors.foreground }]}>{bits >= 1000 ? `${(bits / 1000).toFixed(1)}k` : bits}</Text>
+          <Text style={[styles.statLabel, { color: colors.mutedForeground }]}>Bits</Text>
         </View>
       </View>
 

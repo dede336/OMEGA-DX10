@@ -45,15 +45,29 @@ export default function MapScreen() {
           const clearedInMap = map.stages.filter((s) => isStageCleared(map.id, s.index)).length;
           const allCleared = clearedInMap === map.stages.length;
 
+          const isDungeon = map.isDungeon === true;
+          const dungeonBorderColor = '#8b5cf6';
+
           return (
-            <View key={map.id} style={[styles.mapCard, { backgroundColor: colors.card, borderColor: unlocked ? (allCleared ? '#22c55e' : colors.border) : colors.border + '44' }]}>
+            <View key={map.id} style={[
+              styles.mapCard,
+              { backgroundColor: isDungeon ? '#1a0f2e' : colors.card, borderColor: isDungeon ? dungeonBorderColor : (unlocked ? (allCleared ? '#22c55e' : colors.border) : colors.border + '44') },
+            ]}>
+              {isDungeon && (
+                <View style={[styles.dungeonBanner, { backgroundColor: dungeonBorderColor + '33', borderBottomColor: dungeonBorderColor + '55' }]}>
+                  <Feather name="alert-triangle" size={12} color={dungeonBorderColor} />
+                  <Text style={[styles.dungeonBannerText, { color: dungeonBorderColor }]}>DUNGEON — Boss Encounter</Text>
+                </View>
+              )}
               <TouchableOpacity
                 activeOpacity={0.8}
                 onPress={() => unlocked && setExpandedMap(expanded ? '' : map.id)}
                 style={styles.mapHeader}
               >
-                <View style={[styles.mapIcon, { backgroundColor: unlocked ? (allCleared ? '#22c55e22' : colors.secondary) : '#ffffff11' }]}>
-                  {unlocked ? (
+                <View style={[styles.mapIcon, { backgroundColor: isDungeon ? dungeonBorderColor + '33' : (unlocked ? (allCleared ? '#22c55e22' : colors.secondary) : '#ffffff11') }]}>
+                  {isDungeon ? (
+                    <Feather name="shield-off" size={24} color={dungeonBorderColor} />
+                  ) : unlocked ? (
                     allCleared ? (
                       <Feather name="check-circle" size={24} color="#22c55e" />
                     ) : (
@@ -64,9 +78,9 @@ export default function MapScreen() {
                   )}
                 </View>
                 <View style={styles.mapInfo}>
-                  <Text style={[styles.mapName, { color: unlocked ? colors.foreground : colors.mutedForeground }]}>{map.name}</Text>
+                  <Text style={[styles.mapName, { color: isDungeon ? '#c4b5fd' : (unlocked ? colors.foreground : colors.mutedForeground) }]}>{map.name}</Text>
                   <Text style={[styles.mapDesc, { color: colors.mutedForeground }]} numberOfLines={2}>{map.description}</Text>
-                  {!unlocked && (
+                  {!unlocked && !isDungeon && (
                     <Text style={[styles.lockHint, { color: colors.mutedForeground }]}>
                       Complete o mapa anterior para desbloquear
                     </Text>
@@ -126,7 +140,7 @@ export default function MapScreen() {
                               </View>
                             </View>
                           )}
-                          {!cleared && (
+                          {!cleared && !isDungeon && (
                             <View style={styles.rewardRow}>
                               <Feather name="cpu" size={11} color="#3b82f6" />
                               <Text style={[styles.rewardText, { color: '#3b82f6' }]}>
@@ -134,6 +148,25 @@ export default function MapScreen() {
                               </Text>
                             </View>
                           )}
+                          {isDungeon && stage.drops && stage.drops.map((drop, di) => (
+                            <View key={di} style={styles.rewardRow}>
+                              {drop.type === 'bits' ? (
+                                <>
+                                  <Feather name="dollar-sign" size={11} color="#facc15" />
+                                  <Text style={[styles.rewardText, { color: '#facc15' }]}>
+                                    {drop.amount.toLocaleString()} Bits ({Math.round(drop.chance * 100)}%)
+                                  </Text>
+                                </>
+                              ) : (
+                                <>
+                                  <Feather name="gift" size={11} color="#f59e0b" />
+                                  <Text style={[styles.rewardText, { color: '#f59e0b' }]}>
+                                    Fragmento Coragem ({Math.round(drop.chance * 100)}%)
+                                  </Text>
+                                </>
+                              )}
+                            </View>
+                          ))}
                         </View>
                         <View style={styles.stageRight}>
                           <View style={[styles.expTag, { backgroundColor: colors.primary + '22' }]}>
@@ -179,6 +212,8 @@ const styles = StyleSheet.create({
   lockHint: { fontSize: 11, marginTop: 4 },
   mapRight: { alignItems: 'center', gap: 4 },
   mapProgress: { fontSize: 16, fontWeight: '800' as const },
+  dungeonBanner: { flexDirection: 'row', alignItems: 'center', gap: 6, paddingHorizontal: 16, paddingVertical: 7, borderBottomWidth: 1 },
+  dungeonBannerText: { fontSize: 11, fontWeight: '700' as const, letterSpacing: 0.6 },
   stagesContainer: { borderTopWidth: 1 },
   stageRow: { flexDirection: 'row', alignItems: 'center', padding: 14, borderBottomWidth: 1, gap: 12 },
   stageNum: { width: 32, height: 32, borderRadius: 16, alignItems: 'center', justifyContent: 'center', borderWidth: 1 },

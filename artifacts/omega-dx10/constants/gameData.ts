@@ -22,12 +22,20 @@ export interface Character {
   description: string;
 }
 
+export interface StageDrop {
+  type: 'bits' | 'piece';
+  id?: string;
+  amount: number;
+  chance: number;
+}
+
 export interface MapStage {
   index: number;
   name: string;
   enemyCharacterId: string;
   enemyLevel: number;
   expReward: number;
+  drops?: StageDrop[];
 }
 
 export interface GameMap {
@@ -35,6 +43,7 @@ export interface GameMap {
   name: string;
   description: string;
   requiredMapCleared?: string;
+  isDungeon?: boolean;
   stages: MapStage[];
 }
 
@@ -108,6 +117,15 @@ export const CHARACTERS: Record<string, Character> = {
     baseStats: { hp: 200, mp: 220, atk: 130, def: 115, spt: 80, spd: 100, apt: 30 },
     description: 'A forma Ultimate do Garurumon. Um guerreiro humanoide do gelo com força devastadora e velocidade surpreendente.',
   },
+  gulusGammamon: {
+    id: 'gulusGammamon',
+    name: 'GulusGammamon',
+    rarity: 'RARE',
+    attribute: 'VR',
+    element: 'DARK',
+    baseStats: { hp: 145, mp: 130, atk: 115, def: 85, spt: 75, spd: 105, apt: 30 },
+    description: 'A forma sombria do Gammamon. Um Digimon Champion do tipo Vírus corrompido pelas trevas, com velocidade e poder de ataque devastadores.',
+  },
   greymon: {
     id: 'greymon',
     name: 'Greymon',
@@ -150,7 +168,7 @@ export const EVOLUTIONS: Record<string, { evolvesTo: string; requiredLevel: numb
 export const SCANNABLE_CHARACTERS: string[] = ['agumon', 'gabumon', 'demiDevimon'];
 
 // Display order in the Codex (grouped by evolution line)
-export const CODEX_ORDER: string[] = ['agumon', 'greymon', 'metalGreymon', 'warGreymon', 'gabumon', 'garurumon', 'wereGarurumon', 'demiDevimon'];
+export const CODEX_ORDER: string[] = ['agumon', 'greymon', 'metalGreymon', 'warGreymon', 'gabumon', 'garurumon', 'wereGarurumon', 'demiDevimon', 'gulusGammamon'];
 
 // ─── Maps & Stages ─────────────────────────────────────────────────────────────
 export const GAME_MAPS: GameMap[] = [
@@ -184,6 +202,25 @@ export const GAME_MAPS: GameMap[] = [
       { index: 0, name: 'Portal das Trevas',   enemyCharacterId: 'demiDevimon', enemyLevel: 12, expReward: 280 },
       { index: 1, name: 'Abismo Corrompido',   enemyCharacterId: 'agumon',      enemyLevel: 14, expReward: 340 },
       { index: 2, name: 'Trono do Caos',       enemyCharacterId: 'gabumon',     enemyLevel: 16, expReward: 450 },
+    ],
+  },
+  {
+    id: 'dungeon_gulus',
+    name: 'Covil do Gulus',
+    description: 'Uma dungeon sombria onde GulusGammamon reina. Derrote-o para obter Bits e Fragmentos da Coragem.',
+    isDungeon: true,
+    stages: [
+      {
+        index: 0,
+        name: 'Boss — GulusGammamon',
+        enemyCharacterId: 'gulusGammamon',
+        enemyLevel: 25,
+        expReward: 500,
+        drops: [
+          { type: 'bits',  amount: 1000, chance: 1.00 },
+          { type: 'piece', id: 'piece_brasao_coragem', amount: 1, chance: 0.10 },
+        ],
+      },
     ],
   },
 ];
