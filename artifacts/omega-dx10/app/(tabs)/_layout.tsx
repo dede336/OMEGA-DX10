@@ -5,7 +5,7 @@ import { Icon, Label, NativeTabs } from "expo-router/unstable-native-tabs";
 import { SymbolView } from "expo-symbols";
 import { Feather } from "@expo/vector-icons";
 import React from "react";
-import { Platform, StyleSheet, View, useColorScheme } from "react-native";
+import { Platform, StyleSheet, View, Image, useColorScheme } from "react-native";
 
 import { useColors } from "@/hooks/useColors";
 
@@ -77,12 +77,13 @@ function ClassicTabLayout() {
         name="collection"
         options={{
           title: "Digibank",
-          tabBarIcon: ({ color }) =>
-            isIOS ? (
-              <SymbolView name="square.grid.2x2" tintColor={color} size={22} />
-            ) : (
-              <Feather name="grid" size={22} color={color} />
-            ),
+          tabBarIcon: ({ color }) => (
+            <Image
+              source={require('../../assets/images/digibank-icon.png')}
+              style={{ width: 26, height: 26, tintColor: color }}
+              resizeMode="contain"
+            />
+          ),
         }}
       />
       <Tabs.Screen

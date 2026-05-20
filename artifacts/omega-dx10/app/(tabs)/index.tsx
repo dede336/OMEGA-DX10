@@ -139,7 +139,11 @@ export default function HomeScreen() {
           onPress={() => router.push('/(tabs)/collection')}
           activeOpacity={0.8}
         >
-          <Feather name="grid" size={22} color={colors.accent} />
+          <Image
+            source={require('../../assets/images/digibank-icon.png')}
+            style={[styles.actionMapIcon, { tintColor: colors.accent }]}
+            resizeMode="contain"
+          />
           <Text style={[styles.actionLabel, { color: colors.accent }]}>Digibank</Text>
         </TouchableOpacity>
       </View>
