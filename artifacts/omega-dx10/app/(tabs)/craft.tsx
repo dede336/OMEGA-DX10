@@ -12,7 +12,6 @@ import {
 import EQUIP_ITEM_IMAGES from '@/constants/equipImages';
 
 const PIECE_META = [
-  { id: 'piece_coragem',          label: 'Coragem',             icon: 'zap',     color: '#ef4444' },
   { id: 'piece_brasao_coragem',   label: 'Coragem Piece',       icon: 'sun',     color: '#f97316', itemId: 'brasao_coragem' },
   { id: 'piece_brasao_esperanca', label: 'Esperança Piece',     icon: 'sun',     color: '#eab308', itemId: 'brasao_esperanca' },
   { id: 'piece_brasao_amizade',   label: 'Amizade Piece',       icon: 'users',   color: '#3b82f6', itemId: 'brasao_amizade' },
