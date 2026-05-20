@@ -103,6 +103,15 @@ export const CHARACTERS: Record<string, Character> = {
     baseStats: { hp: 100, mp: 118, atk: 75, def: 67, spt: 63, spd: 64, apt: 22 },
     description: 'Um pequeno Digimon maligno do tipo Vírus. Usa suas asas e presas para atacar com poder das trevas.',
   },
+  devimon: {
+    id: 'devimon',
+    name: 'Devimon',
+    rarity: 'RARE',
+    attribute: 'VR',
+    element: 'DARK',
+    baseStats: { hp: 166, mp: 170, atk: 108, def: 82, spt: 92, spd: 79, apt: 48 },
+    description: 'O Anjo das Trevas. A forma Champion do DemiDevimon, um Digimon do tipo Vírus com poderes sombrios devastadores e asas negras imponentes.',
+  },
   garurumon: {
     id: 'garurumon',
     name: 'Garurumon',
@@ -166,13 +175,14 @@ export const EVOLUTIONS: Record<string, { evolvesTo: string; requiredLevel: numb
   metalGreymon: { evolvesTo: 'warGreymon',    requiredLevel: 52, label: 'WarGreymon' },
   gabumon:      { evolvesTo: 'garurumon',     requiredLevel: 19, label: 'Garurumon' },
   garurumon:    { evolvesTo: 'wereGarurumon', requiredLevel: 35, label: 'WereGarurumon' },
+  demiDevimon:  { evolvesTo: 'devimon',       requiredLevel: 21, label: 'Devimon' },
 };
 
 // Characters that can be scanned (encountered as enemies in battle)
 export const SCANNABLE_CHARACTERS: string[] = ['agumon', 'gabumon', 'demiDevimon'];
 
 // Display order in the Codex (grouped by evolution line)
-export const CODEX_ORDER: string[] = ['agumon', 'greymon', 'metalGreymon', 'warGreymon', 'gabumon', 'garurumon', 'wereGarurumon', 'demiDevimon', 'gulusGammamon'];
+export const CODEX_ORDER: string[] = ['agumon', 'greymon', 'metalGreymon', 'warGreymon', 'gabumon', 'garurumon', 'wereGarurumon', 'demiDevimon', 'devimon', 'gulusGammamon'];
 
 // ─── Maps & Stages ─────────────────────────────────────────────────────────────
 export const GAME_MAPS: GameMap[] = [
