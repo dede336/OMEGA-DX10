@@ -201,8 +201,9 @@ export const GAME_MAPS: GameMap[] = [
   },
   {
     id: 'map_shadow',
-    name: 'Domínio das Sombras',
+    name: 'Chaos Brain',
     description: 'Uma dimensão corrompida onde as trevas consomem tudo. Apenas os mais fortes sobrevivem.',
+    backgroundImage: require('../assets/images/maps/chaos_brain.png'),
     requiredMapCleared: 'map_city',
     bitsReward: 500,
     stages: [
