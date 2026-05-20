@@ -17,7 +17,7 @@ const PIECE_META = [
   { id: 'piece_brasao_amizade',   label: 'Amizade Piece',       icon: 'users',   color: '#3b82f6', itemId: 'brasao_amizade' },
   { id: 'piece_caos',             label: 'Caos',                icon: 'cpu',     color: '#a855f7' },
   { id: 'piece_tecido',           label: 'Tecido',              icon: 'layers',  color: '#ec4899' },
-  { id: 'piece_agulha',           label: 'Agulha',              icon: 'edit-2',  color: '#8b5cf6' },
+  { id: 'piece_agulha',           label: 'Agulha Média',        icon: 'edit-2',  color: '#8b5cf6', image: require('../../assets/images/agulha-media.png') },
   { id: 'piece_linha',            label: 'Linha arco-íris',     icon: 'wind',    color: '#06b6d4', image: require('../../assets/images/linha-arco-iris.png') },
   { id: 'piece_brasao_confianca', label: 'Confiança Piece',     icon: 'shield',  color: '#94a3b8', itemId: 'brasao_confianca' },
   { id: 'piece_brasao_pureza',    label: 'Pureza Piece',        icon: 'droplet', color: '#22c55e', itemId: 'brasao_pureza' },
