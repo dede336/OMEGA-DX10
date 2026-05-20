@@ -18,7 +18,7 @@ const PIECE_META = [
   { id: 'piece_caos',             label: 'Caos',                icon: 'cpu',     color: '#a855f7' },
   { id: 'piece_tecido',           label: 'Tecido',              icon: 'layers',  color: '#ec4899' },
   { id: 'piece_agulha',           label: 'Agulha',              icon: 'edit-2',  color: '#8b5cf6' },
-  { id: 'piece_linha',            label: 'Linha',               icon: 'wind',    color: '#06b6d4' },
+  { id: 'piece_linha',            label: 'Linha arco-íris',     icon: 'wind',    color: '#06b6d4', image: require('../../assets/images/linha-arco-iris.png') },
   { id: 'piece_brasao_confianca', label: 'Confiança Piece',     icon: 'shield',  color: '#94a3b8', itemId: 'brasao_confianca' },
   { id: 'piece_brasao_pureza',    label: 'Pureza Piece',        icon: 'droplet', color: '#22c55e', itemId: 'brasao_pureza' },
   { id: 'piece_brasao_amor',      label: 'Amor Piece',          icon: 'heart',   color: '#f43f5e', itemId: 'brasao_amor' },
@@ -44,7 +44,7 @@ export default function CraftScreen() {
       <Text style={[styles.sectionTitle, { color: colors.foreground }]}>Fragmentos</Text>
       <View style={[styles.fragmentSummaryRow, { backgroundColor: colors.card, borderColor: colors.border }]}>
         {PIECE_META.map((p) => {
-          const img = (p as any).itemId ? EQUIP_ITEM_IMAGES[(p as any).itemId] : null;
+          const img = (p as any).image ?? ((p as any).itemId ? EQUIP_ITEM_IMAGES[(p as any).itemId] : null);
           return (
             <View key={p.id} style={styles.fragmentSummaryItem}>
               <View style={[styles.fragmentSummaryIcon, { backgroundColor: p.color + '22' }]}>
