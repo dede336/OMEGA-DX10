@@ -174,7 +174,7 @@ export default function OnboardingScreen() {
                       <View style={[styles.tamerAvatarWrapper, { borderColor: selected ? t.accentColor : '#1e293b' }]}>
                         <Image
                           source={t.image}
-                          style={styles.tamerAvatar}
+                          style={[styles.tamerAvatar, { marginTop: t.avatarOffset }]}
                           contentFit="cover"
                         />
                       </View>

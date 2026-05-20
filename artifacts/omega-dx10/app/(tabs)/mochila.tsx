@@ -78,7 +78,7 @@ export default function MochilaScreen() {
             <View style={[styles.tamerAvatarImg, { borderColor: selectedTamer.accentColor }]}>
               <ExpoImage
                 source={selectedTamer.image}
-                style={styles.tamerAvatarImageStyle}
+                style={[styles.tamerAvatarImageStyle, { marginTop: selectedTamer.avatarOffset }]}
                 contentFit="cover"
               />
             </View>

@@ -328,6 +328,7 @@ export interface TamerOption {
   accentColor: string;
   image: number;
   forGender: 'M' | 'F' | 'N';
+  avatarOffset: number; // negative = skip top pixels (show lower face), positive = show from very top
 }
 
 export const TAMERS: TamerOption[] = [
@@ -340,6 +341,7 @@ export const TAMERS: TamerOption[] = [
     accentColor: '#ec4899',
     image: require('../assets/tamers/mimi_bg.png'),
     forGender: 'F',
+    avatarOffset: -8,
   },
   {
     id: 'tamer_sora',
@@ -349,6 +351,7 @@ export const TAMERS: TamerOption[] = [
     accentColor: '#f97316',
     image: require('../assets/tamers/sora_bg.png'),
     forGender: 'F',
+    avatarOffset: -8,
   },
   {
     id: 'tamer_kari',
@@ -358,6 +361,7 @@ export const TAMERS: TamerOption[] = [
     accentColor: '#f59e0b',
     image: require('../assets/tamers/kari_bg.png'),
     forGender: 'F',
+    avatarOffset: -8,
   },
   // Male tamers
   {
@@ -368,6 +372,7 @@ export const TAMERS: TamerOption[] = [
     accentColor: '#3b82f6',
     image: require('../assets/tamers/matt.png'),
     forGender: 'M',
+    avatarOffset: -8,
   },
   {
     id: 'tamer_tai',
@@ -377,6 +382,7 @@ export const TAMERS: TamerOption[] = [
     accentColor: '#ef4444',
     image: require('../assets/tamers/tai_bg.png'),
     forGender: 'M',
+    avatarOffset: -8,
   },
   {
     id: 'tamer_tk',
@@ -386,6 +392,7 @@ export const TAMERS: TamerOption[] = [
     accentColor: '#22c55e',
     image: require('../assets/tamers/tk.png'),
     forGender: 'M',
+    avatarOffset: -38,
   },
 ];
 
