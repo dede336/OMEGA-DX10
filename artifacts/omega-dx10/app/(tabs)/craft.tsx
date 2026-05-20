@@ -16,7 +16,6 @@ const PIECE_META = [
   { id: 'piece_brasao_coragem',   label: 'Brasão C',  icon: 'sun',     color: '#f97316' },
   { id: 'piece_brasao_esperanca', label: 'Brasão E',  icon: 'sun',     color: '#eab308' },
   { id: 'piece_brasao_amizade',   label: 'Brasão A',  icon: 'users',   color: '#3b82f6' },
-  { id: 'piece_gelo',             label: 'Gelo',      icon: 'droplet', color: '#38bdf8' },
   { id: 'piece_caos',             label: 'Caos',      icon: 'cpu',     color: '#a855f7' },
   { id: 'piece_tecido',           label: 'Tecido',    icon: 'layers',  color: '#ec4899' },
   { id: 'piece_agulha',           label: 'Agulha',    icon: 'edit-2',  color: '#8b5cf6' },
