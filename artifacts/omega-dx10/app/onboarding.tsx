@@ -242,7 +242,7 @@ const styles = StyleSheet.create({
   tamerListContent: { gap: 12, paddingBottom: 20 },
   tamerCard: { flexDirection: 'row', alignItems: 'center', gap: 14, borderWidth: 1.5, borderColor: '#1e293b', backgroundColor: '#111827', borderRadius: 16, padding: 12, position: 'relative' as const },
   tamerAvatarWrapper: { width: 76, height: 76, borderRadius: 14, borderWidth: 2, overflow: 'hidden' as const },
-  tamerAvatar: { width: '100%', height: '100%' },
+  tamerAvatar: { width: '100%', height: 160, marginTop: 0 },
   tamerInfo: { flex: 1, gap: 2 },
   tamerName: { fontSize: 18, fontWeight: '800' as const, color: '#f1f5f9' },
   tamerFullName: { fontSize: 11, color: '#475569', fontWeight: '500' as const, marginBottom: 2 },
