@@ -189,8 +189,9 @@ export const GAME_MAPS: GameMap[] = [
   },
   {
     id: 'map_city',
-    name: 'Cidade Cyber',
-    description: 'Metrópole de circuitos onde Digimons evoluídos patrulham as ruas digitais.',
+    name: 'Acess Glacier',
+    description: 'Um glaciar digital congelado onde Digimons evoluídos patrulham as planícies de gelo.',
+    backgroundImage: require('../assets/images/maps/acess_glacier.png'),
     requiredMapCleared: 'map_forest',
     bitsReward: 250,
     stages: [
