@@ -129,7 +129,7 @@ export default function MochilaScreen() {
           <View style={styles.tamerMetaRow}>
             <Text style={[styles.tamerLabel, { color: colors.mutedForeground }]}>Tamer Digital</Text>
             <View style={[styles.genderPill, { backgroundColor: genderColor + '22', borderColor: genderColor + '66' }]}>
-              <Text style={[styles.genderPillText, { color: genderColor }]}>{genderSymbol} {genderLabel}</Text>
+              <Text style={[styles.genderPillText, { color: genderColor }]}>{genderSymbol}</Text>
             </View>
           </View>
           {/* Tamer XP Bar */}
