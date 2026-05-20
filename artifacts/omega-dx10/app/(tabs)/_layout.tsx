@@ -84,7 +84,7 @@ function ClassicTabLayout() {
           tabBarIcon: ({ color }) => (
             <Image
               source={require('../../assets/images/digibank-icon.png')}
-              style={{ width: 26, height: 26, tintColor: color }}
+              style={{ width: 28, height: 28 }}
               resizeMode="contain"
             />
           ),
