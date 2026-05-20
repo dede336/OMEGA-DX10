@@ -203,12 +203,21 @@ export default function BattleScreen() {
                 addLog(`💰 +${drop.amount.toLocaleString()} Bits!`, '#facc15');
               } else if (drop.type === 'piece' && drop.id) {
                 gainPiece(drop.id, drop.amount);
-                addLog(`✦ Fragmento da Coragem obtido!`, '#f59e0b');
+                addLog(`✦ Fragmento obtido!`, '#f59e0b');
               }
             }
           });
-        } else if (!map?.bitsReward && Math.random() < 0.25) {
-          gainPiece('piece_brasao_coragem', 1);
+        } else if (Math.random() < 0.30) {
+          if (mapId === 'map_forest') {
+            gainPiece('piece_coragem', 1);
+            addLog('🔴 Fragmento da Coragem obtido!', '#ef4444');
+          } else if (mapId === 'map_city') {
+            gainPiece('piece_gelo', 1);
+            addLog('🔵 Fragmento de Gelo obtido!', '#38bdf8');
+          } else if (mapId === 'map_shadow') {
+            gainPiece('piece_caos', 1);
+            addLog('🟣 Fragmento do Caos obtido!', '#a855f7');
+          }
         }
       }, 400);
       setBusy(false);

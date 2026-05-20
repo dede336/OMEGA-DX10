@@ -244,11 +244,13 @@ export function GameProvider({ children }: { children: React.ReactNode }) {
     setState((prev) => {
       const current = prev.pieces[recipe.pieceId] ?? 0;
       if (current < recipe.requiredCount) return prev;
+      if ((recipe.bitsCost ?? 0) > 0 && prev.bits < (recipe.bitsCost ?? 0)) return prev;
       if (prev.inventory.includes(recipe.resultItemId)) return prev;
       success = true;
       return {
         ...prev,
         pieces: { ...prev.pieces, [recipe.pieceId]: current - recipe.requiredCount },
+        bits: prev.bits - (recipe.bitsCost ?? 0),
         inventory: [...prev.inventory, recipe.resultItemId],
       };
     });

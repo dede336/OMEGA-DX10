@@ -324,9 +324,13 @@ export interface CraftRecipe {
   pieceId: string;
   pieceName: string;
   pieceDescription: string;
+  pieceIcon: string;
+  pieceColor: string;
   requiredCount: number;
+  bitsCost?: number;
   resultItemId: string;
   resultItemName: string;
+  resultRarity: RarityId;
 }
 
 // ─── Tamers ───────────────────────────────────────────────────────────────────
@@ -407,13 +411,104 @@ export const TAMERS: TamerOption[] = [
 ];
 
 export const CRAFT_RECIPES: CraftRecipe[] = [
+  // ── Chip Forest drops: piece_coragem ──────────────────────────────────────
   {
-    pieceId: 'piece_brasao_coragem',
+    pieceId: 'piece_coragem',
     pieceName: 'Fragmento da Coragem',
-    pieceDescription: 'Um fragmento do lendário Brasão da Coragem. Colete 50 para forjar o item completo.',
-    requiredCount: 50,
+    pieceDescription: 'Drop do Chip Forest. Usado para forjar itens de ataque.',
+    pieceIcon: 'zap',
+    pieceColor: '#ef4444',
+    requiredCount: 5,
+    bitsCost: 300,
+    resultItemId: 'blusa_jaqueta',
+    resultItemName: 'Jaqueta Tática',
+    resultRarity: 'RARE',
+  },
+  {
+    pieceId: 'piece_coragem',
+    pieceName: 'Fragmento da Coragem',
+    pieceDescription: 'Drop do Chip Forest. Usado para forjar itens de ataque.',
+    pieceIcon: 'zap',
+    pieceColor: '#ef4444',
+    requiredCount: 10,
+    bitsCost: 2000,
+    resultItemId: 'digivice_x',
+    resultItemName: 'Digivice X',
+    resultRarity: 'LEGENDARY',
+  },
+  {
+    pieceId: 'piece_coragem',
+    pieceName: 'Fragmento da Coragem',
+    pieceDescription: 'Drop do Chip Forest. Usado para forjar itens de ataque.',
+    pieceIcon: 'zap',
+    pieceColor: '#ef4444',
+    requiredCount: 10,
+    bitsCost: 0,
     resultItemId: 'brasao_coragem',
     resultItemName: 'Brasão da Coragem',
+    resultRarity: 'LEGENDARY',
+  },
+  // ── Acess Glacier drops: piece_gelo ──────────────────────────────────────
+  {
+    pieceId: 'piece_gelo',
+    pieceName: 'Fragmento de Gelo',
+    pieceDescription: 'Drop do Acess Glacier. Usado para forjar itens de defesa e velocidade.',
+    pieceIcon: 'droplet',
+    pieceColor: '#38bdf8',
+    requiredCount: 5,
+    bitsCost: 300,
+    resultItemId: 'calca_tatica',
+    resultItemName: 'Calça Tática',
+    resultRarity: 'RARE',
+  },
+  {
+    pieceId: 'piece_gelo',
+    pieceName: 'Fragmento de Gelo',
+    pieceDescription: 'Drop do Acess Glacier. Usado para forjar itens de defesa e velocidade.',
+    pieceIcon: 'droplet',
+    pieceColor: '#38bdf8',
+    requiredCount: 5,
+    bitsCost: 500,
+    resultItemId: 'sapato_botas',
+    resultItemName: 'Botas de Batalha',
+    resultRarity: 'RARE',
+  },
+  {
+    pieceId: 'piece_gelo',
+    pieceName: 'Fragmento de Gelo',
+    pieceDescription: 'Drop do Acess Glacier. Usado para forjar itens de defesa e velocidade.',
+    pieceIcon: 'droplet',
+    pieceColor: '#38bdf8',
+    requiredCount: 5,
+    bitsCost: 400,
+    resultItemId: 'oculos_tatico',
+    resultItemName: 'Óculos Tático',
+    resultRarity: 'RARE',
+  },
+  // ── Chaos Brain drops: piece_caos ────────────────────────────────────────
+  {
+    pieceId: 'piece_caos',
+    pieceName: 'Fragmento do Caos',
+    pieceDescription: 'Drop do Chaos Brain. Usado para forjar itens épicos.',
+    pieceIcon: 'cpu',
+    pieceColor: '#a855f7',
+    requiredCount: 5,
+    bitsCost: 500,
+    resultItemId: 'pulseira_ouro',
+    resultItemName: 'Pulseira Dourada',
+    resultRarity: 'RARE',
+  },
+  {
+    pieceId: 'piece_caos',
+    pieceName: 'Fragmento do Caos',
+    pieceDescription: 'Drop do Chaos Brain. Usado para forjar itens épicos.',
+    pieceIcon: 'cpu',
+    pieceColor: '#a855f7',
+    requiredCount: 8,
+    bitsCost: 800,
+    resultItemId: 'brasao_elite',
+    resultItemName: 'Brasão de Elite',
+    resultRarity: 'EPIC',
   },
 ];
 
