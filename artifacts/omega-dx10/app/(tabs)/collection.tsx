@@ -23,6 +23,7 @@ export default function CollectionScreen() {
   const topPad = 0;
   const bottomPad = Platform.OS === 'web' ? 34 : insets.bottom;
 
+  const DIGIBANK_LIMIT = 100;
   const ownedCount = collection.length;
   const totalCount = Object.keys(CHARACTERS).length;
 
@@ -31,7 +32,7 @@ export default function CollectionScreen() {
       <View style={[styles.header, { paddingTop: topPad + 16, borderBottomColor: colors.border }]}>
         <Text style={[styles.title, { color: colors.foreground }]}>Digibank</Text>
         <View style={[styles.countBadge, { backgroundColor: colors.primary + '22', borderColor: colors.primary }]}>
-          <Text style={[styles.countText, { color: colors.primary }]}>{ownedCount} / {totalCount}</Text>
+          <Text style={[styles.countText, { color: colors.primary }]}>{ownedCount} / {DIGIBANK_LIMIT}</Text>
         </View>
       </View>
 

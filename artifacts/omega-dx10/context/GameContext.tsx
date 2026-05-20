@@ -122,6 +122,7 @@ export function GameProvider({ children }: { children: React.ReactNode }) {
   const addToCollection = useCallback((characterId: string) => {
     setState((prev) => {
       if (prev.collection.some((c) => c.characterId === characterId)) return prev;
+      if (prev.collection.length >= 100) return prev;
       const ownedId = `owned_${characterId}_${Date.now()}`;
       const newChar: OwnedCharacter = { ownedId, characterId, level: 1, exp: 0 };
       return { ...prev, collection: [...prev.collection, newChar] };
@@ -167,6 +168,7 @@ export function GameProvider({ children }: { children: React.ReactNode }) {
       const scan = prev.scanProgress[characterId] ?? 0;
       if (scan < 100) return prev;
       if (prev.collection.some((c) => c.characterId === characterId)) return prev;
+      if (prev.collection.length >= 100) return prev;
       const ownedId = `owned_${characterId}_${Date.now()}`;
       return {
         ...prev,
