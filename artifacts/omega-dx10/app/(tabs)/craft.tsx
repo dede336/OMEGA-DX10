@@ -24,7 +24,8 @@ const PIECE_META = [
   { id: 'piece_brasao_confianca', label: 'Confiança', icon: 'shield',  color: '#94a3b8' },
   { id: 'piece_brasao_pureza',    label: 'Pureza',    icon: 'droplet', color: '#22c55e' },
   { id: 'piece_brasao_amor',      label: 'Amor',      icon: 'heart',   color: '#f43f5e' },
-  { id: 'piece_brasao_luz',       label: 'Luz',       icon: 'star',    color: '#c084fc' },
+  { id: 'piece_brasao_luz',           label: 'Luz',           icon: 'star', color: '#c084fc' },
+  { id: 'piece_brasao_conhecimento',  label: 'Conhecimento',  icon: 'book', color: '#a855f7' },
 ];
 
 export default function CraftScreen() {
