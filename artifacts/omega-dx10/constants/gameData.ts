@@ -233,7 +233,9 @@ export const GAME_MAPS: GameMap[] = [
         expReward: 500,
         drops: [
           { type: 'bits',  amount: 1000, chance: 1.00 },
-          { type: 'piece', id: 'piece_brasao_coragem', amount: 1, chance: 0.10 },
+          { type: 'piece', id: 'piece_brasao_coragem',   amount: 1, chance: 0.10 },
+          { type: 'piece', id: 'piece_brasao_esperanca', amount: 1, chance: 0.10 },
+          { type: 'piece', id: 'piece_brasao_amizade',   amount: 1, chance: 0.10 },
         ],
       },
     ],
@@ -261,7 +263,7 @@ export type EquipSlot = 'blusa' | 'calca' | 'sapato' | 'brasao' | 'digivice' | '
 export type TamerGender = 'M' | 'F' | 'N';
 
 export interface ElementBonus {
-  element: ElementId;
+  elements: ElementId[];
   percent: number;
 }
 
@@ -304,7 +306,9 @@ export const EQUIPMENT_ITEMS: EquipItem[] = [
   { id: 'sapato_botas',   name: 'Botas de Batalha',   slot: 'sapato',   rarity: 'RARE',      description: 'Botas robustas para batalhas intensas.',                            bonuses: { spd: 8, def: 6 } },
   { id: 'brasao_digital',  name: 'Brasão Digital',      slot: 'brasao',   rarity: 'COMMON',    description: 'Símbolo de um Tamer legítimo. Aumenta o HP do parceiro.',                           bonuses: { hp: 15 } },
   { id: 'brasao_elite',    name: 'Brasão de Elite',     slot: 'brasao',   rarity: 'EPIC',      description: 'Concedido apenas aos melhores Tamers do mundo digital.',                            bonuses: { hp: 35, mp: 20 } },
-  { id: 'brasao_coragem',  name: 'Brasão da Coragem',   slot: 'brasao',   rarity: 'LEGENDARY', description: 'O Brasão da Coragem de Tai. Aumenta em 20% todos os status de Digimon do tipo Fogo.', bonuses: {}, elementBonus: { element: 'FIRE', percent: 0.20 } },
+  { id: 'brasao_coragem',   name: 'Brasão da Coragem',   slot: 'brasao', rarity: 'LEGENDARY', description: 'O Brasão da Coragem de Tai. Aumenta em 20% todos os status de Digimon do tipo Fogo.',                          bonuses: {}, elementBonus: { elements: ['FIRE'],          percent: 0.20 } },
+  { id: 'brasao_esperanca', name: 'Brasão da Esperança', slot: 'brasao', rarity: 'LEGENDARY', description: 'O Brasão da Esperança de TK. Aumenta em 20% todos os status de Digimon do tipo Luz.',                           bonuses: {}, elementBonus: { elements: ['LIGHT'],         percent: 0.20 } },
+  { id: 'brasao_amizade',   name: 'Brasão da Amizade',   slot: 'brasao', rarity: 'LEGENDARY', description: 'O Brasão da Amizade de Matt. Aumenta em 20% todos os status de Digimon do tipo Água e Gelo.', bonuses: {}, elementBonus: { elements: ['WATER', 'ICE'], percent: 0.20 } },
   { id: 'digivice_d3',    name: 'Digivice D-3',       slot: 'digivice', rarity: 'COMMON',    description: 'Digivice padrão. Potencializa o espírito do parceiro.',             bonuses: { spt: 6 } },
   { id: 'digivice_x',    name: 'Digivice X',          slot: 'digivice', rarity: 'LEGENDARY', description: 'Versão X do Digivice. Poder muito além dos limites conhecidos.',    bonuses: { spt: 20, atk: 12, mp: 25 } },
   { id: 'pulseira_forca', name: 'Pulseira de Força',  slot: 'pulseira', rarity: 'COMMON',    description: 'Amplifica a força bruta do Digimon parceiro.',                      bonuses: { atk: 7 } },
@@ -451,6 +455,30 @@ export const CRAFT_RECIPES: CraftRecipe[] = [
     bitsCost: 0,
     resultItemId: 'brasao_coragem',
     resultItemName: 'Brasão da Coragem',
+    resultRarity: 'LEGENDARY',
+  },
+  {
+    pieceId: 'piece_brasao_esperanca',
+    pieceName: 'Fragmento da Esperança',
+    pieceDescription: 'Drop raro da masmorra do GulusGammamon. Necessário para forjar o lendário Brasão da Esperança.',
+    pieceIcon: 'sun',
+    pieceColor: '#eab308',
+    requiredCount: 50,
+    bitsCost: 0,
+    resultItemId: 'brasao_esperanca',
+    resultItemName: 'Brasão da Esperança',
+    resultRarity: 'LEGENDARY',
+  },
+  {
+    pieceId: 'piece_brasao_amizade',
+    pieceName: 'Fragmento da Amizade',
+    pieceDescription: 'Drop raro da masmorra do GulusGammamon. Necessário para forjar o lendário Brasão da Amizade.',
+    pieceIcon: 'users',
+    pieceColor: '#3b82f6',
+    requiredCount: 50,
+    bitsCost: 0,
+    resultItemId: 'brasao_amizade',
+    resultItemName: 'Brasão da Amizade',
     resultRarity: 'LEGENDARY',
   },
   // ── Acess Glacier drops: piece_gelo ──────────────────────────────────────

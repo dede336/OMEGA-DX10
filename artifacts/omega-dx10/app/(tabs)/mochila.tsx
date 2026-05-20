@@ -254,8 +254,8 @@ export default function MochilaScreen() {
 
               const itemImg = EQUIP_ITEM_IMAGES[item.id];
               const elemBonus = item.elementBonus;
-              const elemLabel = elemBonus ? ELEMENTS[elemBonus.element]?.label : null;
-              const elemColor = elemBonus ? ELEMENTS[elemBonus.element]?.color : null;
+              const elemLabel = elemBonus ? elemBonus.elements.map((e) => ELEMENTS[e]?.label).join(' & ') : null;
+              const elemColor = elemBonus ? ELEMENTS[elemBonus.elements[0]]?.color : null;
 
               return (
                 <TouchableOpacity
@@ -320,7 +320,9 @@ export default function MochilaScreen() {
       <View style={[styles.fragmentSummaryRow, { backgroundColor: colors.card, borderColor: colors.border }]}>
         {[
           { id: 'piece_coragem',        label: 'Coragem', icon: 'zap',      color: '#ef4444' },
-          { id: 'piece_brasao_coragem', label: 'Brasão',  icon: 'sun',      color: '#f97316' },
+          { id: 'piece_brasao_coragem',   label: 'Coragem', icon: 'sun',   color: '#f97316' },
+          { id: 'piece_brasao_esperanca', label: 'Esperança', icon: 'sun', color: '#eab308' },
+          { id: 'piece_brasao_amizade',   label: 'Amizade', icon: 'users', color: '#3b82f6' },
           { id: 'piece_gelo',           label: 'Gelo',    icon: 'droplet',  color: '#38bdf8' },
           { id: 'piece_caos',           label: 'Caos',    icon: 'cpu',      color: '#a855f7' },
           { id: 'piece_tecido',         label: 'Tecido',  icon: 'layers',   color: '#ec4899' },

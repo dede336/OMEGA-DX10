@@ -100,8 +100,9 @@ export default function BattleScreen() {
       Object.entries(item.bonuses).forEach(([k, v]) => {
         (equipBonuses.flat as Record<string, number>)[k] = ((equipBonuses.flat as Record<string, number>)[k] ?? 0) + (v ?? 0);
       });
-      if (item.elementBonus && !equipBonuses.elementPct) {
-        equipBonuses.elementPct = item.elementBonus;
+      if (item.elementBonus) {
+        if (!equipBonuses.elementBonuses) equipBonuses.elementBonuses = [];
+        equipBonuses.elementBonuses.push(item.elementBonus);
       }
     });
 
