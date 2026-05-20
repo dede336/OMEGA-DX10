@@ -137,7 +137,7 @@ export const CHARACTERS: Record<string, Character> = {
     attribute: 'VC',
     element: 'ICE',
     baseStats: { hp: 312, mp: 338, atk: 167, def: 121, spt: 124, spd: 131, apt: 72 },
-    description: 'A forma Mega do WereGarurumon. Um lobo metálico blindado com mísseis de gelo, considerado um dos Digimon mais poderosos do tipo Vacina.',
+    description: 'A forma Mega do WereGarurumon. Um lobo metálico blindado que domina os elementos gelo e água, disparando mísseis criogênicos devastadores. Considerado um dos Digimon Vacina mais poderosos.',
   },
   gulusGammamon: {
     id: 'gulusGammamon',
