@@ -81,7 +81,11 @@ function ClassicTabLayout() {
             isIOS ? (
               <SymbolView name="house" tintColor={color} size={22} />
             ) : (
-              <Feather name="home" size={22} color={color} />
+              <Image
+                source={require('../../assets/images/home-icon.png')}
+                style={{ width: 26, height: 26 }}
+                resizeMode="contain"
+              />
             ),
         }}
       />
