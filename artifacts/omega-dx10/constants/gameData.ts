@@ -121,6 +121,15 @@ export const CHARACTERS: Record<string, Character> = {
     baseStats: { hp: 233, mp: 260, atk: 132, def: 121, spt: 119, spd: 95, apt: 60 },
     description: 'O Lorde das Trevas. A forma Ultimate do Devimon, um vampiro Digimon do tipo Vírus com domínio sobre a escuridão e poderes de manipulação da mente.',
   },
+  vnonMyotismon: {
+    id: 'vnonMyotismon',
+    name: 'VenomMyotismon',
+    rarity: 'LEGENDARY',
+    attribute: 'VR',
+    element: 'DARK',
+    baseStats: { hp: 322, mp: 345, atk: 231, def: 182, spt: 186, spd: 163, apt: 66 },
+    description: 'A forma Mega corrompida do Myotismon. Consumido pelo veneno das trevas, VenomMyotismon é uma força destrutiva imparável do tipo Vírus, com poder devastador e brutalidade sem limites.',
+  },
   garurumon: {
     id: 'garurumon',
     name: 'Garurumon',
@@ -195,14 +204,15 @@ export const EVOLUTIONS: Record<string, { evolvesTo: string; requiredLevel: numb
   garurumon:    { evolvesTo: 'wereGarurumon',   requiredLevel: 35, label: 'WereGarurumon' },
   wereGarurumon:{ evolvesTo: 'metalGarurumon', requiredLevel: 52, label: 'MetalGarurumon' },
   demiDevimon:  { evolvesTo: 'devimon',     requiredLevel: 21, label: 'Devimon' },
-  devimon:      { evolvesTo: 'myotismon',   requiredLevel: 32, label: 'Myotismon' },
+  devimon:      { evolvesTo: 'myotismon',     requiredLevel: 32, label: 'Myotismon' },
+  myotismon:    { evolvesTo: 'vnonMyotismon', requiredLevel: 56, label: 'VenomMyotismon' },
 };
 
 // Characters that can be scanned (encountered as enemies in battle)
 export const SCANNABLE_CHARACTERS: string[] = ['agumon', 'gabumon', 'demiDevimon'];
 
 // Display order in the Codex (grouped by evolution line)
-export const CODEX_ORDER: string[] = ['agumon', 'greymon', 'metalGreymon', 'warGreymon', 'gabumon', 'garurumon', 'wereGarurumon', 'metalGarurumon', 'demiDevimon', 'devimon', 'myotismon', 'gulusGammamon'];
+export const CODEX_ORDER: string[] = ['agumon', 'greymon', 'metalGreymon', 'warGreymon', 'gabumon', 'garurumon', 'wereGarurumon', 'metalGarurumon', 'demiDevimon', 'devimon', 'myotismon', 'vnonMyotismon', 'gulusGammamon'];
 
 // ─── Maps & Stages ─────────────────────────────────────────────────────────────
 export const GAME_MAPS: GameMap[] = [
