@@ -117,20 +117,40 @@ export const CHARACTERS: Record<string, Character> = {
     baseStats: { hp: 170, mp: 165, atk: 115, def: 92, spt: 72, spd: 80, apt: 35 },
     description: 'A poderosa evolução do Agumon. Um Digimon de nível Champion do tipo Vacina com força de fogo devastadora.',
   },
+  metalGreymon: {
+    id: 'metalGreymon',
+    name: 'MetalGreymon',
+    rarity: 'EPIC',
+    attribute: 'VC',
+    element: 'FIRE',
+    baseStats: { hp: 215, mp: 210, atk: 137, def: 117, spt: 94, spd: 100, apt: 51 },
+    description: 'A forma Ultimate do Greymon. Metade de seu corpo foi reconstruído com metal cibernético, tornando-o um dos Digimon mais poderosos do tipo Vacina.',
+  },
+  warGreymon: {
+    id: 'warGreymon',
+    name: 'WarGreymon',
+    rarity: 'LEGENDARY',
+    attribute: 'VC',
+    element: 'FIRE',
+    baseStats: { hp: 320, mp: 335, atk: 171, def: 146, spt: 126, spd: 122, apt: 72 },
+    description: 'O ápice da evolução do Agumon. Guerreiro lendário do tipo Vacina revestido por armadura Dramon Destroyer, capaz de destruir qualquer Dragonoid.',
+  },
 };
 
 // ─── Evolution paths ──────────────────────────────────────────────────────────
 export const EVOLUTIONS: Record<string, { evolvesTo: string; requiredLevel: number; label: string }> = {
-  agumon:    { evolvesTo: 'greymon',      requiredLevel: 16, label: 'Greymon' },
-  gabumon:   { evolvesTo: 'garurumon',    requiredLevel: 19, label: 'Garurumon' },
-  garurumon: { evolvesTo: 'wereGarurumon', requiredLevel: 35, label: 'WereGarurumon' },
+  agumon:       { evolvesTo: 'greymon',       requiredLevel: 16, label: 'Greymon' },
+  greymon:      { evolvesTo: 'metalGreymon',  requiredLevel: 34, label: 'MetalGreymon' },
+  metalGreymon: { evolvesTo: 'warGreymon',    requiredLevel: 52, label: 'WarGreymon' },
+  gabumon:      { evolvesTo: 'garurumon',     requiredLevel: 19, label: 'Garurumon' },
+  garurumon:    { evolvesTo: 'wereGarurumon', requiredLevel: 35, label: 'WereGarurumon' },
 };
 
 // Characters that can be scanned (encountered as enemies in battle)
 export const SCANNABLE_CHARACTERS: string[] = ['agumon', 'gabumon', 'demiDevimon'];
 
 // Display order in the Codex (grouped by evolution line)
-export const CODEX_ORDER: string[] = ['agumon', 'greymon', 'gabumon', 'garurumon', 'wereGarurumon', 'demiDevimon'];
+export const CODEX_ORDER: string[] = ['agumon', 'greymon', 'metalGreymon', 'warGreymon', 'gabumon', 'garurumon', 'wereGarurumon', 'demiDevimon'];
 
 // ─── Maps & Stages ─────────────────────────────────────────────────────────────
 export const GAME_MAPS: GameMap[] = [
