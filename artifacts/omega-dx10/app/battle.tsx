@@ -104,6 +104,14 @@ export default function BattleScreen() {
         if (!equipBonuses.elementBonuses) equipBonuses.elementBonuses = [];
         equipBonuses.elementBonuses.push(item.elementBonus);
       }
+      if (item.percentBonuses) {
+        if (!equipBonuses.percentBonuses) equipBonuses.percentBonuses = {};
+        Object.entries(item.percentBonuses).forEach(([k, v]) => {
+          if (v !== undefined) {
+            (equipBonuses.percentBonuses as Record<string, number>)[k] = ((equipBonuses.percentBonuses as Record<string, number>)[k] ?? 0) + v;
+          }
+        });
+      }
     });
 
     const pFighter = buildFighter(pChar.name, pChar.attribute, pChar.element, pChar.baseStats, owned.level, equipBonuses);

@@ -274,6 +274,7 @@ export interface EquipItem {
   rarity: RarityId;
   description: string;
   bonuses: Partial<BaseStats>;
+  percentBonuses?: Partial<BaseStats>;
   elementBonus?: ElementBonus;
 }
 
@@ -319,6 +320,10 @@ export const EQUIPMENT_ITEMS: EquipItem[] = [
   { id: 'jaqueta_artesanal', name: 'Jaqueta Artesanal', slot: 'blusa',  rarity: 'RARE', description: 'Jaqueta costurada à mão com tecido digital colorido. Equilibra ataque e defesa.', bonuses: { atk: 8, def: 7 } },
   { id: 'calca_artesanal',   name: 'Calça Artesanal',   slot: 'calca',  rarity: 'RARE', description: 'Calça costurada com agulha de precisão digital. Alta resistência e agilidade.',    bonuses: { def: 10, spd: 4 } },
   { id: 'sapato_artesanal',  name: 'Tênis Artesanal',   slot: 'sapato', rarity: 'RARE', description: 'Tênis montado com linha digital reforçada. Velocidade e ataque aprimorados.',        bonuses: { spd: 10, atk: 3 } },
+  // ── Costura Premium (multi-material crafts) ───────────────────────────────
+  { id: 'blusa_social',      name: 'Blusa Social',       slot: 'blusa',  rarity: 'RARE', description: 'Blusa social costurada com materiais premium. Aumenta em 2% o ATK e HP do Digimon.', bonuses: {}, percentBonuses: { atk: 0.02, hp: 0.02 } },
+  { id: 'bermuda_poliester', name: 'Bermuda de Poliéster', slot: 'calca', rarity: 'RARE', description: 'Bermuda leve de poliéster digital. Aumenta em 3% a DEF do Digimon.', bonuses: {}, percentBonuses: { def: 0.03 } },
+  { id: 'tenis_corrida',     name: 'Tênis de Corrida',   slot: 'sapato', rarity: 'RARE', description: 'Tênis aerodinâmico de corrida. Aumenta em 3% a SPD do Digimon.',                    bonuses: {}, percentBonuses: { spd: 0.03 } },
 ];
 
 export const EQUIP_SLOTS_ORDER: EquipSlot[] = ['blusa', 'calca', 'sapato', 'brasao', 'digivice', 'pulseira', 'oculos'];
@@ -328,6 +333,14 @@ export const DEFAULT_INVENTORY: string[] = [
 ];
 
 // ─── Crafting / Pieces ─────────────────────────────────────────────────────────
+export interface PieceRequirement {
+  pieceId: string;
+  count: number;
+  pieceName: string;
+  pieceIcon: string;
+  pieceColor: string;
+}
+
 export interface CraftRecipe {
   pieceId: string;
   pieceName: string;
@@ -335,6 +348,7 @@ export interface CraftRecipe {
   pieceIcon: string;
   pieceColor: string;
   requiredCount: number;
+  pieceRequirements?: PieceRequirement[];
   bitsCost?: number;
   resultItemId: string;
   resultItemName: string;
@@ -553,6 +567,58 @@ export const CRAFT_RECIPES: CraftRecipe[] = [
     bitsCost: 0,
     resultItemId: 'sapato_artesanal',
     resultItemName: 'Tênis Artesanal',
+    resultRarity: 'RARE',
+  },
+  // ── Costura Premium: multi-material recipes ──────────────────────────────
+  {
+    pieceId: 'piece_tecido',
+    pieceName: 'Tecido Colorido',
+    pieceDescription: 'Receita premium de múltiplos materiais. Forja a Blusa Social com bônus percentuais.',
+    pieceIcon: 'layers',
+    pieceColor: '#ec4899',
+    requiredCount: 20,
+    pieceRequirements: [
+      { pieceId: 'piece_tecido', count: 20, pieceName: 'Tecido Colorido', pieceIcon: 'layers', pieceColor: '#ec4899' },
+      { pieceId: 'piece_linha',  count: 30, pieceName: 'Linha Colorida',  pieceIcon: 'wind',   pieceColor: '#06b6d4' },
+      { pieceId: 'piece_agulha', count: 20, pieceName: 'Agulha Média',    pieceIcon: 'edit-2', pieceColor: '#8b5cf6' },
+    ],
+    bitsCost: 10000,
+    resultItemId: 'blusa_social',
+    resultItemName: 'Blusa Social',
+    resultRarity: 'RARE',
+  },
+  {
+    pieceId: 'piece_tecido',
+    pieceName: 'Tecido Colorido',
+    pieceDescription: 'Receita premium de múltiplos materiais. Forja a Bermuda de Poliéster com bônus percentuais.',
+    pieceIcon: 'layers',
+    pieceColor: '#ec4899',
+    requiredCount: 20,
+    pieceRequirements: [
+      { pieceId: 'piece_tecido', count: 20, pieceName: 'Tecido Colorido', pieceIcon: 'layers', pieceColor: '#ec4899' },
+      { pieceId: 'piece_linha',  count: 30, pieceName: 'Linha Colorida',  pieceIcon: 'wind',   pieceColor: '#06b6d4' },
+      { pieceId: 'piece_agulha', count: 20, pieceName: 'Agulha Média',    pieceIcon: 'edit-2', pieceColor: '#8b5cf6' },
+    ],
+    bitsCost: 10000,
+    resultItemId: 'bermuda_poliester',
+    resultItemName: 'Bermuda de Poliéster',
+    resultRarity: 'RARE',
+  },
+  {
+    pieceId: 'piece_tecido',
+    pieceName: 'Tecido Colorido',
+    pieceDescription: 'Receita premium de múltiplos materiais. Forja o Tênis de Corrida com bônus percentuais.',
+    pieceIcon: 'layers',
+    pieceColor: '#ec4899',
+    requiredCount: 20,
+    pieceRequirements: [
+      { pieceId: 'piece_tecido', count: 20, pieceName: 'Tecido Colorido', pieceIcon: 'layers', pieceColor: '#ec4899' },
+      { pieceId: 'piece_linha',  count: 30, pieceName: 'Linha Colorida',  pieceIcon: 'wind',   pieceColor: '#06b6d4' },
+      { pieceId: 'piece_agulha', count: 20, pieceName: 'Agulha Média',    pieceIcon: 'edit-2', pieceColor: '#8b5cf6' },
+    ],
+    bitsCost: 10000,
+    resultItemId: 'tenis_corrida',
+    resultItemName: 'Tênis de Corrida',
     resultRarity: 'RARE',
   },
   // ── Chaos Brain drops: piece_caos ────────────────────────────────────────

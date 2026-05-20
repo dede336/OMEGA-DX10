@@ -248,9 +248,15 @@ export default function MochilaScreen() {
             slotItems.map((item) => {
               const isEquipped = equippedItems[selectedSlot] === item.id;
               const rc = RARITY_COLORS[item.rarity];
-              const bonusStr = Object.entries(item.bonuses)
+              const flatBonusStr = Object.entries(item.bonuses)
                 .map(([k, v]) => `+${v} ${k.toUpperCase()}`)
                 .join('  ');
+              const pctBonusStr = item.percentBonuses
+                ? Object.entries(item.percentBonuses)
+                    .map(([k, v]) => `+${Math.round((v ?? 0) * 100)}% ${k.toUpperCase()}`)
+                    .join('  ')
+                : '';
+              const bonusStr = [flatBonusStr, pctBonusStr].filter(Boolean).join('  ');
 
               const itemImg = EQUIP_ITEM_IMAGES[item.id];
               const elemBonus = item.elementBonus;
@@ -341,14 +347,35 @@ export default function MochilaScreen() {
 
       {/* Recipe cards */}
       {CRAFT_RECIPES.map((recipe, idx) => {
-        const count = pieces[recipe.pieceId] ?? 0;
-        const hasEnoughPieces = count >= recipe.requiredCount;
-        const hasEnoughBits = bits >= (recipe.bitsCost ?? 0);
+        const isMulti = !!(recipe.pieceRequirements && recipe.pieceRequirements.length > 0);
         const alreadyCrafted = inventory.includes(recipe.resultItemId);
+        const hasEnoughBits = bits >= (recipe.bitsCost ?? 0);
+
+        let hasEnoughPieces: boolean;
+        let progress: number;
+        let singleCount = 0;
+
+        if (isMulti) {
+          hasEnoughPieces = recipe.pieceRequirements!.every((r) => (pieces[r.pieceId] ?? 0) >= r.count);
+          progress = Math.min(...recipe.pieceRequirements!.map((r) => Math.min(1, (pieces[r.pieceId] ?? 0) / r.count)));
+        } else {
+          singleCount = pieces[recipe.pieceId] ?? 0;
+          hasEnoughPieces = singleCount >= recipe.requiredCount;
+          progress = Math.min(1, singleCount / recipe.requiredCount);
+        }
+
         const canCraft = hasEnoughPieces && hasEnoughBits && !alreadyCrafted;
-        const progress = Math.min(1, count / recipe.requiredCount);
         const rarityColor = RARITY_COLORS[recipe.resultRarity];
         const rarityLabel = RARITY_LABELS[recipe.resultRarity];
+
+        let btnLabel: string;
+        if (canCraft) {
+          btnLabel = `Forjar ${recipe.resultItemName}`;
+        } else if (!hasEnoughPieces) {
+          btnLabel = isMulti ? 'Faltam materiais' : `Faltam ${recipe.requiredCount - singleCount} fragmentos`;
+        } else {
+          btnLabel = `Faltam ${((recipe.bitsCost ?? 0) - bits).toLocaleString()} Bits`;
+        }
 
         return (
           <View
@@ -372,16 +399,33 @@ export default function MochilaScreen() {
 
             {/* Requirements */}
             <View style={styles.craftReqRow}>
-              {/* Pieces */}
-              <View style={[styles.craftReqChip, {
-                backgroundColor: hasEnoughPieces ? recipe.pieceColor + '18' : colors.background,
-                borderColor: hasEnoughPieces ? recipe.pieceColor : colors.border,
-              }]}>
-                <Feather name={recipe.pieceIcon as any} size={12} color={hasEnoughPieces ? recipe.pieceColor : colors.mutedForeground} />
-                <Text style={[styles.craftReqText, { color: hasEnoughPieces ? recipe.pieceColor : colors.mutedForeground }]}>
-                  {count}/{recipe.requiredCount} {recipe.pieceName.split(' ')[1]}
-                </Text>
-              </View>
+              {isMulti ? (
+                recipe.pieceRequirements!.map((req) => {
+                  const cnt = pieces[req.pieceId] ?? 0;
+                  const met = cnt >= req.count;
+                  return (
+                    <View key={req.pieceId} style={[styles.craftReqChip, {
+                      backgroundColor: met ? req.pieceColor + '18' : colors.background,
+                      borderColor: met ? req.pieceColor : colors.border,
+                    }]}>
+                      <Feather name={req.pieceIcon as any} size={12} color={met ? req.pieceColor : colors.mutedForeground} />
+                      <Text style={[styles.craftReqText, { color: met ? req.pieceColor : colors.mutedForeground }]}>
+                        {cnt}/{req.count} {req.pieceName.split(' ')[0]}
+                      </Text>
+                    </View>
+                  );
+                })
+              ) : (
+                <View style={[styles.craftReqChip, {
+                  backgroundColor: hasEnoughPieces ? recipe.pieceColor + '18' : colors.background,
+                  borderColor: hasEnoughPieces ? recipe.pieceColor : colors.border,
+                }]}>
+                  <Feather name={recipe.pieceIcon as any} size={12} color={hasEnoughPieces ? recipe.pieceColor : colors.mutedForeground} />
+                  <Text style={[styles.craftReqText, { color: hasEnoughPieces ? recipe.pieceColor : colors.mutedForeground }]}>
+                    {singleCount}/{recipe.requiredCount} {recipe.pieceName.split(' ')[1]}
+                  </Text>
+                </View>
+              )}
               {/* Bits cost */}
               {(recipe.bitsCost ?? 0) > 0 && (
                 <View style={[styles.craftReqChip, {
@@ -401,7 +445,11 @@ export default function MochilaScreen() {
               <View style={[styles.craftProgressTrack, { backgroundColor: colors.border }]}>
                 <View style={[styles.craftProgressFill, { width: `${progress * 100}%` as any, backgroundColor: recipe.pieceColor }]} />
               </View>
-              <Text style={[styles.craftProgressLabel, { color: recipe.pieceColor }]}>{count}/{recipe.requiredCount}</Text>
+              {isMulti ? (
+                <Text style={[styles.craftProgressLabel, { color: recipe.pieceColor }]}>{Math.round(progress * 100)}%</Text>
+              ) : (
+                <Text style={[styles.craftProgressLabel, { color: recipe.pieceColor }]}>{singleCount}/{recipe.requiredCount}</Text>
+              )}
             </View>
 
             {/* Button */}
@@ -423,7 +471,7 @@ export default function MochilaScreen() {
               >
                 <Feather name="tool" size={14} color={canCraft ? rarityColor : colors.mutedForeground} />
                 <Text style={[styles.craftBtnText, { color: canCraft ? rarityColor : colors.mutedForeground }]}>
-                  {canCraft ? `Forjar ${recipe.resultItemName}` : !hasEnoughPieces ? `Faltam ${recipe.requiredCount - count} fragmentos` : `Faltam ${((recipe.bitsCost ?? 0) - bits).toLocaleString()} Bits`}
+                  {btnLabel}
                 </Text>
               </TouchableOpacity>
             )}

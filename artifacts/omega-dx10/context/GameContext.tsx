@@ -242,14 +242,28 @@ export function GameProvider({ children }: { children: React.ReactNode }) {
   const craftItem = useCallback((recipe: CraftRecipe): boolean => {
     let success = false;
     setState((prev) => {
-      const current = prev.pieces[recipe.pieceId] ?? 0;
-      if (current < recipe.requiredCount) return prev;
-      if ((recipe.bitsCost ?? 0) > 0 && prev.bits < (recipe.bitsCost ?? 0)) return prev;
       if (prev.inventory.includes(recipe.resultItemId)) return prev;
+      if ((recipe.bitsCost ?? 0) > 0 && prev.bits < (recipe.bitsCost ?? 0)) return prev;
+
+      const newPieces = { ...prev.pieces };
+
+      if (recipe.pieceRequirements && recipe.pieceRequirements.length > 0) {
+        for (const req of recipe.pieceRequirements) {
+          if ((prev.pieces[req.pieceId] ?? 0) < req.count) return prev;
+        }
+        for (const req of recipe.pieceRequirements) {
+          newPieces[req.pieceId] = (newPieces[req.pieceId] ?? 0) - req.count;
+        }
+      } else {
+        const current = prev.pieces[recipe.pieceId] ?? 0;
+        if (current < recipe.requiredCount) return prev;
+        newPieces[recipe.pieceId] = current - recipe.requiredCount;
+      }
+
       success = true;
       return {
         ...prev,
-        pieces: { ...prev.pieces, [recipe.pieceId]: current - recipe.requiredCount },
+        pieces: newPieces,
         bits: prev.bits - (recipe.bitsCost ?? 0),
         inventory: [...prev.inventory, recipe.resultItemId],
       };

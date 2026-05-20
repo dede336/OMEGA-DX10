@@ -91,6 +91,7 @@ export function whoGoesFirst(player: BattleFighter, enemy: BattleFighter): 'play
 export interface EquipBonuses {
   flat: Partial<BaseStats>;
   elementBonuses?: { elements: ElementId[]; percent: number }[];
+  percentBonuses?: Partial<BaseStats>;
 }
 
 export function buildFighter(
@@ -131,6 +132,19 @@ export function buildFighter(
           };
         }
       }
+    }
+
+    const { percentBonuses } = equipBonuses;
+    if (percentBonuses) {
+      stats = {
+        hp:  percentBonuses.hp  ? Math.floor(stats.hp  * (1 + percentBonuses.hp))  : stats.hp,
+        mp:  percentBonuses.mp  ? Math.floor(stats.mp  * (1 + percentBonuses.mp))  : stats.mp,
+        atk: percentBonuses.atk ? Math.floor(stats.atk * (1 + percentBonuses.atk)) : stats.atk,
+        def: percentBonuses.def ? Math.floor(stats.def * (1 + percentBonuses.def)) : stats.def,
+        spt: percentBonuses.spt ? Math.floor(stats.spt * (1 + percentBonuses.spt)) : stats.spt,
+        spd: percentBonuses.spd ? Math.floor(stats.spd * (1 + percentBonuses.spd)) : stats.spd,
+        apt: percentBonuses.apt ? Math.floor(stats.apt * (1 + percentBonuses.apt)) : stats.apt,
+      };
     }
   }
 
