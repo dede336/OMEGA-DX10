@@ -27,8 +27,8 @@ export default function CraftScreen() {
   const insets = useSafeAreaInsets();
   const { pieces, bits, inventory, craftItem } = useGame();
 
-  const topPad = Platform.OS === 'web' ? 67 : insets.top;
-  const botPad = 100 + (Platform.OS === 'web' ? 34 : insets.bottom);
+  const topPad = 0;
+  const botPad = insets.bottom + 20;
 
   return (
     <ScrollView

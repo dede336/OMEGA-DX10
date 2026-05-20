@@ -21,12 +21,12 @@ export default function HomeScreen() {
   const scaled = char && selectedCharacter ? getScaledStats(char.baseStats, selectedCharacter.level) : null;
   const attrData = char ? ATTRIBUTES[char.attribute] : null;
 
-  const topPad = Platform.OS === 'web' ? 67 : insets.top;
+  const topPad = 0;
 
   return (
     <ScrollView
       style={[styles.container, { backgroundColor: colors.background }]}
-      contentContainerStyle={[styles.content, { paddingTop: topPad + 20, paddingBottom: 100 + (Platform.OS === 'web' ? 34 : insets.bottom) }]}
+      contentContainerStyle={[styles.content, { paddingTop: topPad + 20, paddingBottom: insets.bottom + 20 }]}
       showsVerticalScrollIndicator={false}
     >
       {/* Header */}

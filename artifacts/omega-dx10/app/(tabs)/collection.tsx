@@ -20,7 +20,7 @@ export default function CollectionScreen() {
   const insets = useSafeAreaInsets();
   const { collection, selectedCharacter, setSelectedCharacter, scanProgress, createFromScan, evolveDigimon } = useGame();
 
-  const topPad = Platform.OS === 'web' ? 67 : insets.top;
+  const topPad = 0;
   const bottomPad = Platform.OS === 'web' ? 34 : insets.bottom;
 
   const ownedCount = collection.length;
@@ -36,7 +36,7 @@ export default function CollectionScreen() {
       </View>
 
       <ScrollView
-        contentContainerStyle={[styles.list, { paddingBottom: 100 + bottomPad }]}
+        contentContainerStyle={[styles.list, { paddingBottom: bottomPad + 20 }]}
         showsVerticalScrollIndicator={false}
       >
         {CODEX_ORDER.map((charId) => {

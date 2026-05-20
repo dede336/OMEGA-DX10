@@ -14,7 +14,7 @@ export default function MapScreen() {
   const { isStageCleared, isMapUnlocked, selectedCharacter, collection, totalPlayerLevel } = useGame();
   const [expandedMap, setExpandedMap] = useState<string>('map_forest');
 
-  const topPad = Platform.OS === 'web' ? 67 : insets.top;
+  const topPad = 0;
   const bottomPad = Platform.OS === 'web' ? 34 : insets.bottom;
 
   function handleStagePress(mapId: string, stageIndex: number) {
@@ -35,7 +35,7 @@ export default function MapScreen() {
       </View>
 
       <ScrollView
-        contentContainerStyle={[styles.content, { paddingBottom: 100 + bottomPad }]}
+        contentContainerStyle={[styles.content, { paddingBottom: bottomPad + 20 }]}
         showsVerticalScrollIndicator={false}
       >
         {GAME_MAPS.map((map) => {

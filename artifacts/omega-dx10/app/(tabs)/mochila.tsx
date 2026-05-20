@@ -35,8 +35,8 @@ export default function MochilaScreen() {
   const [editingName, setEditingName] = useState(false);
   const [nameInput, setNameInput] = useState(playerName);
 
-  const topPad = Platform.OS === 'web' ? 67 : insets.top;
-  const botPad = 100 + (Platform.OS === 'web' ? 34 : insets.bottom);
+  const topPad = 0;
+  const botPad = insets.bottom + 20;
 
   const totalBonus = game.totalEquipBonus();
   const bonusEntries = Object.entries(totalBonus).filter(([, v]) => (v ?? 0) > 0);
