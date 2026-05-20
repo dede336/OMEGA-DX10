@@ -1,0 +1,14 @@
+uploads = []
+outputs = []
+
+[[generated]]
+id = "5tsK0Tso73Z7cTH0GGdGN"
+uri = "file://artifacts/omega-dx10/assets/images/icon.png"
+type = "image"
+title = "generated_image"
+
+[[generated]]
+id = "AybEf99LibTR2HiJpi_70"
+uri = "file://artifacts/omega-dx10/assets/images/map_bg.png"
+type = "image"
+title = "generated_image"

@@ -1,0 +1,229 @@
+import React from 'react';
+import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
+import { Feather } from '@expo/vector-icons';
+import { useColors } from '@/hooks/useColors';
+import { AttributeId, ElementId, ATTRIBUTES, ELEMENTS, RARITY_COLORS, RARITY_LABELS, RarityId, BaseStats } from '@/constants/gameData';
+import { OwnedCharacter } from '@/context/GameContext';
+import { CHARACTERS, expToNextLevel, getScaledStats } from '@/constants/gameData';
+
+// ─── AttributeBadge ────────────────────────────────────────────────────────────
+export function AttributeBadge({ attr }: { attr: AttributeId }) {
+  const data = ATTRIBUTES[attr];
+  return (
+    <View style={[badgeStyles.badge, { backgroundColor: data.color + '33', borderColor: data.color }]}>
+      <Text style={[badgeStyles.text, { color: data.color }]}>{data.abbr}</Text>
+    </View>
+  );
+}
+
+// ─── ElementBadge ──────────────────────────────────────────────────────────────
+export function ElementBadge({ elem }: { elem: ElementId }) {
+  const data = ELEMENTS[elem];
+  return (
+    <View style={[badgeStyles.badge, { backgroundColor: data.color + '33', borderColor: data.color }]}>
+      <Text style={[badgeStyles.text, { color: data.color }]}>{data.label}</Text>
+    </View>
+  );
+}
+
+const badgeStyles = StyleSheet.create({
+  badge: {
+    paddingHorizontal: 8,
+    paddingVertical: 3,
+    borderRadius: 6,
+    borderWidth: 1,
+  },
+  text: {
+    fontSize: 11,
+    fontWeight: '700' as const,
+    letterSpacing: 0.5,
+  },
+});
+
+// ─── StatBar ───────────────────────────────────────────────────────────────────
+export function StatBar({ label, value, max, color }: { label: string; value: number; max: number; color: string }) {
+  const pct = Math.min(1, value / max);
+  return (
+    <View style={statStyles.row}>
+      <Text style={statStyles.label}>{label}</Text>
+      <View style={statStyles.track}>
+        <View style={[statStyles.fill, { width: `${pct * 100}%` as any, backgroundColor: color }]} />
+      </View>
+      <Text style={statStyles.value}>{value}</Text>
+    </View>
+  );
+}
+
+const statStyles = StyleSheet.create({
+  row: { flexDirection: 'row', alignItems: 'center', marginBottom: 6 },
+  label: { width: 40, fontSize: 11, color: '#64748b', fontWeight: '600' as const },
+  track: { flex: 1, height: 6, backgroundColor: '#1e3a5f', borderRadius: 3, overflow: 'hidden', marginHorizontal: 8 },
+  fill: { height: '100%', borderRadius: 3 },
+  value: { width: 36, fontSize: 12, color: '#e2e8f0', fontWeight: '700' as const, textAlign: 'right' },
+});
+
+// ─── CharacterCard ─────────────────────────────────────────────────────────────
+interface CharacterCardProps {
+  owned: OwnedCharacter;
+  onPress?: () => void;
+  isSelected?: boolean;
+  compact?: boolean;
+}
+
+export function CharacterCard({ owned, onPress, isSelected, compact }: CharacterCardProps) {
+  const colors = useColors();
+  const char = CHARACTERS[owned.characterId];
+  if (!char) return null;
+
+  const scaled = getScaledStats(char.baseStats, owned.level);
+  const expNeeded = expToNextLevel(owned.level);
+  const expPct = Math.min(1, owned.exp / expNeeded);
+  const rarityColor = RARITY_COLORS[char.rarity];
+  const attrData = ATTRIBUTES[char.attribute];
+  const elemData = ELEMENTS[char.element];
+
+  if (compact) {
+    return (
+      <TouchableOpacity
+        onPress={onPress}
+        activeOpacity={0.75}
+        style={[
+          cardStyles.compact,
+          { backgroundColor: colors.card, borderColor: isSelected ? colors.primary : colors.border },
+        ]}
+      >
+        <View style={[cardStyles.compactAvatar, { backgroundColor: attrData.color + '22', borderColor: attrData.color }]}>
+          <Feather name="zap" size={24} color={attrData.color} />
+        </View>
+        <Text style={[cardStyles.compactName, { color: colors.foreground }]} numberOfLines={1}>{char.name}</Text>
+        <Text style={[cardStyles.compactLevel, { color: colors.primary }]}>Lv {owned.level}</Text>
+        {isSelected && <View style={[cardStyles.selectedDot, { backgroundColor: colors.primary }]} />}
+      </TouchableOpacity>
+    );
+  }
+
+  return (
+    <TouchableOpacity
+      onPress={onPress}
+      activeOpacity={0.8}
+      style={[
+        cardStyles.card,
+        { backgroundColor: colors.card, borderColor: isSelected ? colors.primary : colors.border },
+      ]}
+    >
+      <View style={[cardStyles.topAccent, { backgroundColor: rarityColor }]} />
+      <View style={cardStyles.header}>
+        <View style={[cardStyles.avatar, { backgroundColor: attrData.color + '22', borderColor: attrData.color }]}>
+          <Feather name="zap" size={36} color={attrData.color} />
+        </View>
+        <View style={cardStyles.headerInfo}>
+          <Text style={[cardStyles.name, { color: colors.foreground }]}>{char.name}</Text>
+          <Text style={[cardStyles.rarity, { color: rarityColor }]}>{RARITY_LABELS[char.rarity]}</Text>
+          <View style={cardStyles.badges}>
+            <AttributeBadge attr={char.attribute} />
+            <View style={{ width: 6 }} />
+            <ElementBadge elem={char.element} />
+          </View>
+        </View>
+        <View style={cardStyles.levelBox}>
+          <Text style={[cardStyles.levelLabel, { color: colors.mutedForeground }]}>LV</Text>
+          <Text style={[cardStyles.levelNum, { color: colors.primary }]}>{owned.level}</Text>
+        </View>
+      </View>
+
+      <View style={[cardStyles.divider, { backgroundColor: colors.border }]} />
+
+      <View style={cardStyles.stats}>
+        <StatBar label="HP"  value={scaled.hp}  max={300} color="#22c55e" />
+        <StatBar label="ATK" value={scaled.atk} max={200} color="#ef4444" />
+        <StatBar label="DEF" value={scaled.def} max={200} color="#3b82f6" />
+        <StatBar label="SPT" value={scaled.spt} max={200} color="#a855f7" />
+        <StatBar label="SPD" value={scaled.spd} max={150} color="#facc15" />
+      </View>
+
+      <View style={cardStyles.expRow}>
+        <Text style={[cardStyles.expLabel, { color: colors.mutedForeground }]}>EXP</Text>
+        <View style={[cardStyles.expTrack, { backgroundColor: colors.border }]}>
+          <View style={[cardStyles.expFill, { width: `${expPct * 100}%` as any, backgroundColor: colors.primary }]} />
+        </View>
+        <Text style={[cardStyles.expText, { color: colors.mutedForeground }]}>{owned.exp}/{expNeeded}</Text>
+      </View>
+    </TouchableOpacity>
+  );
+}
+
+const cardStyles = StyleSheet.create({
+  card: {
+    borderRadius: 16,
+    borderWidth: 1,
+    overflow: 'hidden',
+    marginBottom: 14,
+  },
+  topAccent: { height: 3, width: '100%' },
+  header: { flexDirection: 'row', alignItems: 'center', padding: 16 },
+  avatar: {
+    width: 72,
+    height: 72,
+    borderRadius: 36,
+    borderWidth: 2,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginRight: 14,
+  },
+  headerInfo: { flex: 1 },
+  name: { fontSize: 20, fontWeight: '700' as const, marginBottom: 2 },
+  rarity: { fontSize: 12, fontWeight: '600' as const, marginBottom: 8 },
+  badges: { flexDirection: 'row', flexWrap: 'wrap', gap: 6 },
+  levelBox: { alignItems: 'center' },
+  levelLabel: { fontSize: 10, fontWeight: '600' as const },
+  levelNum: { fontSize: 28, fontWeight: '800' as const },
+  divider: { height: 1, marginHorizontal: 16 },
+  stats: { padding: 16, paddingBottom: 8 },
+  expRow: { flexDirection: 'row', alignItems: 'center', paddingHorizontal: 16, paddingBottom: 14, gap: 8 },
+  expLabel: { fontSize: 11, fontWeight: '600' as const, width: 30 },
+  expTrack: { flex: 1, height: 4, borderRadius: 2, overflow: 'hidden' },
+  expFill: { height: '100%', borderRadius: 2 },
+  expText: { fontSize: 10, width: 60, textAlign: 'right' },
+  // Compact
+  compact: {
+    width: 90,
+    borderRadius: 12,
+    borderWidth: 1.5,
+    alignItems: 'center',
+    padding: 10,
+    marginRight: 10,
+  },
+  compactAvatar: {
+    width: 48,
+    height: 48,
+    borderRadius: 24,
+    borderWidth: 1.5,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginBottom: 6,
+  },
+  compactName: { fontSize: 12, fontWeight: '700' as const, textAlign: 'center', marginBottom: 2 },
+  compactLevel: { fontSize: 11, fontWeight: '600' as const },
+  selectedDot: { width: 6, height: 6, borderRadius: 3, marginTop: 4 },
+});
+
+// ─── HPBar ─────────────────────────────────────────────────────────────────────
+export function HPBar({ current, max, color }: { current: number; max: number; color: string }) {
+  const pct = Math.max(0, Math.min(1, current / max));
+  const barColor = pct > 0.5 ? '#22c55e' : pct > 0.25 ? '#facc15' : '#ef4444';
+  return (
+    <View style={hpStyles.container}>
+      <View style={[hpStyles.track, { borderColor: color + '44' }]}>
+        <View style={[hpStyles.fill, { width: `${pct * 100}%` as any, backgroundColor: barColor }]} />
+      </View>
+      <Text style={[hpStyles.text, { color }]}>{current}/{max}</Text>
+    </View>
+  );
+}
+
+const hpStyles = StyleSheet.create({
+  container: { width: '100%', gap: 4 },
+  track: { height: 10, backgroundColor: '#1e3a5f', borderRadius: 5, borderWidth: 1, overflow: 'hidden' },
+  fill: { height: '100%', borderRadius: 5 },
+  text: { fontSize: 12, fontWeight: '700' as const, textAlign: 'center' },
+});
