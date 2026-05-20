@@ -112,6 +112,15 @@ export const CHARACTERS: Record<string, Character> = {
     baseStats: { hp: 166, mp: 170, atk: 108, def: 82, spt: 92, spd: 79, apt: 48 },
     description: 'O Anjo das Trevas. A forma Champion do DemiDevimon, um Digimon do tipo Vírus com poderes sombrios devastadores e asas negras imponentes.',
   },
+  myotismon: {
+    id: 'myotismon',
+    name: 'Myotismon',
+    rarity: 'EPIC',
+    attribute: 'VR',
+    element: 'DARK',
+    baseStats: { hp: 233, mp: 260, atk: 132, def: 121, spt: 119, spd: 95, apt: 60 },
+    description: 'O Lorde das Trevas. A forma Ultimate do Devimon, um vampiro Digimon do tipo Vírus com domínio sobre a escuridão e poderes de manipulação da mente.',
+  },
   garurumon: {
     id: 'garurumon',
     name: 'Garurumon',
@@ -185,14 +194,15 @@ export const EVOLUTIONS: Record<string, { evolvesTo: string; requiredLevel: numb
   gabumon:      { evolvesTo: 'garurumon',     requiredLevel: 19, label: 'Garurumon' },
   garurumon:    { evolvesTo: 'wereGarurumon',   requiredLevel: 35, label: 'WereGarurumon' },
   wereGarurumon:{ evolvesTo: 'metalGarurumon', requiredLevel: 52, label: 'MetalGarurumon' },
-  demiDevimon:  { evolvesTo: 'devimon',         requiredLevel: 21, label: 'Devimon' },
+  demiDevimon:  { evolvesTo: 'devimon',     requiredLevel: 21, label: 'Devimon' },
+  devimon:      { evolvesTo: 'myotismon',   requiredLevel: 32, label: 'Myotismon' },
 };
 
 // Characters that can be scanned (encountered as enemies in battle)
 export const SCANNABLE_CHARACTERS: string[] = ['agumon', 'gabumon', 'demiDevimon'];
 
 // Display order in the Codex (grouped by evolution line)
-export const CODEX_ORDER: string[] = ['agumon', 'greymon', 'metalGreymon', 'warGreymon', 'gabumon', 'garurumon', 'wereGarurumon', 'metalGarurumon', 'demiDevimon', 'devimon', 'gulusGammamon'];
+export const CODEX_ORDER: string[] = ['agumon', 'greymon', 'metalGreymon', 'warGreymon', 'gabumon', 'garurumon', 'wereGarurumon', 'metalGarurumon', 'demiDevimon', 'devimon', 'myotismon', 'gulusGammamon'];
 
 // ─── Maps & Stages ─────────────────────────────────────────────────────────────
 export const GAME_MAPS: GameMap[] = [

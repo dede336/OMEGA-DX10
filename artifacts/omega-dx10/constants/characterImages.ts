@@ -3,6 +3,7 @@ const CHARACTER_IMAGES: Record<string, any> = {
   gabumon:        require('../assets/images/characters/gabumon.gif'),
   demiDevimon:    require('../assets/images/characters/demiDevimon.gif'),
   devimon:        require('../assets/images/characters/devimon.gif'),
+  myotismon:      require('../assets/images/characters/myotismon.gif'),
   greymon:        require('../assets/images/characters/greymon.gif'),
   metalGreymon:   require('../assets/images/characters/metalGreymon.gif'),
   warGreymon:     require('../assets/images/characters/warGreymon.gif'),
