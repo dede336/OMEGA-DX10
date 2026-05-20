@@ -176,10 +176,10 @@ export const RARITY_COLORS: Record<RarityId, string> = {
 };
 
 export const RARITY_LABELS: Record<RarityId, string> = {
-  COMMON:    'Comum',
-  RARE:      'Raro',
-  EPIC:      'Épico',
-  LEGENDARY: 'Lendário',
+  COMMON:    'Rookie',
+  RARE:      'Champion',
+  EPIC:      'Ultimate',
+  LEGENDARY: 'Mega',
 };
 
 export function expToNextLevel(level: number): number {
