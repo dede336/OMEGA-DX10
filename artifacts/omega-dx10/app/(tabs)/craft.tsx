@@ -13,18 +13,18 @@ import EQUIP_ITEM_IMAGES from '@/constants/equipImages';
 
 const PIECE_META = [
   { id: 'piece_coragem',          label: 'Coragem',   icon: 'zap',     color: '#ef4444' },
-  { id: 'piece_brasao_coragem',   label: 'Brasão C',  icon: 'sun',     color: '#f97316' },
-  { id: 'piece_brasao_esperanca', label: 'Brasão E',  icon: 'sun',     color: '#eab308' },
-  { id: 'piece_brasao_amizade',   label: 'Brasão A',  icon: 'users',   color: '#3b82f6' },
+  { id: 'piece_brasao_coragem',   label: 'Coragem Piece',    icon: 'sun',     color: '#f97316' },
+  { id: 'piece_brasao_esperanca', label: 'Esperança Piece',  icon: 'sun',     color: '#eab308' },
+  { id: 'piece_brasao_amizade',   label: 'Amizade Piece',    icon: 'users',   color: '#3b82f6' },
   { id: 'piece_caos',             label: 'Caos',      icon: 'cpu',     color: '#a855f7' },
   { id: 'piece_tecido',           label: 'Tecido',    icon: 'layers',  color: '#ec4899' },
   { id: 'piece_agulha',           label: 'Agulha',    icon: 'edit-2',  color: '#8b5cf6' },
   { id: 'piece_linha',            label: 'Linha',     icon: 'wind',    color: '#06b6d4' },
-  { id: 'piece_brasao_confianca', label: 'Confiança', icon: 'shield',  color: '#94a3b8' },
-  { id: 'piece_brasao_pureza',    label: 'Pureza',    icon: 'droplet', color: '#22c55e' },
-  { id: 'piece_brasao_amor',      label: 'Amor',      icon: 'heart',   color: '#f43f5e' },
-  { id: 'piece_brasao_luz',           label: 'Luz',           icon: 'star', color: '#c084fc' },
-  { id: 'piece_brasao_conhecimento',  label: 'Conhecimento',  icon: 'book', color: '#a855f7' },
+  { id: 'piece_brasao_confianca', label: 'Confiança Piece',    icon: 'shield',  color: '#94a3b8' },
+  { id: 'piece_brasao_pureza',    label: 'Pureza Piece',       icon: 'droplet', color: '#22c55e' },
+  { id: 'piece_brasao_amor',      label: 'Amor Piece',         icon: 'heart',   color: '#f43f5e' },
+  { id: 'piece_brasao_luz',       label: 'Luz Piece',          icon: 'star',    color: '#c084fc' },
+  { id: 'piece_brasao_conhecimento', label: 'Conhecimento Piece', icon: 'book', color: '#a855f7' },
 ];
 
 export default function CraftScreen() {
