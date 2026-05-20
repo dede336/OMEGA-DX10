@@ -41,7 +41,7 @@ export default function CollectionScreen() {
       >
         {CODEX_ORDER.map((charId) => {
           const owned = collection.find((c) => c.characterId === charId);
-          const isScannable = SCANNABLE_CHARACTERS.includes(charId);
+          const isScannable = CHARACTERS[charId]?.rarity === 'COMMON';
           const scan = scanProgress[charId] ?? 0;
           const evo = owned ? EVOLUTIONS[owned.characterId] : undefined;
           const canEvolve = owned && evo && owned.level >= evo.requiredLevel;

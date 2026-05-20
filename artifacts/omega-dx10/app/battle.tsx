@@ -223,7 +223,7 @@ export default function BattleScreen() {
           const rewardItem = EQUIPMENT_ITEMS.find((i) => i.id === stage.firstClearReward);
           addLog(`🎁 Item obtido: ${rewardItem?.name ?? stage.firstClearReward}!`, '#f59e0b');
         }
-        if (stage && SCANNABLE_CHARACTERS.includes(stage.enemyCharacterId)) {
+        if (stage && CHARACTERS[stage.enemyCharacterId]?.rarity === 'COMMON') {
           gainScan(stage.enemyCharacterId, 5);
         }
 
