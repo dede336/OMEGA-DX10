@@ -95,10 +95,10 @@ function ClassicTabLayout() {
         options={{
           title: "Digibank",
           tabBarIcon: ({ color }) => (
-            <ExpoImage
-              source={require('../../assets/images/digimon-icon.gif')}
+            <Image
+              source={require('../../assets/images/digibank-icon.png')}
               style={{ width: 28, height: 28 }}
-              contentFit="contain"
+              resizeMode="contain"
             />
           ),
         }}
