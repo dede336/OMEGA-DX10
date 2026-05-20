@@ -37,6 +37,7 @@ export interface MapStage {
   expReward: number;
   drops?: StageDrop[];
   bossMultipliers?: { hp?: number; def?: number };
+  firstClearReward?: string;
 }
 
 export interface GameMap {
@@ -274,6 +275,7 @@ export const GAME_MAPS: GameMap[] = [
         enemyLevel: 25,
         expReward: 500,
         bossMultipliers: { hp: 2, def: 4 / 3 },
+        firstClearReward: 'digivice_d2',
         drops: [
           { type: 'bits',  amount: 1000, chance: 1.00 },
           { type: 'piece', id: 'piece_brasao_coragem',   amount: 1, chance: 0.10 },
@@ -318,6 +320,8 @@ export interface EquipItem {
   description: string;
   bonuses: Partial<BaseStats>;
   percentBonuses?: Partial<BaseStats>;
+  xpSharePercent?: number;
+  tamerXpBonusPercent?: number;
   elementBonus?: ElementBonus;
 }
 
@@ -358,6 +362,7 @@ export const EQUIPMENT_ITEMS: EquipItem[] = [
   { id: 'brasao_amor',      name: 'Brasão do Amor',      slot: 'brasao', rarity: 'LEGENDARY', description: 'O Brasão do Amor. Aumenta em 15% todos os status de Digimon do tipo Fogo e Vento.',     bonuses: {}, elementBonus: { elements: ['FIRE', 'WIND'],   percent: 0.15 } },
   { id: 'brasao_luz',           name: 'Brasão da Luz',           slot: 'brasao', rarity: 'LEGENDARY', description: 'O Brasão da Luz. Aumenta em 15% todos os status de Digimon do tipo Luz e Trevas.',           bonuses: {}, elementBonus: { elements: ['LIGHT', 'DARK'],        percent: 0.15 } },
   { id: 'brasao_conhecimento',  name: 'Brasão do Conhecimento',  slot: 'brasao', rarity: 'LEGENDARY', description: 'O Brasão do Conhecimento. Aumenta em 15% todos os status de Digimon do tipo Trovão e Planta.', bonuses: {}, elementBonus: { elements: ['LIGHTNING', 'PLANT'], percent: 0.15 } },
+  { id: 'digivice_d2',    name: 'Digivice D-2',       slot: 'digivice', rarity: 'EPIC',      description: 'Recompensa por derrotar GulusGammamon. Compartilha 25% do XP de batalha com Digimon reserva e aumenta 20% o XP Tamer.', bonuses: {}, xpSharePercent: 0.25, tamerXpBonusPercent: 0.20 },
   { id: 'digivice_d3',    name: 'Digivice D-3',       slot: 'digivice', rarity: 'COMMON',    description: 'Digivice padrão. Potencializa o espírito do parceiro.',             bonuses: { spt: 6 } },
   { id: 'digivice_x',    name: 'Digivice X',          slot: 'digivice', rarity: 'LEGENDARY', description: 'Versão X do Digivice. Poder muito além dos limites conhecidos.',    bonuses: { spt: 20, atk: 12, mp: 25 } },
   { id: 'pulseira_forca', name: 'Pulseira de Força',  slot: 'pulseira', rarity: 'COMMON',    description: 'Amplifica a força bruta do Digimon parceiro.',                      bonuses: { atk: 7 } },

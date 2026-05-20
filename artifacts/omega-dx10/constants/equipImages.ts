@@ -6,6 +6,7 @@ const EQUIP_ITEM_IMAGES: Record<string, any> = {
   brasao_pureza:    require('../assets/images/brasao_pureza.png'),
   brasao_amor:      require('../assets/images/brasao_amor.png'),
   brasao_luz:           require('../assets/images/brasao_luz.png'),
+  digivice_d2:          require('../assets/images/digivice_d2.png'),
   brasao_conhecimento:  require('../assets/images/brasao_conhecimento.png'),
   pulseira_ouro:        require('../assets/images/pulseira_ouro.png'),
   blusa_social:     require('../assets/images/blusa_social.png'),

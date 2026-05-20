@@ -60,6 +60,7 @@ interface GameContextValue extends GameState {
   craftItem: (recipe: CraftRecipe) => boolean;
   gainBits: (amount: number) => void;
   gainTamerExp: (amount: number) => void;
+  addToInventory: (itemId: string) => void;
 }
 
 const STORAGE_KEY = 'omega_dx10_save_v2';
@@ -232,6 +233,13 @@ export function GameProvider({ children }: { children: React.ReactNode }) {
     });
   }, []);
 
+  const addToInventory = useCallback((itemId: string) => {
+    setState((prev) => {
+      if (prev.inventory.includes(itemId)) return prev;
+      return { ...prev, inventory: [...prev.inventory, itemId] };
+    });
+  }, []);
+
   const gainPiece = useCallback((pieceId: string, amount = 1) => {
     setState((prev) => ({
       ...prev,
@@ -336,6 +344,7 @@ export function GameProvider({ children }: { children: React.ReactNode }) {
         craftItem,
         gainBits,
         gainTamerExp,
+        addToInventory,
         isLoaded: loaded,
         completeOnboarding,
       }}

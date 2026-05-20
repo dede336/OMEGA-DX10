@@ -46,7 +46,7 @@ export default function BattleScreen() {
   const colors = useColors();
   const insets = useSafeAreaInsets();
   const params = useLocalSearchParams<{ mapId: string; stageIndex: string }>();
-  const { collection, selectedCharacter, setSelectedCharacter, gainExp, clearStage, isStageCleared, gainScan, equippedItems, gainPiece, gainBits, gainTamerExp } = useGame();
+  const { collection, selectedCharacter, setSelectedCharacter, gainExp, clearStage, isStageCleared, gainScan, equippedItems, gainPiece, gainBits, gainTamerExp, addToInventory } = useGame();
 
   const mapId = params.mapId ?? '';
   const stageIndex = Number(params.stageIndex ?? '0');
@@ -197,10 +197,32 @@ export default function BattleScreen() {
         setWinner('player');
         setPhase('result');
         // Grant rewards
+        const xpAmount = stage?.expReward ?? 0;
         if (selectedCharacter) {
-          gainExp(selectedCharacter.ownedId, stage?.expReward ?? 0);
+          gainExp(selectedCharacter.ownedId, xpAmount);
         }
+        // D-2: share 25% XP with benched digimon
+        const equippedDigivice = equippedItems.digivice
+          ? EQUIPMENT_ITEMS.find((i) => i.id === equippedItems.digivice)
+          : null;
+        if (equippedDigivice?.xpSharePercent && xpAmount > 0 && selectedCharacter) {
+          const shared = Math.floor(xpAmount * equippedDigivice.xpSharePercent);
+          if (shared > 0) {
+            const benched = collection.filter((c) => c.ownedId !== selectedCharacter.ownedId);
+            benched.forEach((c) => gainExp(c.ownedId, shared));
+            if (benched.length > 0) {
+              addLog(`📡 +${shared} XP compartilhado com ${benched.length} Digimon!`, '#60a5fa');
+            }
+          }
+        }
+        // First clear reward
+        const wasCleared = isStageCleared(mapId, stageIndex);
         clearStage(mapId, stageIndex);
+        if (!wasCleared && stage?.firstClearReward) {
+          addToInventory(stage.firstClearReward);
+          const rewardItem = EQUIPMENT_ITEMS.find((i) => i.id === stage.firstClearReward);
+          addLog(`🎁 Item obtido: ${rewardItem?.name ?? stage.firstClearReward}!`, '#f59e0b');
+        }
         if (stage && SCANNABLE_CHARACTERS.includes(stage.enemyCharacterId)) {
           gainScan(stage.enemyCharacterId, 5);
         }
@@ -210,8 +232,12 @@ export default function BattleScreen() {
           addLog(`💰 +${map.bitsReward.toLocaleString()} Bits!`, '#facc15');
         }
         if (map?.tamerExpReward) {
-          gainTamerExp(map.tamerExpReward);
-          addLog(`⭐ +${map.tamerExpReward} XP Tamer!`, '#a78bfa');
+          // D-2: +20% tamer XP bonus
+          const tamerXp = equippedDigivice?.tamerXpBonusPercent
+            ? Math.floor(map.tamerExpReward * (1 + equippedDigivice.tamerXpBonusPercent))
+            : map.tamerExpReward;
+          gainTamerExp(tamerXp);
+          addLog(`⭐ +${tamerXp} XP Tamer!`, '#a78bfa');
         }
 
         if (stage?.drops) {
