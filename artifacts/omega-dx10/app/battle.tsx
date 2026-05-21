@@ -37,6 +37,8 @@ import {
 } from '@/utils/battleEngine';
 import { HPBar, AttributeBadge, CharacterAvatar } from '@/components/GameComponents';
 
+const AUTO_BATTLE_IMG = require('../assets/images/auto_battle.png');
+
 type Phase = 'select' | 'battle' | 'result';
 type BattleLog = { text: string; color: string };
 type TeamFighter = BattleFighter & { ownedId: string };
@@ -900,7 +902,7 @@ export default function BattleScreen() {
           )}
           {autoMode && (
             <View style={[styles.autoIndicator, { backgroundColor: '#22c55e11', borderColor: '#22c55e' }]}>
-              <Feather name="zap" size={18} color="#22c55e" />
+              <Image source={AUTO_BATTLE_IMG} style={{ width: 22, height: 22 }} resizeMode="contain" />
               <Text style={[styles.autoIndicatorText, { color: '#22c55e' }]}>Batalha Automática…</Text>
             </View>
           )}
@@ -910,7 +912,7 @@ export default function BattleScreen() {
               onPress={() => { setAutoMode((p) => { const n = !p; if (n) setAutoRunCount(0); return n; }); }}
               style={[styles.autoBtn, { backgroundColor: autoMode ? '#22c55e22' : colors.card, borderColor: autoMode ? '#22c55e' : colors.border }]}
             >
-              <Feather name={autoMode ? 'pause' : 'play'} size={16} color={autoMode ? '#22c55e' : colors.mutedForeground} />
+              <Image source={AUTO_BATTLE_IMG} style={{ width: 18, height: 18, opacity: autoMode ? 1 : 0.5 }} resizeMode="contain" />
               <Text style={[styles.autoBtnLabel, { color: autoMode ? '#22c55e' : colors.mutedForeground }]}>
                 {autoMode ? 'Pausar' : 'Auto'}
               </Text>
