@@ -18,8 +18,9 @@ import { AttributeBadge, ElementBadge, StatBar, CharacterAvatar } from '@/compon
 
 const DIGIVO_GIF             = require('../../assets/images/digivolution.gif');
 const FUSION_GIF             = require('../../assets/images/fusion_crimson.gif');
-const OMEGAMON_GIF           = require('../../assets/images/omegamon_digivolve.gif');
-const OMEGAMON_FUSION_INTRO  = require('../../assets/images/omegamon_fusion_intro.gif');
+const OMEGAMON_GIF              = require('../../assets/images/omegamon_digivolve.gif');
+const OMEGAMON_FUSION_INTRO     = require('../../assets/images/omegamon_fusion_intro.gif');
+const SHINEGREYMON_BM_GIF       = require('../../assets/images/characters/shinegreymonbm_special.gif');
 
 type FusePhase = 'playing' | 'reveal' | 'done';
 
@@ -124,14 +125,17 @@ export default function CharacterDetailScreen() {
   const fuseToChar   = fuseAnim ? CHARACTERS[fuseAnim.toCharId]   : null;
   const fuseFromChar = fuseAnim ? CHARACTERS[fuseAnim.fromCharId] : null;
 
-  const isOmegamon = char.id === 'omegamon';
+  const isOmegamon        = char.id === 'omegamon';
+  const isShineGreymonBM  = char.id === 'shineGreymonBurstMode';
+  const hasSpecialGif     = isOmegamon || isShineGreymonBM;
+  const specialGif        = isOmegamon ? OMEGAMON_GIF : SHINEGREYMON_BM_GIF;
 
   return (
     <>
       <View style={[styles.container, { backgroundColor: colors.background }]}>
-        {isOmegamon ? (
+        {hasSpecialGif ? (
           <Image
-            source={OMEGAMON_GIF}
+            source={specialGif}
             style={styles.omegamonBgGif}
             resizeMode="cover"
           />
@@ -154,9 +158,9 @@ export default function CharacterDetailScreen() {
         {/* Hero Card */}
         <View style={[styles.heroCard, { backgroundColor: colors.card, borderColor: elemData.color + '66' }]}>
           <View style={[styles.heroStrip, { backgroundColor: elemData.color + '18' }]}>
-            {isOmegamon ? (
+            {hasSpecialGif ? (
               <Image
-                source={OMEGAMON_GIF}
+                source={specialGif}
                 style={styles.heroStripGif}
                 resizeMode="cover"
               />

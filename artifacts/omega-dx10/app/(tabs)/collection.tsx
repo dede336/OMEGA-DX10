@@ -17,7 +17,8 @@ import { CharacterCard, ScanCard, LockedCard, CharacterAvatar, AttributeBadge, E
 
 const DIGIVO_GIF       = require('../../assets/images/digivolution.gif');
 const DIGIVO_INTRO_GIF = require('../../assets/images/digivolution_intro.gif');
-const OMEGAMON_GIF     = require('../../assets/images/omegamon_digivolve.gif');
+const OMEGAMON_GIF          = require('../../assets/images/omegamon_digivolve.gif');
+const SHINEGREYMON_BM_GIF   = require('../../assets/images/characters/shinegreymonbm_special.gif');
 
 // Reverse map: evolvesTo → { fromName, requiredLevel }
 const EVOLVES_FROM: Record<string, { fromName: string; requiredLevel: number }> = {};
@@ -418,8 +419,8 @@ export default function CollectionScreen() {
           <Image
             source={
               evoPhase === 'playing'
-                ? (evoAnim?.toCharId === 'omegamon' ? OMEGAMON_GIF : DIGIVO_INTRO_GIF)
-                : (evoAnim?.toCharId === 'omegamon' ? OMEGAMON_GIF : DIGIVO_GIF)
+                ? (evoAnim?.toCharId === 'omegamon' ? OMEGAMON_GIF : evoAnim?.toCharId === 'shineGreymonBurstMode' ? SHINEGREYMON_BM_GIF : DIGIVO_INTRO_GIF)
+                : (evoAnim?.toCharId === 'omegamon' ? OMEGAMON_GIF : evoAnim?.toCharId === 'shineGreymonBurstMode' ? SHINEGREYMON_BM_GIF : DIGIVO_GIF)
             }
             style={styles.evoGifBg}
             resizeMode="cover"
