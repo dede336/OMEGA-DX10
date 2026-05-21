@@ -262,12 +262,12 @@ export default function HomeScreen() {
             style={[styles.activeCard, { backgroundColor: colors.card, borderColor: attrData.color + '55' }]}
           >
             {/* top colored strip */}
-            <View style={[styles.activeStrip, { backgroundColor: attrData.color + '22', overflow: 'hidden' }]}>
-              {SPECIAL_GIFS[char.id] ? (
-                <View style={StyleSheet.absoluteFill}>
-                  <Image source={SPECIAL_GIFS[char.id]} style={styles.activeStripGif} resizeMode="cover" />
-                </View>
-              ) : null}
+            <ImageBackground
+              source={SPECIAL_GIFS[char.id] ?? undefined}
+              style={[styles.activeStrip, { backgroundColor: attrData.color + '22' }]}
+              imageStyle={styles.activeStripGif}
+              resizeMode="cover"
+            >
               <View style={[styles.activeAvatarRing, { borderColor: attrData.color + '88' }]}>
                 <CharacterAvatar characterId={char.id} size={72} />
               </View>
@@ -280,7 +280,7 @@ export default function HomeScreen() {
                 </View>
                 <Text style={[styles.activeLevel, { color: colors.primary }]}>Nível {selectedCharacter.level}</Text>
               </View>
-            </View>
+            </ImageBackground>
 
             {/* HP */}
             <View style={styles.hpRow}>
