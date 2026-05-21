@@ -10,7 +10,7 @@ import { useColors } from '@/hooks/useColors';
 import { useAuth } from '@/context/AuthContext';
 import { TAMERS } from '@/constants/gameData';
 
-const TK_BG_GIF  = require('../../assets/images/tk_bg.gif');
+const TK_CARD    = require('../../assets/images/tk_card.png');
 const TAI_CARD   = require('../../assets/images/tai_card.png');
 
 interface LeaderboardEntry {
@@ -74,9 +74,9 @@ export default function RankingScreen() {
       ]}>
         {isTK && (
           <Image
-            source={TK_BG_GIF}
-            style={[StyleSheet.absoluteFillObject, { opacity: 0.40, borderRadius: 12 }]}
-            resizeMode="contain"
+            source={TK_CARD}
+            style={[StyleSheet.absoluteFillObject, { opacity: 0.55, borderRadius: 12 }]}
+            resizeMode="cover"
           />
         )}
         {isTai && (
