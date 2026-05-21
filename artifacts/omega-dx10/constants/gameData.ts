@@ -492,11 +492,13 @@ export const CHARACTERS: Record<string, Character> = {
     name: 'Paildramon',
     rarity: 'EPIC',
     attribute: 'VC',
-    element: 'WIND',
-    baseStats: { hp: 218, mp: 195, atk: 128, def: 104, spt: 88, spd: 115, apt: 60 },
-    description: 'Digimon dragão de evolução dupla, fruto da fusão entre ExVeemon e Stingmon. Combina agilidade e potência de fogo em um corpo ágil e resistente. Tem potencial para transcender ao ImperialDramon Fighter Mode.',
-    attackName: 'Desperado Blaster 💨',
-    spiritName: 'Tera Blaster 🌀',
+    element: 'FIRE',
+    baseStats: { hp: 264, mp: 271, atk: 168, def: 121, spt: 108, spd: 141, apt: 72 },
+    description: 'Digimon dragão de fusão entre ExVeemon e Stingmon. Combina a força explosiva do fogo com a agilidade cortante do vento, tornando-se um dos Digimon mais versáteis do Mundo Digital.',
+    attackName: 'Desperado Blaster 🔥',
+    attackElement: 'FIRE',
+    spiritName: 'Sonic Flapper 💨',
+    spiritElement: 'WIND',
   },
   imperialDramonFM: {
     id: 'imperialDramonFM',
@@ -667,6 +669,8 @@ export const ALTERNATE_EVOLUTIONS: Record<string, { evolvesTo: string; requiredL
   magnaAngemon: { evolvesTo: 'seraphimon',           requiredLevel: 60, label: 'Seraphimon',             requiredItem: 'anel_sagrado' },
   shineGreymon:      { evolvesTo: 'shineGreymonBurstMode', requiredLevel: 68, label: 'ShineGreymon Burst Mode', requiredSacrificeCharacter: 'imperialDramonFM' },
   imperialDramonFM:  { evolvesTo: 'imperialDramonPM',     requiredLevel: 60, label: 'Imperialdramon PM',       requiredSacrificeCharacter: 'omegamon' },
+  exVeemon:          { evolvesTo: 'paildramon',            requiredLevel: 36, label: 'Paildramon',              requiredSacrificeCharacter: 'stingmon' },
+  stingmon:          { evolvesTo: 'paildramon',            requiredLevel: 36, label: 'Paildramon',              requiredSacrificeCharacter: 'exVeemon' },
 };
 
 export const SACRIFICE_DROPS: Record<string, { itemId: string; chance: number }[]> = {
@@ -687,6 +691,7 @@ export const ROOKIE_OF: Record<string, string> = {
   togemon: 'palmon',        lillymon: 'palmon',       rosemon: 'palmon',
   devimon: 'demiDevimon',   myotismon: 'demiDevimon',     vnonMyotismon: 'demiDevimon',
   exVeemon:         'veemon',
+  paildramon:       'veemon',
   imperialDramonFM: 'paildramon',
   imperialDramonPM: 'paildramon',
 };
