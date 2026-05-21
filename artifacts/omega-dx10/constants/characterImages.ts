@@ -54,6 +54,7 @@ const CHARACTER_IMAGES: Record<string, any> = {
   shineGreymonBurstMode: require('../assets/images/characters/shinegreymonbm.gif'),
   goldramon:      require('../assets/images/characters/goldramon.gif'),
   seraphimon:     require('../assets/images/characters/seraphimon.gif'),
+  veemon:           require('../assets/images/characters/veemon.gif'),
   imperialDramonFM: require('../assets/images/characters/imperialDramonFM.webp'),
   imperialDramonPM: require('../assets/images/characters/imperialDramonPM.gif'),
 };

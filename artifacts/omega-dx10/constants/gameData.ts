@@ -1,4 +1,4 @@
-export type AttributeId = 'VC' | 'VR' | 'DA' | 'NO' | 'UN';
+export type AttributeId = 'VC' | 'VR' | 'DA' | 'NO' | 'UN' | 'FR';
 export type ElementId = 'FIRE' | 'PLANT' | 'WATER' | 'WIND' | 'EARTH' | 'LIGHTNING' | 'LIGHT' | 'DARK' | 'NULL' | 'ICE' | 'METAL';
 export type RarityId = 'COMMON' | 'RARE' | 'EPIC' | 'LEGENDARY' | 'ULTRA' | 'BURST';
 
@@ -68,6 +68,7 @@ export const ATTRIBUTES: Record<AttributeId, { label: string; abbr: string; colo
   DA: { label: 'Data',         abbr: 'DA', color: '#3b82f6', beats: 'VC', weakTo: 'VR' },
   NO: { label: 'Nulo',         abbr: 'NO', color: '#6b7280', beats: null, weakTo: 'UN' },
   UN: { label: 'Desconhecido', abbr: 'UN', color: '#a855f7', beats: 'NO', weakTo: null },
+  FR: { label: 'Livre',        abbr: 'FR', color: '#f59e0b', beats: null, weakTo: null },
 };
 
 // ─── Elements ──────────────────────────────────────────────────────────────────
@@ -460,6 +461,19 @@ export const CHARACTERS: Record<string, Character> = {
     attackName: 'Shine Slash ✨',
     spiritName: 'Corona Blaze Sword 🔥',
   },
+  veemon: {
+    id: 'veemon',
+    name: 'Veemon',
+    rarity: 'RARE',
+    attribute: 'FR',
+    element: 'FIRE',
+    baseStats: { hp: 116, mp: 104, atk: 81, def: 63, spt: 52, spd: 60, apt: 38 },
+    description: 'Um Digimon do tipo Livre com aparência de dragão azul e espírito aguerrido. Parceiro leal de Davis, carrega uma força oculta capaz de despertar evoluções poderosas.',
+    attackName: 'Vee Headbutt ○',
+    attackElement: 'NULL',
+    spiritName: 'Boom Boom Punch 🔥',
+    spiritElement: 'FIRE',
+  },
   paildramon: {
     id: 'paildramon',
     name: 'Paildramon',
@@ -681,7 +695,7 @@ export const ITEM_NAMES: Record<string, string> = {
 export const SCANNABLE_CHARACTERS: string[] = ['agumon', 'gabumon', 'demiDevimon', 'patamon', 'pyomon', 'salamon', 'palmon'];
 
 // Display order in the Codex (grouped by evolution line)
-export const CODEX_ORDER: string[] = ['agumon', 'agumonSaver', 'geoGreymon', 'rizeGreymon', 'shineGreymon', 'shineGreymonBurstMode', 'paildramon', 'imperialDramonFM', 'imperialDramonPM', 'greymon', 'metalGreymon', 'warGreymon', 'gabumon', 'garurumon', 'wereGarurumon', 'metalGarurumon', 'omegamon', 'guilmon', 'growlmon', 'megaloGrowlmon', 'gallantmon', 'gallantmonCrimsonMode', 'lucemon', 'lucemonChaosMode', 'patamon', 'angemon', 'magnaAngemon', 'goldramon', 'seraphimon', 'pyomon', 'birdramon', 'garudamon', 'phoenixmon', 'salamon', 'tailmon', 'angewomon', 'magnadramon', 'ophanimon', 'palmon', 'togemon', 'lillymon', 'rosemon', 'demiDevimon', 'devimon', 'myotismon', 'vnonMyotismon', 'gulusGammamon'];
+export const CODEX_ORDER: string[] = ['agumon', 'agumonSaver', 'geoGreymon', 'rizeGreymon', 'shineGreymon', 'shineGreymonBurstMode', 'veemon', 'paildramon', 'imperialDramonFM', 'imperialDramonPM', 'greymon', 'metalGreymon', 'warGreymon', 'gabumon', 'garurumon', 'wereGarurumon', 'metalGarurumon', 'omegamon', 'guilmon', 'growlmon', 'megaloGrowlmon', 'gallantmon', 'gallantmonCrimsonMode', 'lucemon', 'lucemonChaosMode', 'patamon', 'angemon', 'magnaAngemon', 'goldramon', 'seraphimon', 'pyomon', 'birdramon', 'garudamon', 'phoenixmon', 'salamon', 'tailmon', 'angewomon', 'magnadramon', 'ophanimon', 'palmon', 'togemon', 'lillymon', 'rosemon', 'demiDevimon', 'devimon', 'myotismon', 'vnonMyotismon', 'gulusGammamon'];
 
 // ─── Maps & Stages ─────────────────────────────────────────────────────────────
 export const GAME_MAPS: GameMap[] = [
