@@ -1,6 +1,6 @@
 export type AttributeId = 'VC' | 'VR' | 'DA' | 'NO' | 'UN';
 export type ElementId = 'FIRE' | 'PLANT' | 'WATER' | 'WIND' | 'EARTH' | 'LIGHTNING' | 'LIGHT' | 'DARK' | 'NULL' | 'ICE' | 'METAL';
-export type RarityId = 'COMMON' | 'RARE' | 'EPIC' | 'LEGENDARY' | 'ULTRA';
+export type RarityId = 'COMMON' | 'RARE' | 'EPIC' | 'LEGENDARY' | 'ULTRA' | 'BURST';
 
 export interface BaseStats {
   hp: number;
@@ -450,7 +450,7 @@ export const CHARACTERS: Record<string, Character> = {
   shineGreymonBurstMode: {
     id: 'shineGreymonBurstMode',
     name: 'ShineGreymon BM',
-    rarity: 'LEGENDARY',
+    rarity: 'BURST',
     attribute: 'VC',
     element: 'FIRE',
     baseStats: { hp: 332, mp: 350, atk: 187, def: 160, spt: 162, spd: 142, apt: 85 },
@@ -745,6 +745,7 @@ export const RARITY_COLORS: Record<RarityId, string> = {
   EPIC:      '#8b5cf6',
   LEGENDARY: '#f59e0b',
   ULTRA:     '#ff3c6e',
+  BURST:     '#ff6b00',
 };
 
 export const RARITY_LABELS: Record<RarityId, string> = {
@@ -753,6 +754,7 @@ export const RARITY_LABELS: Record<RarityId, string> = {
   EPIC:      'Ultimate',
   LEGENDARY: 'Mega',
   ULTRA:     'Ultra',
+  BURST:     'Burst',
 };
 
 // ─── Tamer Equipment ──────────────────────────────────────────────────────────
