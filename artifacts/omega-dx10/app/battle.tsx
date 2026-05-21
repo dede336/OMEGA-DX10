@@ -686,44 +686,22 @@ export default function BattleScreen() {
           <View style={{ width: 32 }} />
         </View>
 
-        {/* Enemy preview — all at once */}
+        {/* Enemy preview — background only, enemies are a surprise */}
         <View style={[styles.enemyPreviewCard, { borderColor: firstEnemyAttr ? firstEnemyAttr.color + '88' : colors.border }]}>
           {map.backgroundImage ? (
             <ImageBackground source={map.backgroundImage} style={styles.previewBg} imageStyle={{ resizeMode: 'cover' }}>
               <View style={styles.previewBgOverlay}>
-                <Text style={styles.previewLabel}>
-                  {stageCharIds.length > 1 ? `${stageCharIds.length} INIMIGOS` : 'INIMIGO'}
-                </Text>
-                <View style={styles.previewEnemyRow}>
-                  {stageCharIds.map((cid) =>
-                    CHARACTER_IMAGES[cid] ? (
-                      <Image
-                        key={cid}
-                        source={CHARACTER_IMAGES[cid]}
-                        style={[styles.previewSprite, stageCharIds.length > 1 && { width: 70, height: 70 }]}
-                        resizeMode="contain"
-                      />
-                    ) : (
-                      <CharacterAvatar key={cid} characterId={cid} size={stageCharIds.length > 1 ? 60 : 90} plain />
-                    )
-                  )}
-                </View>
+                <Feather name="help-circle" size={36} color="rgba(255,255,255,0.6)" />
+                <Text style={[styles.previewLabel, { marginTop: 6 }]}>INIMIGOS DESCONHECIDOS</Text>
               </View>
             </ImageBackground>
           ) : (
             <View style={[styles.previewBgOverlay, { backgroundColor: colors.card, minHeight: 140 }]}>
-              <Text style={[styles.previewLabel, { color: colors.mutedForeground }]}>
-                {stageCharIds.length > 1 ? `${stageCharIds.length} INIMIGOS` : 'INIMIGO'}
-              </Text>
-              <View style={styles.previewEnemyRow}>
-                {stageCharIds.map((cid) => <CharacterAvatar key={cid} characterId={cid} size={stageCharIds.length > 1 ? 60 : 90} plain />)}
-              </View>
+              <Feather name="help-circle" size={36} color={colors.mutedForeground} />
+              <Text style={[styles.previewLabel, { color: colors.mutedForeground, marginTop: 6 }]}>INIMIGOS DESCONHECIDOS</Text>
             </View>
           )}
           <View style={[styles.previewInfo, { backgroundColor: colors.card }]}>
-            <Text style={[styles.enemyNameLg, { color: colors.foreground }]} numberOfLines={1}>
-              {stageCharIds.map((id) => CHARACTERS[id]?.name ?? id).join(' · ')}
-            </Text>
             <Text style={[styles.enemyLevel, { color: colors.primary }]}>Nível {stage.enemyLevel}</Text>
             <View style={[styles.expBadge, { backgroundColor: colors.primary + '22', borderColor: colors.primary }]}>
               <Feather name="award" size={12} color={colors.primary} />
