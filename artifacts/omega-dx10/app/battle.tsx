@@ -123,6 +123,7 @@ export default function BattleScreen() {
   const [busy, setBusy] = useState(false);
   const [log, setLog] = useState<BattleLog[]>([]);
   const [droppedItems, setDroppedItems] = useState<DroppedItem[]>([]);
+  const [dvBonusInfo, setDvBonusInfo] = useState<{ active: number; bank: number; bankCount: number } | null>(null);
   const logRef = useRef<ScrollView>(null);
 
   // ── Team selection ─────────────────────────────────────────────────────────
@@ -154,6 +155,10 @@ export default function BattleScreen() {
   // ── Equipped items ref (always fresh inside setTimeout closures) ───────────
   const equippedItemsRef = useRef(equippedItems);
   useEffect(() => { equippedItemsRef.current = equippedItems; }, [equippedItems]);
+
+  // ── Collection ref (for digibank XP inside setTimeout closures) ────────────
+  const collectionRef = useRef(collection);
+  useEffect(() => { collectionRef.current = collection; }, [collection]);
 
   // ── Auto battle ────────────────────────────────────────────────────────────
   const [autoMode, setAutoMode] = useState(paramAutoMode);
@@ -288,7 +293,6 @@ export default function BattleScreen() {
     const dvActiveBonus = (dv?.xpBonusPercent && xp > 0) ? Math.floor(xp * dv.xpBonusPercent) : 0;
     gainExp(activeOwnedId, xp + dvActiveBonus);
     if (enemyCount > 1) addLog(`⚔️ Bônus de ${enemyCount}x inimigos: +${xp} EXP!`, '#22c55e');
-    if (dvActiveBonus > 0) addLog(`📡 +${dvActiveBonus} XP bônus (Digivice)!`, '#60a5fa');
 
     const bench = teamFightersRef.current.filter((t) => t.ownedId !== activeOwnedId && t.currentHP > 0);
 
@@ -301,13 +305,32 @@ export default function BattleScreen() {
       }
     }
 
-    // Digivice reserve XP bonus
-    if (dv?.xpSharePercent && xp > 0 && bench.length > 0) {
+    // Digivice XP bonuses: bench (in team, not active) + digibank (not in team)
+    let dvBankBonus = 0;
+    let dvBankCount = 0;
+    if (dv?.xpSharePercent && xp > 0) {
       const dvShared = Math.floor(xp * dv.xpSharePercent);
       if (dvShared > 0) {
-        bench.forEach((t) => gainExp(t.ownedId, dvShared));
-        addLog(`📡 +${dvShared} XP reserva (Digivice)!`, '#60a5fa');
+        // Bench fighters in battle team
+        if (bench.length > 0) {
+          bench.forEach((t) => gainExp(t.ownedId, dvShared));
+        }
+        // Digibank: collection members NOT in the battle team
+        const teamOwnedIds = new Set(selectedTeamRef.current);
+        const bankMembers = collectionRef.current.filter((c) => !teamOwnedIds.has(c.ownedId));
+        if (bankMembers.length > 0) {
+          bankMembers.forEach((c) => gainExp(c.ownedId, dvShared));
+        }
+        dvBankBonus = dvShared;
+        dvBankCount = bench.length + bankMembers.length;
+        const total = bench.length + bankMembers.length;
+        if (total > 0) addLog(`📡 +${dvShared} XP banco (${total} Digimon)!`, '#60a5fa');
       }
+    }
+    if (dvActiveBonus > 0 || dvBankBonus > 0) {
+      setDvBonusInfo({ active: dvActiveBonus, bank: dvBankBonus, bankCount: dvBankCount });
+    } else {
+      setDvBonusInfo(null);
     }
 
     const wasCleared = isStageCleared(mapId, stageIndex);
@@ -1122,6 +1145,19 @@ export default function BattleScreen() {
           <Text style={[styles.resultTitle, { color: won ? '#22c55e' : '#ef4444' }]}>
             {won ? 'Vitória!' : 'Derrota'}
           </Text>
+          {won && dvBonusInfo && (
+            <View style={[styles.rewardBox, { backgroundColor: '#60a5fa18', borderColor: '#60a5fa55' }]}>
+              <Text style={{ fontSize: 16 }}>📡</Text>
+              <View style={{ gap: 2 }}>
+                {dvBonusInfo.active > 0 && (
+                  <Text style={[styles.rewardText, { color: '#60a5fa' }]}>+{dvBonusInfo.active} XP ativo (D-2)</Text>
+                )}
+                {dvBonusInfo.bank > 0 && dvBonusInfo.bankCount > 0 && (
+                  <Text style={[styles.rewardText, { color: '#60a5fa' }]}>+{dvBonusInfo.bank} XP banco ({dvBonusInfo.bankCount} Digimon)</Text>
+                )}
+              </View>
+            </View>
+          )}
           {won && stage && (() => {
             const ec = battleCharIds.length > 0 ? battleCharIds.length : 1;
             const totalXp = stage.expReward * ec;
