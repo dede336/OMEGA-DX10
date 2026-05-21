@@ -11,6 +11,7 @@ import { AttributeBadge, ElementBadge, HPBar, CharacterAvatar } from '@/componen
 
 const LIGHT_STATUS_GIF = require('../../assets/images/light_status.gif');
 const DARK_STATUS_GIF  = require('../../assets/images/dark_status.gif');
+const FIRE_STATUS_GIF  = require('../../assets/images/fire_status.gif');
 
 const SPECIAL_GIFS: Record<string, any> = {
   omegamon:              require('../../assets/images/omegamon_digivolve.gif'),
@@ -36,6 +37,23 @@ const SPECIAL_GIFS: Record<string, any> = {
   myotismon:             DARK_STATUS_GIF,
   vnonMyotismon:         DARK_STATUS_GIF,
   gulusGammamon:         DARK_STATUS_GIF,
+  // Fire element — no dedicated GIF
+  agumon:                FIRE_STATUS_GIF,
+  agumonSaver:           FIRE_STATUS_GIF,
+  geoGreymon:            FIRE_STATUS_GIF,
+  rizeGreymon:           FIRE_STATUS_GIF,
+  shineGreymon:          FIRE_STATUS_GIF,
+  guilmon:               FIRE_STATUS_GIF,
+  growlmon:              FIRE_STATUS_GIF,
+  megaloGrowlmon:        FIRE_STATUS_GIF,
+  veemon:                FIRE_STATUS_GIF,
+  exVeemon:              FIRE_STATUS_GIF,
+  paildramon:            FIRE_STATUS_GIF,
+  imperialDramonFM:      FIRE_STATUS_GIF,
+  imperialDramonRM:      FIRE_STATUS_GIF,
+  greymon:               FIRE_STATUS_GIF,
+  metalGreymon:          FIRE_STATUS_GIF,
+  warGreymon:            FIRE_STATUS_GIF,
 };
 
 export default function HomeScreen() {

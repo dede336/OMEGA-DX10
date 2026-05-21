@@ -25,6 +25,7 @@ const ROSEMON_BM_GIF            = require('../../assets/images/characters/rosemo
 const IMPERIALDRAMON_PM_GIF     = require('../../assets/images/characters/imperialDramonPM_status.gif');
 const LIGHT_STATUS_GIF          = require('../../assets/images/light_status.gif');
 const DARK_STATUS_GIF           = require('../../assets/images/dark_status.gif');
+const FIRE_STATUS_GIF           = require('../../assets/images/fire_status.gif');
 
 const LIGHT_DIGIMON_NO_GIF = new Set([
   'gallantmon','gallantmonCrimsonMode','lucemon','ophanimon','angewomon',
@@ -33,6 +34,13 @@ const LIGHT_DIGIMON_NO_GIF = new Set([
 
 const DARK_DIGIMON_NO_GIF = new Set([
   'demiDevimon','lucemonChaosMode','devimon','myotismon','vnonMyotismon','gulusGammamon',
+]);
+
+const FIRE_DIGIMON_NO_GIF = new Set([
+  'agumon','agumonSaver','geoGreymon','rizeGreymon','shineGreymon',
+  'guilmon','growlmon','megaloGrowlmon',
+  'veemon','exVeemon','paildramon','imperialDramonFM','imperialDramonRM',
+  'greymon','metalGreymon','warGreymon',
 ]);
 
 type FusePhase = 'playing' | 'reveal' | 'done';
@@ -145,12 +153,14 @@ export default function CharacterDetailScreen() {
   const isImperialDramonPM   = char.id === 'imperialDramonPM';
   const isLightNoGif         = LIGHT_DIGIMON_NO_GIF.has(char.id);
   const isDarkNoGif          = DARK_DIGIMON_NO_GIF.has(char.id);
-  const hasSpecialGif        = isOmegamon || isShineGreymonBM || isRoseMonBM || isImperialDramonPM || isLightNoGif || isDarkNoGif;
+  const isFireNoGif          = FIRE_DIGIMON_NO_GIF.has(char.id);
+  const hasSpecialGif        = isOmegamon || isShineGreymonBM || isRoseMonBM || isImperialDramonPM || isLightNoGif || isDarkNoGif || isFireNoGif;
   const specialGif           = isOmegamon ? OMEGAMON_GIF
     : isShineGreymonBM ? SHINEGREYMON_BM_GIF
     : isRoseMonBM      ? ROSEMON_BM_GIF
     : isLightNoGif     ? LIGHT_STATUS_GIF
     : isDarkNoGif      ? DARK_STATUS_GIF
+    : isFireNoGif      ? FIRE_STATUS_GIF
     : IMPERIALDRAMON_PM_GIF;
 
   return (
