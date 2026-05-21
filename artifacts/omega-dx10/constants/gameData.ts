@@ -226,6 +226,17 @@ export const CHARACTERS: Record<string, Character> = {
     attackName: 'Divine Dasher ✨',
     spiritName: 'Chaos Blast 🌑',
   },
+  pyomon: {
+    id: 'pyomon',
+    name: 'Pyomon',
+    rarity: 'COMMON',
+    attribute: 'VC',
+    element: 'WIND',
+    baseStats: { hp: 101, mp: 114, atk: 72, def: 61, spt: 66, spd: 79, apt: 21 },
+    description: 'O Digimon Pássaro de Fogo. Um Rookie do tipo Vacina ágil e corajoso, com asas flamejantes e personalidade ardente. Usa ataques de fogo e impacto para surpreender os inimigos com velocidade.',
+    attackName: 'Double Flick ○',
+    spiritName: 'Raging Fire 🔥',
+  },
   patamon: {
     id: 'patamon',
     name: 'Patamon',
@@ -446,10 +457,10 @@ export const ITEM_NAMES: Record<string, string> = {
 };
 
 // Characters that can be scanned (encountered as enemies in battle)
-export const SCANNABLE_CHARACTERS: string[] = ['agumon', 'gabumon', 'demiDevimon', 'patamon'];
+export const SCANNABLE_CHARACTERS: string[] = ['agumon', 'gabumon', 'demiDevimon', 'patamon', 'pyomon'];
 
 // Display order in the Codex (grouped by evolution line)
-export const CODEX_ORDER: string[] = ['agumon', 'agumonSaver', 'geoGreymon', 'rizeGreymon', 'shineGreymon', 'greymon', 'metalGreymon', 'warGreymon', 'gabumon', 'garurumon', 'wereGarurumon', 'metalGarurumon', 'omegamon', 'guilmon', 'growlmon', 'megaloGrowlmon', 'gallantmon', 'gallantmonCrimsonMode', 'lucemon', 'lucemonChaosMode', 'patamon', 'angemon', 'magnaAngemon', 'seraphimon', 'demiDevimon', 'devimon', 'myotismon', 'vnonMyotismon', 'gulusGammamon'];
+export const CODEX_ORDER: string[] = ['agumon', 'agumonSaver', 'geoGreymon', 'rizeGreymon', 'shineGreymon', 'greymon', 'metalGreymon', 'warGreymon', 'gabumon', 'garurumon', 'wereGarurumon', 'metalGarurumon', 'omegamon', 'guilmon', 'growlmon', 'megaloGrowlmon', 'gallantmon', 'gallantmonCrimsonMode', 'lucemon', 'lucemonChaosMode', 'patamon', 'angemon', 'magnaAngemon', 'seraphimon', 'pyomon', 'demiDevimon', 'devimon', 'myotismon', 'vnonMyotismon', 'gulusGammamon'];
 
 // ─── Maps & Stages ─────────────────────────────────────────────────────────────
 export const GAME_MAPS: GameMap[] = [
