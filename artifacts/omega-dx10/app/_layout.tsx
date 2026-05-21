@@ -8,7 +8,7 @@ import { SafeAreaProvider } from "react-native-safe-area-context";
 
 import { ErrorBoundary } from "@/components/ErrorBoundary";
 import { GameProvider, useGame } from "@/context/GameContext";
-import { AuthProvider } from "@/context/AuthContext";
+import { AuthProvider, useAuth } from "@/context/AuthContext";
 import { useCloudSync } from "@/hooks/useCloudSync";
 
 SplashScreen.preventAutoHideAsync();
@@ -18,12 +18,17 @@ const queryClient = new QueryClient();
 
 function NavigationGuard() {
   const { isLoaded } = useGame();
+  const { isAuthLoaded, user } = useAuth();
   const fired = useRef(false);
   useEffect(() => {
-    if (!isLoaded || fired.current) return;
+    if (!isLoaded || !isAuthLoaded || fired.current) return;
     fired.current = true;
-    router.replace('/intro' as never);
-  }, [isLoaded]);
+    if (!user) {
+      router.replace('/login' as never);
+    } else {
+      router.replace('/intro' as never);
+    }
+  }, [isLoaded, isAuthLoaded, user]);
   return null;
 }
 
@@ -43,7 +48,7 @@ function RootLayoutNav() {
         <Stack.Screen name="onboarding" options={{ headerShown: false, gestureEnabled: false }} />
         <Stack.Screen name="battle" options={{ headerShown: false, presentation: "fullScreenModal" }} />
         <Stack.Screen name="character/[id]" options={{ headerShown: false }} />
-        <Stack.Screen name="login" options={{ headerShown: false, presentation: "modal" }} />
+        <Stack.Screen name="login" options={{ headerShown: false, gestureEnabled: false, animation: 'none' }} />
       </Stack>
     </>
   );
