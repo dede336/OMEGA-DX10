@@ -102,6 +102,19 @@ export default function CharacterDetailScreen() {
     setFuseAnim({ fromCharId: owned.characterId, toCharId: fusionRecipe.resultId });
   }
 
+  // ── Element background pulse ────────────────────────────────────────────────
+  const elemPulse = useRef(new Animated.Value(0.08)).current;
+  useEffect(() => {
+    const anim = Animated.loop(
+      Animated.sequence([
+        Animated.timing(elemPulse, { toValue: 0.22, duration: 2200, useNativeDriver: true }),
+        Animated.timing(elemPulse, { toValue: 0.08, duration: 2200, useNativeDriver: true }),
+      ])
+    );
+    anim.start();
+    return () => anim.stop();
+  }, [elemPulse]);
+
   // GIF to show: intro during 'playing', reveal GIF during 'reveal'/'done'
   const animGif =
     fusePhase === 'playing'
@@ -115,15 +128,20 @@ export default function CharacterDetailScreen() {
   return (
     <>
       <View style={[styles.container, { backgroundColor: colors.background }]}>
-        {isOmegamon && (
+        {isOmegamon ? (
           <Image
             source={OMEGAMON_GIF}
             style={styles.omegamonBgGif}
             resizeMode="cover"
           />
+        ) : (
+          <>
+            <Animated.View style={[styles.elemBgOverlay, { backgroundColor: elemData.color, opacity: elemPulse }]} />
+            <Text style={[styles.elemBgLabel, { color: elemData.color }]}>{elemData.label.toUpperCase()}</Text>
+          </>
         )}
       <ScrollView
-        style={[styles.scrollView, isOmegamon && styles.scrollTransparent]}
+        style={[styles.scrollView, styles.scrollTransparent]}
         contentContainerStyle={[styles.content, { paddingTop: topPad + 8, paddingBottom: 60 }]}
         showsVerticalScrollIndicator={false}
       >
@@ -133,14 +151,16 @@ export default function CharacterDetailScreen() {
         </TouchableOpacity>
 
         {/* Hero Card */}
-        <View style={[styles.heroCard, { backgroundColor: colors.card, borderColor: attrData.color + '66' }]}>
-          <View style={[styles.heroStrip, { backgroundColor: rarityColor + '22' }]}>
-            {isOmegamon && (
+        <View style={[styles.heroCard, { backgroundColor: colors.card, borderColor: elemData.color + '66' }]}>
+          <View style={[styles.heroStrip, { backgroundColor: elemData.color + '18' }]}>
+            {isOmegamon ? (
               <Image
                 source={OMEGAMON_GIF}
                 style={styles.heroStripGif}
                 resizeMode="cover"
               />
+            ) : (
+              <Animated.View style={[StyleSheet.absoluteFill, { backgroundColor: elemData.color, opacity: elemPulse }]} />
             )}
             <CharacterAvatar characterId={char.id} size={120} />
           </View>
@@ -407,6 +427,21 @@ export default function CharacterDetailScreen() {
 
 const styles = StyleSheet.create({
   container: { flex: 1 },
+  elemBgOverlay: {
+    ...StyleSheet.absoluteFillObject as any,
+    zIndex: 0,
+  },
+  elemBgLabel: {
+    position: 'absolute',
+    bottom: 80,
+    alignSelf: 'center',
+    fontSize: 96,
+    fontWeight: '900' as const,
+    opacity: 0.07,
+    letterSpacing: 8,
+    zIndex: 0,
+    pointerEvents: 'none' as any,
+  },
   omegamonBgGif: {
     ...StyleSheet.absoluteFillObject as any,
     width: '100%', height: '100%',

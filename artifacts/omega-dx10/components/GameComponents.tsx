@@ -27,9 +27,9 @@ const AVATAR_SCALE: Record<string, number> = {
 export function CharacterAvatar({ characterId, size = 72, borderColor, bgColor, dimmed }: AvatarProps) {
   const img = CHARACTER_IMAGES[characterId];
   const char = CHARACTERS[characterId];
-  const attrData = char ? ATTRIBUTES[char.attribute] : null;
-  const bc = borderColor ?? attrData?.color ?? '#00d4ff';
-  const bg = bgColor ?? (attrData?.color ?? '#00d4ff') + '22';
+  const elemData = char ? ELEMENTS[char.element] : null;
+  const bc = borderColor ?? elemData?.color ?? '#00d4ff';
+  const bg = bgColor ?? (elemData?.color ?? '#00d4ff') + '22';
   const imgScale = AVATAR_SCALE[characterId] ?? 0.8;
 
   return (
