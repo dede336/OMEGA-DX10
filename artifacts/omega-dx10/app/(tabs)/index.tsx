@@ -329,7 +329,7 @@ const styles = StyleSheet.create({
   container: { flex: 1 },
 
   // Hero
-  heroBanner: { flexDirection: 'row', alignItems: 'center', paddingHorizontal: 16, paddingTop: 16, paddingBottom: 14, gap: 12 },
+  heroBanner: { flexDirection: 'row', alignItems: 'center', paddingHorizontal: 16, paddingTop: 16, paddingBottom: 14, gap: 12, overflow: 'hidden' as const },
   tamerPortrait: { width: 64, height: 64, borderRadius: 32, borderWidth: 2, overflow: 'hidden' as const, backgroundColor: '#0f1629' },
   tamerPortraitImg: { width: 64, height: 144 },
   heroText: { flex: 1 },
