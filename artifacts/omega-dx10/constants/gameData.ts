@@ -624,6 +624,7 @@ export const GAME_MAPS: GameMap[] = [
     description: 'Enfrente Lucemon Chaos Mode para ganhar EXP massiva. Reseta todo dia à meia-noite. Apenas 1x por dia.',
     isDungeon: true,
     isDaily: true,
+    requiredTamerLevel: 10,
     bitsReward: 500,
     stages: [
       {
