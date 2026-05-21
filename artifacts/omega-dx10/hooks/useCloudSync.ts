@@ -8,12 +8,22 @@ const SAVE_KEY = 'omega_dx10_save_v3';
 
 export function useCloudSync() {
   const { token, getApiUrl } = useAuth();
-  const { collection, tamerLevel, tamerExp, playerName, team } = useGame();
+  const { collection, tamerLevel, tamerExp, playerName, team, loadFromCloud } = useGame();
   const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const tokenRef = useRef(token);
   const getApiUrlRef = useRef(getApiUrl);
+  const initialLoadDone = useRef(false);
+
   useEffect(() => { tokenRef.current = token; }, [token]);
   useEffect(() => { getApiUrlRef.current = getApiUrl; }, [getApiUrl]);
+
+  // Ao abrir o app com sessão ativa, busca o save do servidor imediatamente
+  useEffect(() => {
+    if (!token || initialLoadDone.current) return;
+    initialLoadDone.current = true;
+    loadFromCloud(getApiUrl());
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [token]);
 
   useEffect(() => {
     const tok = tokenRef.current;
