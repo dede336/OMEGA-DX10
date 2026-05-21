@@ -273,8 +273,17 @@ export default function BattleScreen() {
   function grantRewards(activeOwnedId: string) {
     const enemyCount = battleCharIds.length > 0 ? battleCharIds.length : 1;
     const xp = (stage?.expReward ?? 0) * enemyCount;
-    gainExp(activeOwnedId, xp);
+
+    // Digivice bonuses
+    const dv = equippedItems.digivice
+      ? EQUIPMENT_ITEMS.find((i) => i.id === equippedItems.digivice)
+      : null;
+
+    // Active fighter XP (+ Digivice bonus)
+    const dvActiveBonus = (dv?.xpBonusPercent && xp > 0) ? Math.floor(xp * dv.xpBonusPercent) : 0;
+    gainExp(activeOwnedId, xp + dvActiveBonus);
     if (enemyCount > 1) addLog(`⚔️ Bônus de ${enemyCount}x inimigos: +${xp} EXP!`, '#22c55e');
+    if (dvActiveBonus > 0) addLog(`📡 +${dvActiveBonus} XP bônus (Digivice)!`, '#60a5fa');
 
     const bench = teamFightersRef.current.filter((t) => t.ownedId !== activeOwnedId && t.currentHP > 0);
 
@@ -287,15 +296,12 @@ export default function BattleScreen() {
       }
     }
 
-    // Digivice extra bonus
-    const dv = equippedItems.digivice
-      ? EQUIPMENT_ITEMS.find((i) => i.id === equippedItems.digivice)
-      : null;
+    // Digivice reserve XP bonus
     if (dv?.xpSharePercent && xp > 0 && bench.length > 0) {
       const dvShared = Math.floor(xp * dv.xpSharePercent);
       if (dvShared > 0) {
         bench.forEach((t) => gainExp(t.ownedId, dvShared));
-        addLog(`📡 +${dvShared} XP bônus (Digivice)!`, '#60a5fa');
+        addLog(`📡 +${dvShared} XP reserva (Digivice)!`, '#60a5fa');
       }
     }
 

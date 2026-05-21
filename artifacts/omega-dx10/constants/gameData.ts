@@ -796,6 +796,7 @@ export interface EquipItem {
   description: string;
   bonuses: Partial<BaseStats>;
   percentBonuses?: Partial<BaseStats>;
+  xpBonusPercent?: number;
   xpSharePercent?: number;
   tamerXpBonusPercent?: number;
   elementBonus?: ElementBonus;
@@ -834,7 +835,7 @@ export const EQUIPMENT_ITEMS: EquipItem[] = [
   { id: 'brasao_amor',      name: 'Brasão do Amor',      slot: 'brasao', rarity: 'LEGENDARY', description: 'O Brasão do Amor. Aumenta em 15% todos os status de Digimon do tipo Fogo e Vento.',     bonuses: {}, elementBonus: { elements: ['FIRE', 'WIND'],   percent: 0.15 } },
   { id: 'brasao_luz',           name: 'Brasão da Luz',           slot: 'brasao', rarity: 'LEGENDARY', description: 'O Brasão da Luz. Aumenta em 15% todos os status de Digimon do tipo Luz e Trevas.',           bonuses: {}, elementBonus: { elements: ['LIGHT', 'DARK'],        percent: 0.15 } },
   { id: 'brasao_conhecimento',  name: 'Brasão do Conhecimento',  slot: 'brasao', rarity: 'LEGENDARY', description: 'O Brasão do Conhecimento. Aumenta em 15% todos os status de Digimon do tipo Trovão e Planta.', bonuses: {}, elementBonus: { elements: ['LIGHTNING', 'PLANT'], percent: 0.15 } },
-  { id: 'digivice_d2',    name: 'Digivice D-2',       slot: 'digivice', rarity: 'EPIC',      description: 'Recompensa por derrotar GulusGammamon. Compartilha 25% do XP de batalha com Digimon reserva e aumenta 20% o XP Tamer.', bonuses: {}, xpSharePercent: 0.25, tamerXpBonusPercent: 0.20 },
+  { id: 'digivice_d2',    name: 'Digivice D-2',       slot: 'digivice', rarity: 'EPIC',      description: 'Recompensa por derrotar GulusGammamon. +20% XP para o Digimon em batalha, +25% XP para a reserva e +20% XP Tamer.', bonuses: {}, xpBonusPercent: 0.20, xpSharePercent: 0.25, tamerXpBonusPercent: 0.20 },
   { id: 'digivice_d3',    name: 'Digivice Quebrado',  slot: 'digivice', rarity: 'COMMON',    description: 'Digivice danificado, mas ainda funcional. Potencializa levemente o espírito do parceiro.',             bonuses: { spt: 6 } },
   { id: 'pulseira_forca', name: 'Pulseira de Força',  slot: 'pulseira', rarity: 'COMMON',    description: 'Amplifica a força bruta do Digimon parceiro.',                      bonuses: { atk: 7 } },
   { id: 'pulseira_ouro',  name: 'Pulseira Dourada',   slot: 'pulseira', rarity: 'RARE',      description: 'Pulseira lendária que amplifica múltiplos atributos de batalha.',   bonuses: { atk: 10, spt: 8 } },

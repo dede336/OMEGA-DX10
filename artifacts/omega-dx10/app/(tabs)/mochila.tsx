@@ -242,6 +242,7 @@ export default function MochilaScreen() {
                     .join('  ')
                 : '';
               const specialBonuses: string[] = [];
+              if ((item as any).xpBonusPercent)      specialBonuses.push(`⚔️ +${Math.round((item as any).xpBonusPercent * 100)}% XP Batalha`);
               if ((item as any).xpSharePercent)      specialBonuses.push(`📡 +${Math.round((item as any).xpSharePercent * 100)}% XP Reserva`);
               if ((item as any).tamerXpBonusPercent) specialBonuses.push(`⭐ +${Math.round((item as any).tamerXpBonusPercent * 100)}% XP Tamer`);
               const bonusStr = [flatBonusStr, pctBonusStr, ...specialBonuses].filter(Boolean).join('  ');
