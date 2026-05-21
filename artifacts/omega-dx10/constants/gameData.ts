@@ -204,6 +204,17 @@ export const CHARACTERS: Record<string, Character> = {
     spiritName: 'Shining Laser ✨',
     spiritHitsAll: true,
   },
+  lucemon: {
+    id: 'lucemon',
+    name: 'Lucemon',
+    rarity: 'COMMON',
+    attribute: 'VC',
+    element: 'LIGHT',
+    baseStats: { hp: 112, mp: 116, atk: 79, def: 69, spt: 78, spd: 72, apt: 30 },
+    description: 'O Anjo Caído em forma de criança. Um Rookie do tipo Vacina com poder divino imenso e uma dualidade entre a luz pura e a escuridão latente que o conduzirá a transformações devastadoras.',
+    attackName: 'Holy Bolt ✨',
+    spiritName: 'Grand Cross ✨',
+  },
   lucemonChaosMode: {
     id: 'lucemonChaosMode',
     name: 'Lucemon Chaos Mode',
@@ -405,7 +416,7 @@ export const EVOLUTIONS: Record<string, { evolvesTo: string; requiredLevel: numb
 export const SCANNABLE_CHARACTERS: string[] = ['agumon', 'gabumon', 'demiDevimon'];
 
 // Display order in the Codex (grouped by evolution line)
-export const CODEX_ORDER: string[] = ['agumon', 'agumonSaver', 'geoGreymon', 'rizeGreymon', 'shineGreymon', 'greymon', 'metalGreymon', 'warGreymon', 'gabumon', 'garurumon', 'wereGarurumon', 'metalGarurumon', 'omegamon', 'guilmon', 'growlmon', 'megaloGrowlmon', 'gallantmon', 'gallantmonCrimsonMode', 'lucemonChaosMode', 'patamon', 'angemon', 'magnaAngemon', 'seraphimon', 'demiDevimon', 'devimon', 'myotismon', 'vnonMyotismon', 'gulusGammamon'];
+export const CODEX_ORDER: string[] = ['agumon', 'agumonSaver', 'geoGreymon', 'rizeGreymon', 'shineGreymon', 'greymon', 'metalGreymon', 'warGreymon', 'gabumon', 'garurumon', 'wereGarurumon', 'metalGarurumon', 'omegamon', 'guilmon', 'growlmon', 'megaloGrowlmon', 'gallantmon', 'gallantmonCrimsonMode', 'lucemon', 'lucemonChaosMode', 'patamon', 'angemon', 'magnaAngemon', 'seraphimon', 'demiDevimon', 'devimon', 'myotismon', 'vnonMyotismon', 'gulusGammamon'];
 
 // ─── Maps & Stages ─────────────────────────────────────────────────────────────
 export const GAME_MAPS: GameMap[] = [
