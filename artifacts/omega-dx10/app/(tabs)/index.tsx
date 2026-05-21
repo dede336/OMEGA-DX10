@@ -17,6 +17,7 @@ const WIND_STATUS_GIF  = require('../../assets/images/wind_status.gif');
 const TK_BG_GIF        = require('../../assets/images/tk_bg.gif');
 const TAI_BG           = require('../../assets/images/tai_bg.webp');
 const SORA_BG          = require('../../assets/images/sora_bg.jpg');
+const MIMI_BG          = require('../../assets/images/mimi_bg.jpg');
 
 const SPECIAL_GIFS: Record<string, any> = {
   omegamon:              require('../../assets/images/omegamon_digivolve.gif'),
@@ -93,6 +94,7 @@ export default function HomeScreen() {
   const isTK   = tamerId === 'tamer_tk';
   const isTai  = tamerId === 'tamer_tai';
   const isSora = tamerId === 'tamer_sora';
+  const isMimi = tamerId === 'tamer_mimi';
 
   const botPad = Platform.OS === 'web' ? 20 : insets.bottom + 20;
 
@@ -121,6 +123,13 @@ export default function HomeScreen() {
         {isSora && (
           <Image
             source={SORA_BG}
+            style={[StyleSheet.absoluteFillObject, { opacity: 0.30 }]}
+            resizeMode="cover"
+          />
+        )}
+        {isMimi && (
+          <Image
+            source={MIMI_BG}
             style={[StyleSheet.absoluteFillObject, { opacity: 0.30 }]}
             resizeMode="cover"
           />
