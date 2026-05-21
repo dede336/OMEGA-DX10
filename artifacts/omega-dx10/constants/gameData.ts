@@ -608,11 +608,11 @@ export const ALTERNATE_EVOLUTIONS: Record<string, { evolvesTo: string; requiredL
 };
 
 export const SACRIFICE_DROPS: Record<string, { itemId: string; chance: number }[]> = {
-  magnaAngemon:     [{ itemId: 'anel_sagrado', chance: 0.30 }],
-  angewomon:        [{ itemId: 'anel_sagrado', chance: 0.30 }],
-  lucemonChaosMode: [{ itemId: 'anel_sagrado', chance: 0.40 }],
-  angemon:          [{ itemId: 'anel_sagrado', chance: 0.10 }],
-  tailmon:          [{ itemId: 'anel_sagrado', chance: 0.10 }],
+  magnaAngemon:     [{ itemId: 'piece_anel_sagrado', chance: 0.30 }],
+  angewomon:        [{ itemId: 'piece_anel_sagrado', chance: 0.30 }],
+  lucemonChaosMode: [{ itemId: 'piece_anel_sagrado', chance: 0.40 }],
+  angemon:          [{ itemId: 'piece_anel_sagrado', chance: 0.10 }],
+  tailmon:          [{ itemId: 'piece_anel_sagrado', chance: 0.10 }],
 };
 
 export const ROOKIE_OF: Record<string, string> = {
@@ -637,7 +637,8 @@ export const SACRIFICE_SCAN_PCT: Partial<Record<RarityId, number>> = {
 };
 
 export const ITEM_NAMES: Record<string, string> = {
-  anel_sagrado: 'Anel Sagrado ✨',
+  anel_sagrado:       'Anel Sagrado ✨',
+  piece_anel_sagrado: 'Fragmento do Anel Sagrado',
 };
 
 // Characters that can be scanned (encountered as enemies in battle)
@@ -932,6 +933,19 @@ export const TAMERS: TamerOption[] = [
 ];
 
 export const CRAFT_RECIPES: CraftRecipe[] = [
+  // ── Anel Sagrado: sacrifice drops ─────────────────────────────────────────
+  {
+    pieceId: 'piece_anel_sagrado',
+    pieceName: 'Fragmento do Anel Sagrado',
+    pieceDescription: 'Obtido sacrificando Angemon, Tailmon, MagnaAngemon, Angewomon ou Lucemon Chaos Mode. Junte 10 para forjar o Anel Sagrado.',
+    pieceIcon: 'circle',
+    pieceColor: '#fde68a',
+    requiredCount: 10,
+    bitsCost: 0,
+    resultItemId: 'anel_sagrado',
+    resultItemName: 'Anel Sagrado ✨',
+    resultRarity: 'EPIC',
+  },
   // ── Chip Forest drops: piece_coragem ──────────────────────────────────────
   // ── Dungeon Gulus drop: piece_brasao_coragem ─────────────────────────────
   {
