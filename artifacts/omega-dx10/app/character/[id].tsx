@@ -16,8 +16,9 @@ import {
 } from '@/constants/gameData';
 import { AttributeBadge, ElementBadge, StatBar, CharacterAvatar } from '@/components/GameComponents';
 
-const DIGIVO_GIF    = require('../../assets/images/digivolution.gif');
-const OMEGAMON_GIF  = require('../../assets/images/omegamon_digivolve.gif');
+const DIGIVO_GIF             = require('../../assets/images/digivolution.gif');
+const OMEGAMON_GIF           = require('../../assets/images/omegamon_digivolve.gif');
+const OMEGAMON_FUSION_INTRO  = require('../../assets/images/omegamon_fusion_intro.gif');
 
 type FusePhase = 'playing' | 'reveal' | 'done';
 
@@ -40,8 +41,8 @@ export default function CharacterDetailScreen() {
   useEffect(() => {
     if (!fuseAnim) return;
     if (fusePhase === 'playing') {
-      // GIF plays alone for 2 000ms, then reveal the new form
-      const t = setTimeout(() => setFusePhase('reveal'), 2000);
+      // Intro GIF is 8.37s — wait for it to finish, then reveal
+      const t = setTimeout(() => setFusePhase('reveal'), 8400);
       return () => clearTimeout(t);
     }
     if (fusePhase === 'reveal') {
@@ -101,8 +102,11 @@ export default function CharacterDetailScreen() {
     setFuseAnim({ fromCharId: owned.characterId, toCharId: fusionRecipe.resultId });
   }
 
-  // GIF to show during animation
-  const animGif = fuseAnim?.toCharId === 'omegamon' ? OMEGAMON_GIF : DIGIVO_GIF;
+  // GIF to show: intro during 'playing', reveal GIF during 'reveal'/'done'
+  const animGif =
+    fusePhase === 'playing'
+      ? (fuseAnim?.toCharId === 'omegamon' ? OMEGAMON_FUSION_INTRO : DIGIVO_GIF)
+      : (fuseAnim?.toCharId === 'omegamon' ? OMEGAMON_GIF           : DIGIVO_GIF);
   const fuseToChar   = fuseAnim ? CHARACTERS[fuseAnim.toCharId]   : null;
   const fuseFromChar = fuseAnim ? CHARACTERS[fuseAnim.fromCharId] : null;
 
