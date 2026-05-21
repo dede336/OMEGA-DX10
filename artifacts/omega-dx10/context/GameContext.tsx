@@ -64,6 +64,16 @@ const DEFAULT_MESSAGES: MailMessage[] = [
     createdAt: 1716000001000,
     unlocksAtTamerLevel: 5,
   },
+  {
+    id: 'agumon_saver_gift_v1',
+    title: 'Presente de Nível 10 — Agumon (Saber)!',
+    body: 'Incrível, Tamer Rank 10! Você provou seu valor no Mundo Digital. Como reconhecimento especial, você recebe o Agumon (Saber) — a versão aprimorada do clássico Agumon do Tamer Masaru. Com seu tipo Vacina e golpes poderosos, ele será um parceiro formidável nas masmorras avançadas!',
+    reward: { digimon: ['agumonSaver'] },
+    rewardClaimed: false,
+    isRead: false,
+    createdAt: 1716000002000,
+    unlocksAtTamerLevel: 10,
+  },
 ];
 
 function getTodayDateString(): string {
