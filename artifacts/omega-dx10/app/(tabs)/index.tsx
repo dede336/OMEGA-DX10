@@ -140,23 +140,11 @@ export default function HomeScreen() {
         </View>
 
         {/* ── Active Digimon ── */}
-        <View style={styles.sectionHeader}>
-          <Text style={[styles.sectionTitle, { color: colors.foreground }]}>Digimon Ativo</Text>
-          {collection.length > 0 && (
-            <TouchableOpacity
-              onPress={() => setSwapModalVisible(true)}
-              style={[styles.swapBtn, { backgroundColor: colors.primary + '22', borderColor: colors.primary + '66' }]}
-              activeOpacity={0.7}
-            >
-              <Feather name="refresh-cw" size={11} color={colors.primary} />
-              <Text style={[styles.swapBtnText, { color: colors.primary }]}>Trocar</Text>
-            </TouchableOpacity>
-          )}
-        </View>
+        <Text style={[styles.sectionTitle, { color: colors.foreground }]}>Digimon Ativo</Text>
         {char && scaled && selectedCharacter && attrData ? (
           <TouchableOpacity
             activeOpacity={0.85}
-            onPress={() => router.push('/(tabs)/collection')}
+            onPress={() => setSwapModalVisible(true)}
             style={[styles.activeCard, { backgroundColor: colors.card, borderColor: attrData.color + '55' }]}
           >
             {/* top colored strip */}
@@ -329,11 +317,6 @@ const styles = StyleSheet.create({
 
   emptyCard: { borderRadius: 16, borderWidth: 1, padding: 40, alignItems: 'center', gap: 12, marginBottom: 20 },
   emptyText: { fontSize: 13, textAlign: 'center' as const },
-
-  // Section header row
-  sectionHeader: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: 10 },
-  swapBtn: { flexDirection: 'row', alignItems: 'center', gap: 5, borderRadius: 8, borderWidth: 1, paddingHorizontal: 10, paddingVertical: 5 },
-  swapBtnText: { fontSize: 11, fontWeight: '700' as const },
 
   // Swap modal
   modalOverlay: { flex: 1, justifyContent: 'flex-end', backgroundColor: '#00000088' },
