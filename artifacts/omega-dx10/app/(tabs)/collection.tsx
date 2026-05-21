@@ -20,6 +20,7 @@ const DIGIVO_INTRO_GIF = require('../../assets/images/digivolution_intro.gif');
 const OMEGAMON_GIF          = require('../../assets/images/omegamon_digivolve.gif');
 const SHINEGREYMON_BM_GIF   = require('../../assets/images/characters/shinegreymonbm_special.gif');
 const ROSEMON_BM_GIF        = require('../../assets/images/characters/rosemonBurstMode_status.gif');
+const IMPERIALDRAMON_PM_GIF = require('../../assets/images/characters/imperialDramonPM_status.gif');
 
 // Reverse map: evolvesTo → { fromName, requiredLevel }
 const EVOLVES_FROM: Record<string, { fromName: string; requiredLevel: number }> = {};
@@ -459,8 +460,8 @@ export default function CollectionScreen() {
           <Image
             source={
               evoPhase === 'playing'
-                ? (evoAnim?.toCharId === 'omegamon' ? OMEGAMON_GIF : evoAnim?.toCharId === 'shineGreymonBurstMode' ? SHINEGREYMON_BM_GIF : evoAnim?.toCharId === 'rosemonBurstMode' ? ROSEMON_BM_GIF : DIGIVO_INTRO_GIF)
-                : (evoAnim?.toCharId === 'omegamon' ? OMEGAMON_GIF : evoAnim?.toCharId === 'shineGreymonBurstMode' ? SHINEGREYMON_BM_GIF : evoAnim?.toCharId === 'rosemonBurstMode' ? ROSEMON_BM_GIF : DIGIVO_GIF)
+                ? (evoAnim?.toCharId === 'omegamon' ? OMEGAMON_GIF : evoAnim?.toCharId === 'shineGreymonBurstMode' ? SHINEGREYMON_BM_GIF : evoAnim?.toCharId === 'rosemonBurstMode' ? ROSEMON_BM_GIF : evoAnim?.toCharId === 'imperialDramonPM' ? IMPERIALDRAMON_PM_GIF : DIGIVO_INTRO_GIF)
+                : (evoAnim?.toCharId === 'omegamon' ? OMEGAMON_GIF : evoAnim?.toCharId === 'shineGreymonBurstMode' ? SHINEGREYMON_BM_GIF : evoAnim?.toCharId === 'rosemonBurstMode' ? ROSEMON_BM_GIF : evoAnim?.toCharId === 'imperialDramonPM' ? IMPERIALDRAMON_PM_GIF : DIGIVO_GIF)
             }
             style={styles.evoGifBg}
             resizeMode="cover"

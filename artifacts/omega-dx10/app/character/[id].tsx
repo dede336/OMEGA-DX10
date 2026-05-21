@@ -22,6 +22,7 @@ const OMEGAMON_GIF              = require('../../assets/images/omegamon_digivolv
 const OMEGAMON_FUSION_INTRO     = require('../../assets/images/omegamon_fusion_intro.gif');
 const SHINEGREYMON_BM_GIF       = require('../../assets/images/characters/shinegreymonbm_special.gif');
 const ROSEMON_BM_GIF            = require('../../assets/images/characters/rosemonBurstMode_status.gif');
+const IMPERIALDRAMON_PM_GIF     = require('../../assets/images/characters/imperialDramonPM_status.gif');
 
 type FusePhase = 'playing' | 'reveal' | 'done';
 
@@ -127,11 +128,12 @@ export default function CharacterDetailScreen() {
   const fuseToChar   = fuseAnim ? CHARACTERS[fuseAnim.toCharId]   : null;
   const fuseFromChar = fuseAnim ? CHARACTERS[fuseAnim.fromCharId] : null;
 
-  const isOmegamon        = char.id === 'omegamon';
-  const isShineGreymonBM  = char.id === 'shineGreymonBurstMode';
-  const isRoseMonBM       = char.id === 'rosemonBurstMode';
-  const hasSpecialGif     = isOmegamon || isShineGreymonBM || isRoseMonBM;
-  const specialGif        = isOmegamon ? OMEGAMON_GIF : isShineGreymonBM ? SHINEGREYMON_BM_GIF : ROSEMON_BM_GIF;
+  const isOmegamon           = char.id === 'omegamon';
+  const isShineGreymonBM     = char.id === 'shineGreymonBurstMode';
+  const isRoseMonBM          = char.id === 'rosemonBurstMode';
+  const isImperialDramonPM   = char.id === 'imperialDramonPM';
+  const hasSpecialGif        = isOmegamon || isShineGreymonBM || isRoseMonBM || isImperialDramonPM;
+  const specialGif           = isOmegamon ? OMEGAMON_GIF : isShineGreymonBM ? SHINEGREYMON_BM_GIF : isRoseMonBM ? ROSEMON_BM_GIF : IMPERIALDRAMON_PM_GIF;
 
   return (
     <>
