@@ -5,8 +5,7 @@ import { Feather } from '@expo/vector-icons';
 import { router } from 'expo-router';
 import { useColors } from '@/hooks/useColors';
 import { useGame } from '@/context/GameContext';
-import { GAME_MAPS, CHARACTERS, ATTRIBUTES, ELEMENTS } from '@/constants/gameData';
-import CHARACTER_IMAGES from '@/constants/characterImages';
+import { GAME_MAPS } from '@/constants/gameData';
 
 const STARS_3  = require('../../assets/images/ui/stars3.png');
 const PADLOCK  = require('../../assets/images/ui/padlock.png');
@@ -204,11 +203,6 @@ export default function MapScreen() {
                 <View style={[styles.stagesContainer, { borderTopColor: colors.border }]}>
                   {map.stages.map((stage) => {
                     const cleared = isStageCleared(map.id, stage.index);
-                    const stageEnemyCount = stage.enemyCharacterIds?.length ?? 1;
-                    const enemyChar = CHARACTERS[stage.enemyCharacterId];
-                    const enemyAttr = enemyChar ? ATTRIBUTES[enemyChar.attribute] : null;
-                    const enemyElem = enemyChar ? ELEMENTS[enemyChar.element] : null;
-                    const enemyImg = CHARACTER_IMAGES[stage.enemyCharacterId];
                     const stageDailyLocked = isDaily && !isDailyDungeonAvailable;
                     const canPlay = !!selectedCharacter && !stageDailyLocked;
 
@@ -227,22 +221,6 @@ export default function MapScreen() {
                         {/* Info */}
                         <View style={styles.stageInfo}>
                           <Text style={[styles.stageName, { color: isDungeon ? '#e9d5ff' : colors.foreground }]}>{stage.name}</Text>
-                          {enemyChar && (
-                            <View style={styles.enemyRow}>
-                              <Feather name="zap" size={12} color={enemyAttr?.color ?? colors.mutedForeground} />
-                              <Text style={[styles.enemyName, { color: colors.mutedForeground }]}>
-                                {enemyChar.name} Lv{stage.enemyLevel}
-                              </Text>
-                              <View style={[styles.elemTag, { backgroundColor: (enemyElem?.color ?? '#6b7280') + '33', borderColor: enemyElem?.color ?? '#6b7280' }]}>
-                                <Text style={[styles.elemTagText, { color: enemyElem?.color ?? '#6b7280' }]}>{enemyElem?.label}</Text>
-                              </View>
-                              {stageEnemyCount > 1 && (
-                                <View style={[styles.enemyCountTag, { backgroundColor: '#ef444422', borderColor: '#ef4444' }]}>
-                                  <Text style={[styles.enemyCountTagText, { color: '#ef4444' }]}>×{stageEnemyCount}</Text>
-                                </View>
-                              )}
-                            </View>
-                          )}
                           {!cleared && !isDungeon && (
                             <View style={styles.rewardRow}>
                               <Feather name="cpu" size={11} color="#3b82f6" />
@@ -270,16 +248,10 @@ export default function MapScreen() {
                           ))}
                         </View>
 
-                        {/* Enemy sprite */}
                         <View style={styles.stageRight}>
                           <View style={[styles.expTag, { backgroundColor: colors.primary + '22' }]}>
                             <Text style={[styles.expText, { color: colors.primary }]}>+{stage.expReward} EXP</Text>
                           </View>
-                          {enemyImg && (
-                            <View style={[styles.enemySpriteWrapper, { backgroundColor: (enemyAttr?.color ?? '#6b7280') + '22', borderColor: (enemyAttr?.color ?? '#6b7280') + '55' }]}>
-                              <Image source={enemyImg} style={styles.enemySprite} resizeMode="contain" />
-                            </View>
-                          )}
                         </View>
                       </TouchableOpacity>
                     );
