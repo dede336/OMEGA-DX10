@@ -1,14 +1,20 @@
-import React from 'react';
-import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Platform } from 'react-native';
+import React, { useState } from 'react';
+import {
+  View, Text, StyleSheet, ScrollView, TouchableOpacity,
+  Platform, Modal, Pressable,
+} from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { router } from 'expo-router';
 import { Feather } from '@expo/vector-icons';
 import { useColors } from '@/hooks/useColors';
-import { useGame } from '@/context/GameContext';
-import { CHARACTERS, EVOLUTIONS, SCANNABLE_CHARACTERS, CODEX_ORDER } from '@/constants/gameData';
-import { CharacterCard, ScanCard, LockedCard } from '@/components/GameComponents';
+import { useGame, OwnedCharacter } from '@/context/GameContext';
+import {
+  CHARACTERS, EVOLUTIONS, SCANNABLE_CHARACTERS, CODEX_ORDER,
+  RARITY_COLORS, RARITY_LABELS,
+} from '@/constants/gameData';
+import { CharacterCard, ScanCard, LockedCard, CharacterAvatar, AttributeBadge, ElementBadge } from '@/components/GameComponents';
 
-// Reverse map: evolvesTo → { fromId, requiredLevel, fromName }
+// Reverse map: evolvesTo → { fromName, requiredLevel }
 const EVOLVES_FROM: Record<string, { fromName: string; requiredLevel: number }> = {};
 Object.entries(EVOLUTIONS).forEach(([fromId, evo]) => {
   const fromChar = CHARACTERS[fromId];
@@ -20,16 +26,32 @@ export default function CollectionScreen() {
   const insets = useSafeAreaInsets();
   const { collection, selectedCharacter, setSelectedCharacter, scanProgress, createFromScan, evolveDigimon } = useGame();
 
-  const topPad = 0;
   const bottomPad = Platform.OS === 'web' ? 34 : insets.bottom;
 
   const DIGIBANK_LIMIT = 100;
   const ownedCount = collection.length;
-  const totalCount = Object.keys(CHARACTERS).length;
+
+  // Modal state
+  const [modalOwned, setModalOwned] = useState<OwnedCharacter | null>(null);
+
+  function openModal(owned: OwnedCharacter) {
+    setSelectedCharacter(owned.ownedId);
+    setModalOwned(owned);
+  }
+
+  function closeModal() {
+    setModalOwned(null);
+  }
+
+  // Computed evolution info for modal
+  const modalEvo = modalOwned ? EVOLUTIONS[modalOwned.characterId] : undefined;
+  const modalCanEvolve = !!(modalOwned && modalEvo && modalOwned.level >= modalEvo.requiredLevel);
+  const modalEvoChar = modalEvo ? CHARACTERS[modalEvo.evolvesTo] : undefined;
 
   return (
     <View style={[styles.container, { backgroundColor: colors.background }]}>
-      <View style={[styles.header, { paddingTop: topPad + 16, borderBottomColor: colors.border }]}>
+      {/* ── Header ── */}
+      <View style={[styles.header, { paddingTop: 16, borderBottomColor: colors.border }]}>
         <Text style={[styles.title, { color: colors.foreground }]}>Digibank</Text>
         <View style={[styles.countBadge, { backgroundColor: colors.primary + '22', borderColor: colors.primary }]}>
           <Text style={[styles.countText, { color: colors.primary }]}>{ownedCount} / {DIGIBANK_LIMIT}</Text>
@@ -45,41 +67,18 @@ export default function CollectionScreen() {
           const isScannable = CHARACTERS[charId]?.rarity === 'COMMON';
           const scan = scanProgress[charId] ?? 0;
           const evo = owned ? EVOLUTIONS[owned.characterId] : undefined;
-          const canEvolve = owned && evo && owned.level >= evo.requiredLevel;
+          const canEvolve = !!(owned && evo && owned.level >= evo.requiredLevel);
           const evolvesFrom = EVOLVES_FROM[charId];
 
           if (owned) {
             return (
-              <View key={owned.ownedId}>
-                <CharacterCard
-                  owned={owned}
-                  isSelected={selectedCharacter?.ownedId === owned.ownedId}
-                  onPress={() => {
-                    setSelectedCharacter(owned.ownedId);
-                    router.push(`/character/${owned.ownedId}`);
-                  }}
-                />
-                {canEvolve && evo && (
-                  <TouchableOpacity
-                    activeOpacity={0.8}
-                    onPress={() => evolveDigimon(owned.ownedId)}
-                    style={[styles.evolveBtn, { backgroundColor: '#f59e0b' }]}
-                  >
-                    <Feather name="arrow-up-circle" size={18} color="#000" />
-                    <Text style={styles.evolveBtnText}>
-                      Evoluir para {evo.label}  (Nível {evo.requiredLevel}+)
-                    </Text>
-                  </TouchableOpacity>
-                )}
-                {evo && !canEvolve && (
-                  <View style={[styles.evoHint, { backgroundColor: colors.muted, borderColor: colors.border }]}>
-                    <Feather name="info" size={13} color={colors.mutedForeground} />
-                    <Text style={[styles.evoHintText, { color: colors.mutedForeground }]}>
-                      Alcance o Nível {evo.requiredLevel} para evoluir para {evo.label}
-                    </Text>
-                  </View>
-                )}
-              </View>
+              <CharacterCard
+                key={owned.ownedId}
+                owned={owned}
+                isSelected={selectedCharacter?.ownedId === owned.ownedId}
+                canEvolve={canEvolve}
+                onPress={() => openModal(owned)}
+              />
             );
           }
 
@@ -94,7 +93,7 @@ export default function CollectionScreen() {
             );
           }
 
-          // Locked evolution-only Digimon
+          // Locked evolution-only entry
           const rarity = CHARACTERS[charId]?.rarity;
           const rarityLabel = rarity === 'EPIC' ? 'Ultimate' : rarity === 'RARE' ? 'Champion' : 'Evolução';
           const hint = evolvesFrom
@@ -119,6 +118,123 @@ export default function CollectionScreen() {
           </Text>
         </View>
       </ScrollView>
+
+      {/* ── Evolution Modal ── */}
+      <Modal
+        visible={modalOwned !== null}
+        transparent
+        animationType="slide"
+        onRequestClose={closeModal}
+      >
+        <Pressable style={styles.modalOverlay} onPress={closeModal}>
+          <Pressable
+            style={[styles.modalSheet, { backgroundColor: colors.card }]}
+            onPress={(e) => e.stopPropagation()}
+          >
+            {modalOwned && (() => {
+              const char = CHARACTERS[modalOwned.characterId];
+              const rarityColor = char ? RARITY_COLORS[char.rarity] : colors.primary;
+
+              return (
+                <>
+                  {/* Handle bar */}
+                  <View style={[styles.sheetHandle, { backgroundColor: colors.border }]} />
+
+                  {/* Title */}
+                  <Text style={[styles.sheetTitle, { color: colors.foreground }]}>
+                    {char?.name ?? modalOwned.characterId}
+                  </Text>
+                  <Text style={[styles.sheetSub, { color: colors.mutedForeground }]}>
+                    Lv {modalOwned.level} · {char ? RARITY_LABELS[char.rarity] : ''}
+                  </Text>
+
+                  {/* Evolution section */}
+                  {modalEvo && modalEvoChar ? (
+                    <View style={[styles.evoSection, { borderColor: modalCanEvolve ? '#f59e0b' : colors.border }]}>
+                      {/* From */}
+                      <View style={styles.evoSide}>
+                        <CharacterAvatar characterId={modalOwned.characterId} size={72} />
+                        <Text style={[styles.evoName, { color: colors.foreground }]}>{char?.name}</Text>
+                        <Text style={[styles.evoLevel, { color: colors.primary }]}>Lv {modalOwned.level}</Text>
+                      </View>
+
+                      {/* Arrow */}
+                      <View style={styles.evoArrow}>
+                        <Feather name="arrow-right" size={28} color={modalCanEvolve ? '#f59e0b' : colors.mutedForeground} />
+                        <Text style={[styles.evoReqText, { color: modalCanEvolve ? '#f59e0b' : colors.mutedForeground }]}>
+                          Lv {modalEvo.requiredLevel}
+                        </Text>
+                      </View>
+
+                      {/* To */}
+                      <View style={styles.evoSide}>
+                        <CharacterAvatar characterId={modalEvo.evolvesTo} size={72} />
+                        <Text style={[styles.evoName, { color: colors.foreground }]}>{modalEvoChar.name}</Text>
+                        <View style={styles.evoBadgesRow}>
+                          <AttributeBadge attr={modalEvoChar.attribute} />
+                          <ElementBadge elem={modalEvoChar.element} />
+                        </View>
+                      </View>
+                    </View>
+                  ) : (
+                    <View style={[styles.noEvoBox, { borderColor: colors.border, backgroundColor: colors.background }]}>
+                      <Feather name="check-circle" size={20} color={colors.mutedForeground} />
+                      <Text style={[styles.noEvoText, { color: colors.mutedForeground }]}>
+                        Este Digimon está na sua forma final.
+                      </Text>
+                    </View>
+                  )}
+
+                  {/* Evolve button */}
+                  {modalEvo && (
+                    modalCanEvolve ? (
+                      <TouchableOpacity
+                        style={[styles.evolveBtn, { backgroundColor: '#f59e0b' }]}
+                        activeOpacity={0.85}
+                        onPress={() => {
+                          evolveDigimon(modalOwned.ownedId);
+                          closeModal();
+                        }}
+                      >
+                        <Feather name="arrow-up-circle" size={20} color="#000" />
+                        <Text style={styles.evolveBtnText}>Evoluir para {modalEvo.label}</Text>
+                      </TouchableOpacity>
+                    ) : (
+                      <View style={[styles.evolveLocked, { backgroundColor: colors.background, borderColor: colors.border }]}>
+                        <Feather name="lock" size={16} color={colors.mutedForeground} />
+                        <Text style={[styles.evolveLockedText, { color: colors.mutedForeground }]}>
+                          Alcance o Nível {modalEvo.requiredLevel} para evoluir
+                          {' '}(faltam {modalEvo.requiredLevel - modalOwned.level} níveis)
+                        </Text>
+                      </View>
+                    )
+                  )}
+
+                  {/* Detail & close buttons */}
+                  <View style={styles.modalActions}>
+                    <TouchableOpacity
+                      style={[styles.detailBtn, { borderColor: colors.border }]}
+                      onPress={() => {
+                        closeModal();
+                        router.push(`/character/${modalOwned.ownedId}`);
+                      }}
+                    >
+                      <Feather name="info" size={16} color={colors.foreground} />
+                      <Text style={[styles.detailBtnText, { color: colors.foreground }]}>Ver detalhes</Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity
+                      style={[styles.closeBtn, { borderColor: colors.border }]}
+                      onPress={closeModal}
+                    >
+                      <Text style={[styles.closeBtnText, { color: colors.mutedForeground }]}>Fechar</Text>
+                    </TouchableOpacity>
+                  </View>
+                </>
+              );
+            })()}
+          </Pressable>
+        </Pressable>
+      </Modal>
     </View>
   );
 }
@@ -137,29 +253,6 @@ const styles = StyleSheet.create({
   countBadge: { borderWidth: 1, borderRadius: 10, paddingHorizontal: 12, paddingVertical: 4 },
   countText: { fontSize: 13, fontWeight: '700' as const },
   list: { paddingHorizontal: 20, paddingTop: 16 },
-  evolveBtn: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    gap: 8,
-    borderRadius: 10,
-    paddingVertical: 12,
-    marginBottom: 14,
-    marginTop: -8,
-  },
-  evolveBtnText: { fontSize: 14, fontWeight: '700' as const, color: '#000' },
-  evoHint: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 8,
-    borderRadius: 10,
-    borderWidth: 1,
-    paddingHorizontal: 14,
-    paddingVertical: 10,
-    marginBottom: 14,
-    marginTop: -8,
-  },
-  evoHintText: { fontSize: 12, flex: 1, lineHeight: 16 },
   infoBanner: {
     flexDirection: 'row',
     alignItems: 'flex-start',
@@ -170,4 +263,95 @@ const styles = StyleSheet.create({
     marginTop: 4,
   },
   infoText: { fontSize: 13, flex: 1, lineHeight: 18 },
+
+  // Modal
+  modalOverlay: {
+    flex: 1,
+    backgroundColor: '#00000066',
+    justifyContent: 'flex-end',
+  },
+  modalSheet: {
+    borderTopLeftRadius: 24,
+    borderTopRightRadius: 24,
+    padding: 20,
+    paddingBottom: 36,
+    gap: 14,
+  },
+  sheetHandle: {
+    width: 40,
+    height: 4,
+    borderRadius: 2,
+    alignSelf: 'center',
+    marginBottom: 4,
+  },
+  sheetTitle: { fontSize: 22, fontWeight: '800' as const, textAlign: 'center' },
+  sheetSub: { fontSize: 13, textAlign: 'center', marginTop: -8 },
+
+  // Evolution display
+  evoSection: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    borderRadius: 16,
+    borderWidth: 1.5,
+    padding: 16,
+    gap: 8,
+  },
+  evoSide: { alignItems: 'center', gap: 4, flex: 1 },
+  evoName: { fontSize: 13, fontWeight: '700' as const, textAlign: 'center' },
+  evoLevel: { fontSize: 12, fontWeight: '600' as const },
+  evoArrow: { alignItems: 'center', gap: 2 },
+  evoReqText: { fontSize: 10, fontWeight: '700' as const },
+  evoBadgesRow: { flexDirection: 'row', gap: 4, flexWrap: 'wrap', justifyContent: 'center' },
+
+  noEvoBox: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 10,
+    borderRadius: 12,
+    borderWidth: 1,
+    padding: 14,
+  },
+  noEvoText: { fontSize: 13, flex: 1 },
+
+  evolveBtn: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 8,
+    borderRadius: 14,
+    paddingVertical: 14,
+  },
+  evolveBtnText: { fontSize: 15, fontWeight: '800' as const, color: '#000' },
+  evolveLocked: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+    borderRadius: 12,
+    borderWidth: 1,
+    padding: 12,
+  },
+  evolveLockedText: { fontSize: 12, flex: 1 },
+
+  modalActions: { flexDirection: 'row', gap: 10 },
+  detailBtn: {
+    flex: 1,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 6,
+    borderRadius: 12,
+    borderWidth: 1,
+    paddingVertical: 12,
+  },
+  detailBtnText: { fontSize: 13, fontWeight: '700' as const },
+  closeBtn: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderRadius: 12,
+    borderWidth: 1,
+    paddingVertical: 12,
+  },
+  closeBtnText: { fontSize: 13, fontWeight: '600' as const },
 });

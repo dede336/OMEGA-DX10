@@ -120,16 +120,15 @@ interface CharacterCardProps {
   onPress?: () => void;
   isSelected?: boolean;
   compact?: boolean;
+  canEvolve?: boolean;
 }
 
-export function CharacterCard({ owned, onPress, isSelected, compact }: CharacterCardProps) {
+export function CharacterCard({ owned, onPress, isSelected, compact, canEvolve }: CharacterCardProps) {
   const colors = useColors();
   const char = CHARACTERS[owned.characterId];
   if (!char) return null;
 
-  const scaled = getScaledStats(char.baseStats, owned.level);
   const expNeeded = expToNextLevel(owned.level);
-  const expPct = Math.min(1, owned.exp / expNeeded);
   const rarityColor = RARITY_COLORS[char.rarity];
 
   if (compact) {
@@ -146,6 +145,11 @@ export function CharacterCard({ owned, onPress, isSelected, compact }: Character
         <Text style={[cardStyles.compactName, { color: colors.foreground }]} numberOfLines={1}>{char.name}</Text>
         <Text style={[cardStyles.compactLevel, { color: colors.primary }]}>Lv {owned.level}</Text>
         {isSelected && <View style={[cardStyles.selectedDot, { backgroundColor: colors.primary }]} />}
+        {canEvolve && (
+          <View style={[cardStyles.evoBadgeCompact, { backgroundColor: '#f59e0b' }]}>
+            <Text style={cardStyles.evoBadgeCompactText}>▲</Text>
+          </View>
+        )}
       </TouchableOpacity>
     );
   }
@@ -156,10 +160,22 @@ export function CharacterCard({ owned, onPress, isSelected, compact }: Character
       activeOpacity={0.8}
       style={[
         cardStyles.card,
-        { backgroundColor: colors.card, borderColor: isSelected ? colors.primary : colors.border },
+        {
+          backgroundColor: colors.card,
+          borderColor: canEvolve ? '#f59e0b' : (isSelected ? colors.primary : colors.border),
+          borderWidth: canEvolve ? 2 : 1,
+        },
       ]}
     >
       <View style={[cardStyles.topAccent, { backgroundColor: rarityColor }]} />
+
+      {/* Evolution-ready badge */}
+      {canEvolve && (
+        <View style={cardStyles.evoBadge}>
+          <Text style={cardStyles.evoBadgeText}>⬆ PRONTO PARA EVOLUIR</Text>
+        </View>
+      )}
+
       <View style={cardStyles.header}>
         <CharacterAvatar characterId={owned.characterId} size={80} />
         <View style={[cardStyles.headerInfo, { marginLeft: 14 }]}>
@@ -177,20 +193,10 @@ export function CharacterCard({ owned, onPress, isSelected, compact }: Character
         </View>
       </View>
 
-      <View style={[cardStyles.divider, { backgroundColor: colors.border }]} />
-
-      <View style={cardStyles.stats}>
-        <StatBar label="HP"  value={scaled.hp}  max={300} color="#22c55e" />
-        <StatBar label="ATK" value={scaled.atk} max={200} color="#ef4444" />
-        <StatBar label="DEF" value={scaled.def} max={200} color="#3b82f6" />
-        <StatBar label="SPT" value={scaled.spt} max={200} color="#a855f7" />
-        <StatBar label="SPD" value={scaled.spd} max={150} color="#facc15" />
-      </View>
-
-      <View style={cardStyles.expRow}>
+      <View style={[cardStyles.expRow, { paddingHorizontal: 16, paddingBottom: 14 }]}>
         <Text style={[cardStyles.expLabel, { color: colors.mutedForeground }]}>EXP</Text>
         <View style={[cardStyles.expTrack, { backgroundColor: colors.border }]}>
-          <View style={[cardStyles.expFill, { width: `${expPct * 100}%` as any, backgroundColor: colors.primary }]} />
+          <View style={[cardStyles.expFill, { width: `${Math.min(1, owned.exp / expNeeded) * 100}%` as any, backgroundColor: colors.primary }]} />
         </View>
         <Text style={[cardStyles.expText, { color: colors.mutedForeground }]}>{owned.exp}/{expNeeded}</Text>
       </View>
@@ -219,10 +225,32 @@ const cardStyles = StyleSheet.create({
   compact: {
     width: 90, borderRadius: 12, borderWidth: 1.5,
     alignItems: 'center', padding: 10, marginRight: 10,
+    position: 'relative' as const,
   },
   compactName: { fontSize: 12, fontWeight: '700' as const, textAlign: 'center', marginBottom: 2 },
   compactLevel: { fontSize: 11, fontWeight: '600' as const },
   selectedDot: { width: 6, height: 6, borderRadius: 3, marginTop: 4 },
+  evoBadge: {
+    alignSelf: 'flex-start',
+    marginLeft: 16,
+    marginBottom: 2,
+    backgroundColor: '#f59e0b',
+    borderRadius: 6,
+    paddingHorizontal: 8,
+    paddingVertical: 3,
+  },
+  evoBadgeText: { fontSize: 10, fontWeight: '800' as const, color: '#000', letterSpacing: 0.5 },
+  evoBadgeCompact: {
+    position: 'absolute' as const,
+    top: 4,
+    right: 4,
+    width: 16,
+    height: 16,
+    borderRadius: 8,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  evoBadgeCompactText: { fontSize: 8, fontWeight: '800' as const, color: '#000' },
 });
 
 // ─── ScanCard ──────────────────────────────────────────────────────────────────
