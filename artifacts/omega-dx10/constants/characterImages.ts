@@ -1,3 +1,15 @@
+export interface SpriteSheetConfig {
+  source: any;
+  totalWidth: number;
+  frameHeight: number;
+  frameCount: number;
+  fps?: number;
+}
+
+export const CHARACTER_SPRITE_SHEETS: Record<string, SpriteSheetConfig> = {
+  palmon: { source: require('../assets/images/characters/palmon_sprite.png'), totalWidth: 194, frameHeight: 73, frameCount: 3, fps: 4 },
+};
+
 const CHARACTER_IMAGES: Record<string, any> = {
   agumon:         require('../assets/images/characters/agumon.gif'),
   agumonSaver:    require('../assets/images/characters/agumon_saver.gif'),

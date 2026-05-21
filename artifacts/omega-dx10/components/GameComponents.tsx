@@ -7,7 +7,8 @@ import {
   RARITY_COLORS, RARITY_LABELS, RarityId, BaseStats,
   CHARACTERS, expToNextLevel, getScaledStats,
 } from '@/constants/gameData';
-import CHARACTER_IMAGES from '@/constants/characterImages';
+import CHARACTER_IMAGES, { CHARACTER_SPRITE_SHEETS } from '@/constants/characterImages';
+import { SpriteSheet } from '@/components/SpriteSheet';
 import { OwnedCharacter } from '@/context/GameContext';
 
 // ─── CharacterAvatar ───────────────────────────────────────────────────────────
@@ -26,6 +27,7 @@ const AVATAR_SCALE: Record<string, number> = {
 
 export function CharacterAvatar({ characterId, size = 72, borderColor, bgColor, dimmed }: AvatarProps) {
   const img = CHARACTER_IMAGES[characterId];
+  const sprite = CHARACTER_SPRITE_SHEETS[characterId];
   const char = CHARACTERS[characterId];
   const elemData = char ? ELEMENTS[char.element] : null;
   const bc = borderColor ?? elemData?.color ?? '#00d4ff';
@@ -46,7 +48,16 @@ export function CharacterAvatar({ characterId, size = 72, borderColor, bgColor, 
         },
       ]}
     >
-      {img ? (
+      {sprite ? (
+        <SpriteSheet
+          source={sprite.source}
+          totalWidth={sprite.totalWidth}
+          frameHeight={sprite.frameHeight}
+          frameCount={sprite.frameCount}
+          fps={sprite.fps}
+          displaySize={size * imgScale}
+        />
+      ) : img ? (
         <Image
           source={img}
           style={{ width: size * imgScale, height: size * imgScale }}

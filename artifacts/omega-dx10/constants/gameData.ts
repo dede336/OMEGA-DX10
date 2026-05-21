@@ -447,6 +447,17 @@ export const CHARACTERS: Record<string, Character> = {
     attackName: 'Espada Cinzenta ✨',
     spiritName: 'Canhão Garuru ❄️',
   },
+  palmon: {
+    id: 'palmon',
+    name: 'Palmon',
+    rarity: 'COMMON',
+    attribute: 'DA',
+    element: 'EARTH',
+    baseStats: { hp: 55, mp: 60, atk: 22, def: 18, spt: 28, spd: 20, apt: 50 },
+    description: 'Um Digimon planta do tipo Data com pétalas coloridas e uma personalidade calorosa. Apesar da aparência delicada, suas vinhas são surpreendentemente fortes e seu veneno pode paralisar inimigos.',
+    attackName: 'Poison Ivy 🌿',
+    spiritName: 'Stinking Attack 💨',
+  },
   gulusGammamon: {
     id: 'gulusGammamon',
     name: 'GulusGammamon',
@@ -573,7 +584,7 @@ export const ITEM_NAMES: Record<string, string> = {
 export const SCANNABLE_CHARACTERS: string[] = ['agumon', 'gabumon', 'demiDevimon', 'patamon', 'pyomon', 'salamon'];
 
 // Display order in the Codex (grouped by evolution line)
-export const CODEX_ORDER: string[] = ['agumon', 'agumonSaver', 'geoGreymon', 'rizeGreymon', 'shineGreymon', 'greymon', 'metalGreymon', 'warGreymon', 'gabumon', 'garurumon', 'wereGarurumon', 'metalGarurumon', 'omegamon', 'guilmon', 'growlmon', 'megaloGrowlmon', 'gallantmon', 'gallantmonCrimsonMode', 'lucemon', 'lucemonChaosMode', 'patamon', 'angemon', 'magnaAngemon', 'goldramon', 'seraphimon', 'pyomon', 'birdramon', 'garudamon', 'phoenixmon', 'salamon', 'tailmon', 'angewomon', 'magnadramon', 'ophanimon', 'demiDevimon', 'devimon', 'myotismon', 'vnonMyotismon', 'gulusGammamon'];
+export const CODEX_ORDER: string[] = ['agumon', 'agumonSaver', 'geoGreymon', 'rizeGreymon', 'shineGreymon', 'greymon', 'metalGreymon', 'warGreymon', 'gabumon', 'garurumon', 'wereGarurumon', 'metalGarurumon', 'omegamon', 'guilmon', 'growlmon', 'megaloGrowlmon', 'gallantmon', 'gallantmonCrimsonMode', 'lucemon', 'lucemonChaosMode', 'patamon', 'angemon', 'magnaAngemon', 'goldramon', 'seraphimon', 'pyomon', 'birdramon', 'garudamon', 'phoenixmon', 'salamon', 'tailmon', 'angewomon', 'magnadramon', 'ophanimon', 'palmon', 'demiDevimon', 'devimon', 'myotismon', 'vnonMyotismon', 'gulusGammamon'];
 
 // ─── Maps & Stages ─────────────────────────────────────────────────────────────
 export const GAME_MAPS: GameMap[] = [
