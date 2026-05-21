@@ -162,6 +162,7 @@ export function GameProvider({ children }: { children: React.ReactNode }) {
             tamerLevel: parsed.tamerLevel ?? 1,
             tamerId: parsed.tamerId ?? null,
             isOnboarded: parsed.isOnboarded ?? hadPreviousSave,
+            team: parsed.team ?? [],
             messages: merged,
           });
         } catch {}
