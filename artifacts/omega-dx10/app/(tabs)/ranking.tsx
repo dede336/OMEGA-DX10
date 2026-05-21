@@ -10,6 +10,8 @@ import { useColors } from '@/hooks/useColors';
 import { useAuth } from '@/context/AuthContext';
 import { TAMERS } from '@/constants/gameData';
 
+const TK_BG_GIF = require('../../assets/images/tk_bg.gif');
+
 interface LeaderboardEntry {
   rank: number;
   username: string;
@@ -58,6 +60,7 @@ export default function RankingScreen() {
     const isMe = user?.username === item.username;
     const topRank = item.rank <= 3;
     const tamer = item.tamerId ? TAMERS.find((t) => t.id === item.tamerId) : null;
+    const isTK  = item.tamerId === 'tamer_tk';
     return (
       <View style={[
         styles.entry,
@@ -67,6 +70,13 @@ export default function RankingScreen() {
           borderWidth: isMe || topRank ? 1.5 : 1,
         },
       ]}>
+        {isTK && (
+          <Image
+            source={TK_BG_GIF}
+            style={[StyleSheet.absoluteFillObject, { opacity: 0.30, borderRadius: 12 }]}
+            resizeMode="cover"
+          />
+        )}
         <View style={styles.rankCol}>
           {topRank ? (
             <Text style={styles.rankEmoji}>{RANK_ICONS[item.rank - 1]}</Text>
