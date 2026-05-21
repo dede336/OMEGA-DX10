@@ -508,9 +508,9 @@ export const GAME_MAPS: GameMap[] = [
     bitsReward: 100,
     tamerExpReward: 5,
     stages: [
-      { index: 0, name: 'Entrada da Floresta', enemyCharacterId: 'demiDevimon', enemyLevel: 1,  expReward: 40  },
-      { index: 1, name: 'Clareira dos Dados',  enemyCharacterId: 'patamon',     enemyLevel: 4,  expReward: 60,  enemyCharacterIds: ['demiDevimon', 'patamon'] },
-      { index: 2, name: 'Núcleo da Floresta',  enemyCharacterId: 'gabumon',     enemyLevel: 8,  expReward: 100, enemyCharacterIds: ['gabumon', 'demiDevimon', 'patamon'] },
+      { index: 0, name: 'Entrada da Floresta', enemyCharacterId: 'demiDevimon', enemyLevel: 1,  expReward: 40,  enemyCharacterIds: ['demiDevimon', 'agumon'] },
+      { index: 1, name: 'Clareira dos Dados',  enemyCharacterId: 'gabumon',     enemyLevel: 4,  expReward: 60,  enemyCharacterIds: ['gabumon', 'pyomon', 'patamon'] },
+      { index: 2, name: 'Núcleo da Floresta',  enemyCharacterId: 'pyomon',      enemyLevel: 8,  expReward: 100, enemyCharacterIds: ['agumon', 'pyomon', 'demiDevimon', 'patamon', 'gabumon'] },
     ],
   },
   {
