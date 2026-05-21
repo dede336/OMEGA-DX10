@@ -954,15 +954,37 @@ export default function BattleScreen() {
                 const isActive = i === activeTeamIdx;
                 const dead = tf.currentHP <= 0;
                 return (
-                  <View key={tf.ownedId} style={[styles.teamChip, { borderColor: isActive ? colors.primary : colors.border, opacity: dead ? 0.35 : 1 }]}>
+                  <TouchableOpacity
+                    key={tf.ownedId}
+                    activeOpacity={dead || busy || autoMode ? 1 : 0.75}
+                    onPress={() => {
+                      if (!dead && !busy && !autoMode && i !== activeTeamIdx) {
+                        activeTeamIdxRef.current = i;
+                        setActiveTeamIdx(i);
+                      }
+                    }}
+                    style={[
+                      styles.teamChip,
+                      { borderColor: isActive ? colors.primary : colors.border, opacity: dead ? 0.35 : 1 },
+                      isActive && { backgroundColor: colors.primary + '18' },
+                    ]}
+                  >
+                    {isActive && (
+                      <View style={[styles.teamChipActiveDot, { backgroundColor: colors.primary }]} />
+                    )}
                     <CharacterAvatar characterId={tfOwned?.characterId ?? ''} size={28} />
-                    <View style={[styles.teamChipHpTrack, { backgroundColor: colors.border }]}>
-                      <View style={[styles.teamChipHpFill, {
-                        width: `${Math.max(0, (tf.currentHP / maxHP) * 100)}%` as any,
-                        backgroundColor: dead ? '#ef4444' : isActive ? colors.primary : '#22c55e',
-                      }]} />
+                    <View style={{ flex: 1, gap: 2 }}>
+                      <Text style={[styles.teamChipName, { color: isActive ? colors.primary : colors.mutedForeground }]} numberOfLines={1}>
+                        {tfChar?.name ?? '—'}
+                      </Text>
+                      <View style={[styles.teamChipHpTrack, { backgroundColor: colors.border }]}>
+                        <View style={[styles.teamChipHpFill, {
+                          width: `${Math.max(0, (tf.currentHP / maxHP) * 100)}%` as any,
+                          backgroundColor: dead ? '#ef4444' : isActive ? colors.primary : '#22c55e',
+                        }]} />
+                      </View>
                     </View>
-                  </View>
+                  </TouchableOpacity>
                 );
               })}
             </View>
@@ -1165,8 +1187,10 @@ const styles = StyleSheet.create({
   fighterName: { fontSize: 16, fontWeight: '700' as const },
   mpText: { fontSize: 12, fontWeight: '600' as const },
   teamStrip: { flexDirection: 'row', gap: 8, flexWrap: 'wrap' as const },
-  teamChip: { flexDirection: 'row', alignItems: 'center', gap: 6, borderRadius: 10, borderWidth: 1.5, padding: 5 },
-  teamChipHpTrack: { width: 56, height: 5, borderRadius: 3, overflow: 'hidden' as const },
+  teamChip: { flexDirection: 'row', alignItems: 'center', gap: 6, borderRadius: 10, borderWidth: 1.5, padding: 5, position: 'relative' as const },
+  teamChipActiveDot: { position: 'absolute' as const, top: -4, right: -4, width: 8, height: 8, borderRadius: 4 },
+  teamChipName: { fontSize: 10, fontWeight: '600' as const },
+  teamChipHpTrack: { height: 5, borderRadius: 3, overflow: 'hidden' as const },
   teamChipHpFill: { height: 5, borderRadius: 3 },
 
   // ── Log ──
