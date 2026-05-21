@@ -20,7 +20,7 @@ router.get("/", async (req, res) => {
     .orderBy(desc(gameSavesTable.updatedAt))
     .limit(limit * 3);
 
-  type SaveData = { tamerLevel?: number; playerName?: string; collection?: unknown[] };
+  type SaveData = { tamerLevel?: number; playerName?: string; collection?: unknown[]; tamerId?: string };
 
   const entries = rows
     .map((row) => {
@@ -30,6 +30,7 @@ router.get("/", async (req, res) => {
         tamerLevel: data.tamerLevel ?? 1,
         tamerName: data.playerName ?? row.username,
         collectionSize: Array.isArray(data.collection) ? data.collection.length : 0,
+        tamerId: data.tamerId ?? null,
         updatedAt: row.updatedAt,
       };
     })

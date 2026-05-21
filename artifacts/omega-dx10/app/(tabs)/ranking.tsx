@@ -1,15 +1,14 @@
 import React, { useCallback, useState } from 'react';
 import {
   View, Text, StyleSheet, FlatList, TouchableOpacity,
-  ActivityIndicator, RefreshControl, Platform,
+  ActivityIndicator, RefreshControl, Platform, Image,
 } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { router } from 'expo-router';
 import { Feather } from '@expo/vector-icons';
 import { useColors } from '@/hooks/useColors';
 import { useAuth } from '@/context/AuthContext';
-import { CharacterAvatar } from '@/components/GameComponents';
-import { CHARACTERS } from '@/constants/gameData';
+import { TAMERS } from '@/constants/gameData';
 
 interface LeaderboardEntry {
   rank: number;
@@ -17,6 +16,7 @@ interface LeaderboardEntry {
   tamerLevel: number;
   tamerName: string;
   collectionSize: number;
+  tamerId: string | null;
   updatedAt: string;
 }
 
@@ -57,6 +57,7 @@ export default function RankingScreen() {
   function renderEntry({ item }: { item: LeaderboardEntry }) {
     const isMe = user?.username === item.username;
     const topRank = item.rank <= 3;
+    const tamer = item.tamerId ? TAMERS.find((t) => t.id === item.tamerId) : null;
     return (
       <View style={[
         styles.entry,
@@ -73,6 +74,20 @@ export default function RankingScreen() {
             <Text style={[styles.rankNum, { color: colors.mutedForeground }]}>#{item.rank}</Text>
           )}
         </View>
+
+        {/* Tamer avatar */}
+        <View style={[styles.avatarWrap, { borderColor: tamer ? tamer.accentColor : colors.border }]}>
+          {tamer ? (
+            <Image
+              source={tamer.image}
+              style={[styles.avatarImg, { marginTop: tamer.avatarOffset }]}
+              resizeMode="cover"
+            />
+          ) : (
+            <Feather name="user" size={20} color={colors.mutedForeground} />
+          )}
+        </View>
+
         <View style={styles.infoCol}>
           <View style={styles.nameRow}>
             <Text style={[styles.tamerName, { color: colors.foreground }]} numberOfLines={1}>
@@ -164,8 +179,10 @@ const styles = StyleSheet.create({
   retryBtn: { borderWidth: 1, borderRadius: 10, paddingHorizontal: 20, paddingVertical: 10 },
   emptyText: { fontSize: 15, textAlign: 'center', lineHeight: 24 },
   list: { padding: 16, gap: 10 },
-  entry: { flexDirection: 'row', alignItems: 'center', borderRadius: 14, padding: 14, gap: 12 },
-  rankCol: { width: 36, alignItems: 'center' },
+  entry: { flexDirection: 'row', alignItems: 'center', borderRadius: 14, padding: 14, gap: 10 },
+  rankCol: { width: 32, alignItems: 'center' },
+  avatarWrap: { width: 44, height: 44, borderRadius: 22, borderWidth: 2, overflow: 'hidden' as const, alignItems: 'center', justifyContent: 'center', backgroundColor: '#0f1629' },
+  avatarImg: { width: 44, height: 60 },
   rankEmoji: { fontSize: 22 },
   rankNum: { fontSize: 14, fontWeight: '700' as const },
   infoCol: { flex: 1, gap: 2 },
