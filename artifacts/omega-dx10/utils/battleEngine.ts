@@ -29,6 +29,8 @@ export interface BattleFighter {
   stats: BaseStats;
   currentHP: number;
   currentMP: number;
+  attackName?: string;
+  spiritName?: string;
 }
 
 export type ActionType = 'ATTACK' | 'SPIRIT';
@@ -68,7 +70,10 @@ export function executeTurn(
   const damage = Math.floor(rawDamage);
   const newHP = Math.max(0, defender.currentHP - damage);
 
-  let log = `${attacker.name} usou ${action === 'SPIRIT' ? 'Espírito' : 'Ataque'}! `;
+  const moveName = action === 'SPIRIT'
+    ? (attacker.spiritName ?? 'Espírito')
+    : (attacker.attackName ?? 'Ataque');
+  let log = `${attacker.name} usou ${moveName}! `;
   if (attrMult > 1) log += '(Atributo Eficaz!) ';
   if (attrMult < 1) log += '(Atributo Ineficaz) ';
   if (elemMult > 1) log += '(Elemento Eficaz!) ';
@@ -101,6 +106,7 @@ export function buildFighter(
   baseStats: BaseStats,
   level: number,
   equipBonuses?: EquipBonuses,
+  moveNames?: { attackName?: string; spiritName?: string },
 ): BattleFighter {
   let stats = getScaledStats(baseStats, level);
 
@@ -148,7 +154,11 @@ export function buildFighter(
     }
   }
 
-  return { name, attribute, element, stats, currentHP: stats.hp, currentMP: stats.mp };
+  return {
+    name, attribute, element, stats, currentHP: stats.hp, currentMP: stats.mp,
+    attackName: moveNames?.attackName,
+    spiritName: moveNames?.spiritName,
+  };
 }
 
 export function enemyChooseAction(enemy: BattleFighter): ActionType {

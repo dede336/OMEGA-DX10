@@ -184,7 +184,7 @@ export default function BattleScreen() {
   // ── Build enemy fighter ─────────────────────────────────────────────────────
   function buildEnemy(charId: string): BattleFighter {
     const eChar = CHARACTERS[charId];
-    let f = buildFighter(eChar.name, eChar.attribute, eChar.element, eChar.baseStats, stage!.enemyLevel);
+    let f = buildFighter(eChar.name, eChar.attribute, eChar.element, eChar.baseStats, stage!.enemyLevel, undefined, { attackName: eChar.attackName, spiritName: eChar.spiritName });
     if (stage!.bossMultipliers) {
       const bm = stage!.bossMultipliers;
       const hp = bm.hp ? Math.floor(f.stats.hp * bm.hp) : f.stats.hp;
@@ -261,7 +261,10 @@ export default function BattleScreen() {
       if (!owned) continue;
       const ch = CHARACTERS[owned.characterId];
       if (!ch) continue;
-      fighters.push({ ...buildFighter(ch.name, ch.attribute, ch.element, ch.baseStats, owned.level, eqBonuses), ownedId });
+      fighters.push({
+        ...buildFighter(ch.name, ch.attribute, ch.element, ch.baseStats, owned.level, eqBonuses, { attackName: ch.attackName, spiritName: ch.spiritName }),
+        ownedId,
+      });
     }
     if (fighters.length === 0) return;
 
@@ -718,7 +721,9 @@ export default function BattleScreen() {
                 ]}
               >
                 <Feather name="crosshair" size={22} color={busy ? colors.mutedForeground : '#ef4444'} />
-                <Text style={[styles.actionBtnLabel, { color: busy ? colors.mutedForeground : '#ef4444' }]}>Ataque</Text>
+                <Text style={[styles.actionBtnLabel, { color: busy ? colors.mutedForeground : '#ef4444' }]}>
+                  {playerFighter.attackName ?? 'Ataque'}
+                </Text>
               </TouchableOpacity>
               <TouchableOpacity
                 activeOpacity={busy || !canSpirit ? 1 : 0.8}
@@ -733,7 +738,7 @@ export default function BattleScreen() {
               >
                 <Feather name="star" size={22} color={!canSpirit || busy ? colors.mutedForeground : '#a855f7'} />
                 <Text style={[styles.actionBtnLabel, { color: !canSpirit || busy ? colors.mutedForeground : '#a855f7' }]}>
-                  Espírito ({SPIRIT_MP_COST} MP)
+                  {playerFighter.spiritName ?? 'Espírito'} ({SPIRIT_MP_COST} MP)
                 </Text>
               </TouchableOpacity>
             </>

@@ -11,7 +11,7 @@ import { useGame } from '@/context/GameContext';
 import {
   EQUIP_SLOT_LABELS, EQUIP_SLOT_ICONS, EQUIPMENT_ITEMS, EQUIP_SLOTS_ORDER,
   RARITY_COLORS, RARITY_LABELS, ELEMENTS, EquipSlot,
-  TAMERS, tamerExpToNextLevel,
+  TAMERS, tamerExpToNextLevel, CRAFT_RECIPES,
 } from '@/constants/gameData';
 import EQUIP_ITEM_IMAGES from '@/constants/equipImages';
 
@@ -21,8 +21,8 @@ export default function MochilaScreen() {
   const game = useGame();
   const {
     playerName, gender, tamerId, inventory, equippedItems,
-    tamerExp, tamerLevel,
-    equipItem, unequipItem, setPlayerName,
+    tamerExp, tamerLevel, pieces, bits,
+    equipItem, unequipItem, setPlayerName, craftItem,
   } = game;
 
   const genderColor = gender === 'M' ? '#3b82f6' : gender === 'F' ? '#ec4899' : '#a855f7';
@@ -317,6 +317,157 @@ export default function MochilaScreen() {
           </View>
         </>
       )}
+
+      {/* ── Crafting ── */}
+      <Text style={[styles.sectionTitle, { color: colors.foreground }]}>Forja de Itens</Text>
+
+      {/* Fragmentos disponíveis */}
+      {(() => {
+        const knownPieces = [
+          { pieceId: 'piece_tecido',  label: 'Tecido',  icon: 'layers', color: '#ec4899' },
+          { pieceId: 'piece_linha',   label: 'Linha',   icon: 'wind',   color: '#06b6d4' },
+          { pieceId: 'piece_agulha',  label: 'Agulha',  icon: 'edit-2', color: '#8b5cf6' },
+        ];
+        const hasAny = knownPieces.some((p) => (pieces[p.pieceId] ?? 0) > 0);
+        if (!hasAny) return null;
+        return (
+          <View style={[styles.fragmentSummaryRow, { borderColor: colors.border, backgroundColor: colors.card, marginBottom: 16 }]}>
+            {knownPieces.map((p) => (
+              <View key={p.pieceId} style={styles.fragmentSummaryItem}>
+                <View style={[styles.fragmentSummaryIcon, { backgroundColor: p.color + '22' }]}>
+                  <Feather name={p.icon as any} size={18} color={p.color} />
+                </View>
+                <Text style={[styles.fragmentSummaryCount, { color: colors.foreground }]}>
+                  {pieces[p.pieceId] ?? 0}
+                </Text>
+                <Text style={[styles.fragmentSummaryLabel, { color: colors.mutedForeground }]}>{p.label}</Text>
+              </View>
+            ))}
+            <View style={styles.fragmentSummaryItem}>
+              <View style={[styles.fragmentSummaryIcon, { backgroundColor: '#facc1522' }]}>
+                <Feather name="dollar-sign" size={18} color="#facc15" />
+              </View>
+              <Text style={[styles.fragmentSummaryCount, { color: colors.foreground }]}>
+                {bits.toLocaleString()}
+              </Text>
+              <Text style={[styles.fragmentSummaryLabel, { color: colors.mutedForeground }]}>Bits</Text>
+            </View>
+          </View>
+        );
+      })()}
+
+      {CRAFT_RECIPES.map((recipe, idx) => {
+        const alreadyCrafted = inventory.includes(recipe.resultItemId);
+        const rc = RARITY_COLORS[recipe.resultRarity];
+        const resultImg = EQUIP_ITEM_IMAGES[recipe.resultItemId];
+
+        // Determine requirements list for display
+        const reqs = recipe.pieceRequirements && recipe.pieceRequirements.length > 0
+          ? recipe.pieceRequirements
+          : [{ pieceId: recipe.pieceId, count: recipe.requiredCount, pieceName: recipe.pieceName, pieceIcon: recipe.pieceIcon, pieceColor: recipe.pieceColor }];
+
+        // Check if all piece requirements are met
+        const allPiecesMet = reqs.every((r) => (pieces[r.pieceId] ?? 0) >= r.count);
+        const bitsMet = !recipe.bitsCost || bits >= recipe.bitsCost;
+        const canCraft = !alreadyCrafted && allPiecesMet && bitsMet;
+
+        // Progress: for multi-piece use limiting ratio; for single use normal
+        const minRatio = Math.min(...reqs.map((r) => Math.min(1, (pieces[r.pieceId] ?? 0) / r.count)));
+
+        return (
+          <View
+            key={`${recipe.resultItemId}-${idx}`}
+            style={[styles.craftCard, { backgroundColor: colors.card, borderColor: canCraft ? rc : alreadyCrafted ? rc + '66' : colors.border }]}
+          >
+            {/* Header */}
+            <View style={styles.craftCardHeader}>
+              {resultImg ? (
+                <Image source={resultImg} style={{ width: 52, height: 52 }} resizeMode="contain" />
+              ) : (
+                <View style={[styles.craftPieceIcon, { backgroundColor: recipe.pieceColor + '22' }]}>
+                  <Feather name={recipe.pieceIcon as any} size={22} color={recipe.pieceColor} />
+                </View>
+              )}
+              <View style={{ flex: 1 }}>
+                <Text style={[styles.craftResultName, { color: colors.foreground }]}>{recipe.resultItemName}</Text>
+                <View style={styles.craftRarityRow}>
+                  <View style={[styles.craftRarityBadge, { backgroundColor: rc + '22' }]}>
+                    <Text style={[styles.craftRarityText, { color: rc }]}>{RARITY_LABELS[recipe.resultRarity]}</Text>
+                  </View>
+                </View>
+                <Text style={[{ fontSize: 11, color: colors.mutedForeground, marginTop: 3 }]} numberOfLines={2}>
+                  {recipe.pieceDescription}
+                </Text>
+              </View>
+            </View>
+
+            {/* Requirements chips */}
+            <View style={styles.craftReqRow}>
+              {reqs.map((r) => {
+                const have = pieces[r.pieceId] ?? 0;
+                const met = have >= r.count;
+                return (
+                  <View
+                    key={r.pieceId}
+                    style={[styles.craftReqChip, {
+                      backgroundColor: met ? r.pieceColor + '22' : colors.background,
+                      borderColor: met ? r.pieceColor : colors.border,
+                    }]}
+                  >
+                    <Feather name={r.pieceIcon as any} size={13} color={met ? r.pieceColor : colors.mutedForeground} />
+                    <Text style={[styles.craftReqText, { color: met ? r.pieceColor : colors.mutedForeground }]}>
+                      {have}/{r.count} {r.pieceName}
+                    </Text>
+                  </View>
+                );
+              })}
+              {recipe.bitsCost && (
+                <View style={[styles.craftReqChip, {
+                  backgroundColor: bitsMet ? '#facc1522' : colors.background,
+                  borderColor: bitsMet ? '#facc15' : colors.border,
+                }]}>
+                  <Feather name="dollar-sign" size={13} color={bitsMet ? '#facc15' : colors.mutedForeground} />
+                  <Text style={[styles.craftReqText, { color: bitsMet ? '#facc15' : colors.mutedForeground }]}>
+                    {recipe.bitsCost.toLocaleString()} Bits
+                  </Text>
+                </View>
+              )}
+            </View>
+
+            {/* Progress bar */}
+            <View style={styles.craftProgressRow}>
+              <View style={[styles.craftProgressTrack, { backgroundColor: colors.border }]}>
+                <View style={[styles.craftProgressFill, { width: `${Math.round(minRatio * 100)}%` as any, backgroundColor: canCraft ? rc : recipe.pieceColor }]} />
+              </View>
+              <Text style={[styles.craftProgressLabel, { color: canCraft ? rc : colors.mutedForeground }]}>
+                {Math.round(minRatio * 100)}%
+              </Text>
+            </View>
+
+            {/* Action */}
+            {alreadyCrafted ? (
+              <View style={[styles.craftedBadge, { backgroundColor: rc + '18', borderColor: rc + '55' }]}>
+                <Feather name="check-circle" size={16} color={rc} />
+                <Text style={[styles.craftedText, { color: rc }]}>Item já forjado e no inventário</Text>
+              </View>
+            ) : (
+              <TouchableOpacity
+                activeOpacity={canCraft ? 0.8 : 1}
+                onPress={() => { if (canCraft) craftItem(recipe); }}
+                style={[styles.craftBtn, {
+                  backgroundColor: canCraft ? rc + '22' : colors.background,
+                  borderColor: canCraft ? rc : colors.border,
+                }]}
+              >
+                <Feather name="tool" size={16} color={canCraft ? rc : colors.mutedForeground} />
+                <Text style={[styles.craftBtnText, { color: canCraft ? rc : colors.mutedForeground }]}>
+                  {canCraft ? `Forjar ${recipe.resultItemName}` : 'Materiais insuficientes'}
+                </Text>
+              </TouchableOpacity>
+            )}
+          </View>
+        );
+      })}
     </ScrollView>
   );
 }

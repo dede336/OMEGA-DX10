@@ -20,6 +20,8 @@ export interface Character {
   element: ElementId;
   baseStats: BaseStats;
   description: string;
+  attackName?: string;
+  spiritName?: string;
 }
 
 export interface StageDrop {
@@ -88,6 +90,8 @@ export const CHARACTERS: Record<string, Character> = {
     element: 'FIRE',
     baseStats: { hp: 135, mp: 132, atk: 88, def: 73, spt: 60, spd: 66, apt: 40 },
     description: 'Um dinossauro digital corajoso do tipo Vacina. Domina o fogo e possui força física notável.',
+    attackName: 'Garras Afiadas ○',
+    spiritName: 'Chama Bebê 🔥',
   },
   agumonSaver: {
     id: 'agumonSaver',
