@@ -205,15 +205,26 @@ export default function BattleScreen() {
     gainExp(activeOwnedId, xp);
     if (enemyCount > 1) addLog(`⚔️ Bônus de ${enemyCount}x inimigos: +${xp} EXP!`, '#22c55e');
 
+    const bench = teamFightersRef.current.filter((t) => t.ownedId !== activeOwnedId && t.currentHP > 0);
+
+    // Base bench XP: 50% always
+    if (bench.length > 0 && xp > 0) {
+      const baseShared = Math.floor(xp * 0.5);
+      if (baseShared > 0) {
+        bench.forEach((t) => gainExp(t.ownedId, baseShared));
+        addLog(`👥 +${baseShared} EXP para o time!`, '#22c55e');
+      }
+    }
+
+    // Digivice extra bonus
     const dv = equippedItems.digivice
       ? EQUIPMENT_ITEMS.find((i) => i.id === equippedItems.digivice)
       : null;
-    if (dv?.xpSharePercent && xp > 0) {
-      const shared = Math.floor(xp * dv.xpSharePercent);
-      if (shared > 0) {
-        const bench = teamFightersRef.current.filter((t) => t.ownedId !== activeOwnedId);
-        bench.forEach((t) => gainExp(t.ownedId, shared));
-        if (bench.length > 0) addLog(`📡 +${shared} XP compartilhado!`, '#60a5fa');
+    if (dv?.xpSharePercent && xp > 0 && bench.length > 0) {
+      const dvShared = Math.floor(xp * dv.xpSharePercent);
+      if (dvShared > 0) {
+        bench.forEach((t) => gainExp(t.ownedId, dvShared));
+        addLog(`📡 +${dvShared} XP bônus (Digivice)!`, '#60a5fa');
       }
     }
 
