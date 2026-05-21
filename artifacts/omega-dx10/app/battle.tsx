@@ -70,11 +70,18 @@ type TeamFighter = BattleFighter & { ownedId: string };
 type DroppedItem = { id: string; name: string; amount: number; color: string };
 
 const PIECE_META: Record<string, { name: string; color: string }> = {
-  piece_coragem:      { name: 'Fragmento da Coragem', color: '#ef4444' },
-  piece_tecido:       { name: 'Tecido Colorido',      color: '#ec4899' },
-  piece_agulha:       { name: 'Agulha Média',         color: '#8b5cf6' },
-  piece_linha:        { name: 'Linha Colorida',       color: '#06b6d4' },
-  piece_anel_sagrado: { name: 'Fragmento do Anel',    color: '#f59e0b' },
+  piece_tecido:           { name: 'Tecido Colorido',         color: '#ec4899' },
+  piece_agulha:           { name: 'Agulha Média',            color: '#8b5cf6' },
+  piece_linha:            { name: 'Linha Colorida',          color: '#06b6d4' },
+  piece_anel_sagrado:     { name: 'Fragmento do Anel',       color: '#f59e0b' },
+  piece_brasao_coragem:   { name: 'Fragmento Brasão Coragem',   color: '#ef4444' },
+  piece_brasao_esperanca: { name: 'Fragmento Brasão Esperança', color: '#eab308' },
+  piece_brasao_amizade:   { name: 'Fragmento Brasão Amizade',   color: '#3b82f6' },
+  piece_brasao_confianca: { name: 'Fragmento Brasão Confiança', color: '#f97316' },
+  piece_brasao_pureza:    { name: 'Fragmento Brasão Pureza',    color: '#22c55e' },
+  piece_brasao_conhecimento: { name: 'Fragmento Brasão Conhecimento', color: '#8b5cf6' },
+  piece_brasao_luz:       { name: 'Fragmento Brasão Luz',       color: '#ec4899' },
+  piece_brasao_amor:      { name: 'Fragmento Brasão Amor',      color: '#ef4444' },
 };
 
 export default function BattleScreen() {
@@ -336,8 +343,6 @@ export default function BattleScreen() {
           else if (d.type === 'piece' && d.id) { gainPiece(d.id, d.amount); recordDrop(d.id, d.amount); addLog('✦ Fragmento obtido!', '#f59e0b'); }
         }
       });
-    } else if (Math.random() < 0.30) {
-      if (mapId === 'map_forest') { gainPiece('piece_coragem', 1); recordDrop('piece_coragem', 1); addLog('🔴 Fragmento da Coragem!', '#ef4444'); }
     }
     if (Math.random() < 0.20) { gainPiece('piece_tecido', 1); recordDrop('piece_tecido', 1); addLog('🎨 Tecido Colorido!', '#ec4899'); }
     if (Math.random() < 0.20) { gainPiece('piece_agulha', 1); recordDrop('piece_agulha', 1); addLog('🪡 Agulha Média!', '#8b5cf6'); }
