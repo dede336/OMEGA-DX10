@@ -272,6 +272,7 @@ export default function BattleScreen() {
         ...buildFighter(ch.name, ch.attribute, ch.element, ch.baseStats, owned.level, eqBonuses,
           { attackName: ch.attackName, spiritName: ch.spiritName }),
         ownedId,
+        spiritHitsAll: ch.spiritHitsAll,
       });
     }
     if (fighters.length === 0) return;
@@ -396,7 +397,63 @@ export default function BattleScreen() {
     if (action === 'SPIRIT' && currentPF.currentMP < SPIRIT_MP_COST) return;
 
     setBusy(true);
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
 
+    // ── Multi-target spirit (hits ALL living enemies) ─────────────────────────
+    if (action === 'SPIRIT' && currentPF.spiritHitsAll) {
+      const spiritNewMP = Math.max(0, currentPF.currentMP - SPIRIT_MP_COST);
+      const spiritAttacker = { ...currentPF, currentMP: SPIRIT_MP_COST };
+      const liveIndices = currentEnemies
+        .map((e, i) => ({ e, i }))
+        .filter(({ e }) => e.currentHP > 0);
+
+      const updatedEnemiesAll = [...currentEnemies];
+      for (const { e: enemy, i: idx } of liveIndices) {
+        const res = executeTurn(spiritAttacker, enemy, 'SPIRIT');
+        const newHP = res.defenderResult.newHP;
+        updatedEnemiesAll[idx] = { ...enemy, currentHP: newHP };
+        const lc = res.defenderResult.attrMult > 1 || res.defenderResult.elemMult > 1
+          ? '#22c55e' : colors.foreground;
+        addLog(res.defenderResult.log, lc);
+        shake(getEnemyShake(idx));
+        if (newHP <= 0) {
+          addLog(`${enemy.name} foi derrotado!`, '#22c55e');
+          Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+        }
+      }
+
+      setEnemies(updatedEnemiesAll);
+      enemiesRef.current = updatedEnemiesAll;
+
+      const updatedTeamAll = currentTeam.map((t, i) =>
+        i === activeTeamIdxRef.current ? { ...t, currentMP: spiritNewMP } : t
+      );
+      setTeamFighters(updatedTeamAll);
+      teamFightersRef.current = updatedTeamAll;
+
+      const livingAfterAll = updatedEnemiesAll.filter((e) => e.currentHP > 0);
+      if (livingAfterAll.length === 0) {
+        setTimeout(() => {
+          addLog('Todos os inimigos derrotados! Vitória!', '#22c55e');
+          const activeId = teamFightersRef.current[activeTeamIdxRef.current]?.ownedId;
+          if (activeId) grantRewards(activeId);
+          setWinner('player');
+          setPhase('result');
+          setBusy(false);
+        }, 400);
+        return;
+      }
+      const nextIdxAll = updatedEnemiesAll.findIndex((e) => e.currentHP > 0);
+      if (nextIdxAll >= 0) { targetIdxRef.current = nextIdxAll; setTargetIdx(nextIdxAll); }
+      setTimeout(() => {
+        const updatedPF = teamFightersRef.current[activeTeamIdxRef.current];
+        if (!updatedPF || updatedPF.currentHP <= 0) { setBusy(false); return; }
+        doEnemiesCounterAttack(updatedPF, enemiesRef.current);
+      }, 600);
+      return;
+    }
+
+    // ── Single-target (normal ATTACK or SPIRIT) ───────────────────────────────
     const pResult = executeTurn(currentPF, target, action);
     const newPlayerMP = pResult.attackerResult.newMP;
     const newTargetHP = pResult.defenderResult.newHP;
@@ -405,7 +462,6 @@ export default function BattleScreen() {
       ? '#22c55e' : colors.foreground;
     addLog(pResult.defenderResult.log, lc);
     shake(getEnemyShake(targetIdxRef.current));
-    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
 
     // Update attacked enemy
     const updatedEnemies = currentEnemies.map((e, i) =>

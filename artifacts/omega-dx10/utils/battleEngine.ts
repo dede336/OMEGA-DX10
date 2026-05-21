@@ -31,6 +31,7 @@ export interface BattleFighter {
   currentMP: number;
   attackName?: string;
   spiritName?: string;
+  spiritHitsAll?: boolean;
 }
 
 export type ActionType = 'ATTACK' | 'SPIRIT';

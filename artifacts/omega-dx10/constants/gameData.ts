@@ -22,6 +22,7 @@ export interface Character {
   description: string;
   attackName?: string;
   spiritName?: string;
+  spiritHitsAll?: boolean;
 }
 
 export interface StageDrop {
@@ -191,6 +192,29 @@ export const CHARACTERS: Record<string, Character> = {
     attackName: 'EX Damage ○',
     spiritName: 'Heroic Power ✨',
   },
+  gallantmonCrimsonMode: {
+    id: 'gallantmonCrimsonMode',
+    name: 'Gallantmon Crimson Mode',
+    rarity: 'ULTRA',
+    attribute: 'VR',
+    element: 'LIGHT',
+    baseStats: { hp: 336, mp: 370, atk: 190, def: 170, spt: 168, spd: 143, apt: 99 },
+    description: 'A forma transcendente do Gallantmon fundido com o poder do Seraphimon. Seu Shining Laser purifica todos os inimigos simultaneamente com luz divina absoluta.',
+    attackName: 'Mach Rush ○',
+    spiritName: 'Shining Laser ✨',
+    spiritHitsAll: true,
+  },
+  seraphimon: {
+    id: 'seraphimon',
+    name: 'Seraphimon',
+    rarity: 'LEGENDARY',
+    attribute: 'VC',
+    element: 'LIGHT',
+    baseStats: { hp: 310, mp: 380, atk: 170, def: 160, spt: 200, spd: 130, apt: 80 },
+    description: 'O Lorde dos Anjos. Um Digimon do tipo Vacina de forma Mega, guardião celestial que concentra a luz divina em seu espírito incomparável.',
+    attackName: 'Strike of the Seven Stars ○',
+    spiritName: 'Seven Heavens ✨',
+  },
   devimon: {
     id: 'devimon',
     name: 'Devimon',
@@ -303,8 +327,9 @@ export interface FusionRecipe {
 }
 
 export const FUSIONS: Record<string, FusionRecipe> = {
-  warGreymon:    { partner: 'metalGarurumon', resultId: 'omegamon', resultName: 'Omegamon', requiredLevel: 60 },
-  metalGarurumon:{ partner: 'warGreymon',     resultId: 'omegamon', resultName: 'Omegamon', requiredLevel: 60 },
+  warGreymon:    { partner: 'metalGarurumon', resultId: 'omegamon',              resultName: 'Omegamon',              requiredLevel: 60 },
+  metalGarurumon:{ partner: 'warGreymon',     resultId: 'omegamon',              resultName: 'Omegamon',              requiredLevel: 60 },
+  gallantmon:    { partner: 'seraphimon',     resultId: 'gallantmonCrimsonMode', resultName: 'Gallantmon Crimson Mode', requiredLevel: 60 },
 };
 
 // ─── Evolution paths ──────────────────────────────────────────────────────────
@@ -320,7 +345,7 @@ export const EVOLUTIONS: Record<string, { evolvesTo: string; requiredLevel: numb
   wereGarurumon:{ evolvesTo: 'metalGarurumon', requiredLevel: 52, label: 'MetalGarurumon' },
   guilmon:      { evolvesTo: 'growlmon',      requiredLevel: 16, label: 'Growlmon' },
   growlmon:       { evolvesTo: 'megaloGrowlmon', requiredLevel: 40, label: 'MegaloGrowlmon' },
-  megaloGrowlmon: { evolvesTo: 'gallantmon',     requiredLevel: 60, label: 'Gallantmon' },
+  megaloGrowlmon: { evolvesTo: 'gallantmon', requiredLevel: 60, label: 'Gallantmon' },
   demiDevimon:  { evolvesTo: 'devimon',     requiredLevel: 21, label: 'Devimon' },
   devimon:      { evolvesTo: 'myotismon',     requiredLevel: 32, label: 'Myotismon' },
   myotismon:    { evolvesTo: 'vnonMyotismon', requiredLevel: 56, label: 'VenomMyotismon' },
@@ -330,7 +355,7 @@ export const EVOLUTIONS: Record<string, { evolvesTo: string; requiredLevel: numb
 export const SCANNABLE_CHARACTERS: string[] = ['agumon', 'gabumon', 'demiDevimon'];
 
 // Display order in the Codex (grouped by evolution line)
-export const CODEX_ORDER: string[] = ['agumon', 'agumonSaver', 'geoGreymon', 'rizeGreymon', 'shineGreymon', 'greymon', 'metalGreymon', 'warGreymon', 'gabumon', 'garurumon', 'wereGarurumon', 'metalGarurumon', 'omegamon', 'guilmon', 'growlmon', 'megaloGrowlmon', 'gallantmon', 'demiDevimon', 'devimon', 'myotismon', 'vnonMyotismon', 'gulusGammamon'];
+export const CODEX_ORDER: string[] = ['agumon', 'agumonSaver', 'geoGreymon', 'rizeGreymon', 'shineGreymon', 'greymon', 'metalGreymon', 'warGreymon', 'gabumon', 'garurumon', 'wereGarurumon', 'metalGarurumon', 'omegamon', 'guilmon', 'growlmon', 'megaloGrowlmon', 'gallantmon', 'gallantmonCrimsonMode', 'seraphimon', 'demiDevimon', 'devimon', 'myotismon', 'vnonMyotismon', 'gulusGammamon'];
 
 // ─── Maps & Stages ─────────────────────────────────────────────────────────────
 export const GAME_MAPS: GameMap[] = [
