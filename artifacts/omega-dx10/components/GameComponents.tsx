@@ -25,6 +25,7 @@ interface AvatarProps {
 const AVATAR_SCALE: Record<string, number> = {
   omegamon: 1.0,
   salamon:  1.3,
+  palmon:   0.65,
 };
 
 export function CharacterAvatar({ characterId, size = 72, borderColor, bgColor, dimmed, plain }: AvatarProps) {
