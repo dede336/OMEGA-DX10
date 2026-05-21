@@ -209,6 +209,8 @@ export const CHARACTERS: Record<string, Character> = {
     element: 'LIGHT',
     baseStats: { hp: 334, mp: 358, atk: 185, def: 143, spt: 170, spd: 143, apt: 99 },
     description: 'A fusão suprema entre WarGreymon e MetalGarurumon. Um Digimon Ultra lendário do tipo Vacina, portador da espada Grey Sword e do canhão Garuru Cannon. Protege o mundo digital com poder absoluto.',
+    attackName: 'Espada Cinzenta ✨',
+    spiritName: 'Canhão Garuru ❄️',
   },
   gulusGammamon: {
     id: 'gulusGammamon',
