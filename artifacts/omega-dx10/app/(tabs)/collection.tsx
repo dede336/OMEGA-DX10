@@ -9,7 +9,7 @@ import { Feather } from '@expo/vector-icons';
 import { useColors } from '@/hooks/useColors';
 import { useGame, OwnedCharacter, SacrificeResult } from '@/context/GameContext';
 import {
-  CHARACTERS, EVOLUTIONS, ALTERNATE_EVOLUTIONS, SCANNABLE_CHARACTERS, CODEX_ORDER,
+  CHARACTERS, EVOLUTIONS, ALTERNATE_EVOLUTIONS, FORM_CHANGES, SCANNABLE_CHARACTERS, CODEX_ORDER,
   RARITY_COLORS, RARITY_LABELS,
   SACRIFICE_DROPS, ROOKIE_OF, SACRIFICE_SCAN_OVERRIDES, SACRIFICE_SCAN_PCT, ITEM_NAMES,
 } from '@/constants/gameData';
@@ -32,7 +32,7 @@ type EvoPhase = 'playing' | 'reveal' | 'done';
 export default function CollectionScreen() {
   const colors = useColors();
   const insets = useSafeAreaInsets();
-  const { collection, selectedCharacter, setSelectedCharacter, scanProgress, createFromScan, evolveDigimon, pieces, sacrificeDigimon } = useGame();
+  const { collection, selectedCharacter, setSelectedCharacter, scanProgress, createFromScan, evolveDigimon, changeFormDigimon, pieces, sacrificeDigimon } = useGame();
 
   const bottomPad = Platform.OS === 'web' ? 34 : insets.bottom;
 
@@ -94,6 +94,9 @@ export default function CollectionScreen() {
   const hasReqItem     = !modalEvo?.requiredItem || (pieces[modalEvo.requiredItem] ?? 0) > 0;
   const modalCanEvolve = !!(modalOwned && modalEvo && modalOwned.level >= modalEvo.requiredLevel && hasReqItem);
   const modalEvoChar   = modalEvo ? CHARACTERS[modalEvo.evolvesTo] : undefined;
+
+  const modalFormChangeId      = modalOwned ? (FORM_CHANGES[modalOwned.characterId] ?? null) : null;
+  const modalFormChangeChar    = modalFormChangeId ? CHARACTERS[modalFormChangeId] : null;
 
   const modalAltEvo            = modalOwned ? ALTERNATE_EVOLUTIONS[modalOwned.characterId] : undefined;
   const hasAltReqItem          = !modalAltEvo?.requiredItem || (pieces[modalAltEvo.requiredItem] ?? 0) > 0;
@@ -348,6 +351,42 @@ export default function CollectionScreen() {
                           </Text>
                         </View>
                       )}
+                    </View>
+                  )}
+
+                  {/* Form Change section (e.g. ImperialDramon FM ↔ RM) */}
+                  {modalFormChangeId && modalFormChangeChar && (
+                    <View style={[styles.evoSection, { borderColor: '#06b6d4', marginTop: 4 }]}>
+                      <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
+                        <View style={styles.evoSide}>
+                          <CharacterAvatar characterId={modalOwned!.characterId} size={56} />
+                          <Text style={[styles.evoName, { color: colors.foreground, fontSize: 10 }]}>Atual</Text>
+                        </View>
+                        <View style={styles.evoArrow}>
+                          <Feather name="refresh-cw" size={22} color="#06b6d4" />
+                          <Text style={[styles.evoReqText, { color: '#06b6d4', fontSize: 10, marginTop: 2 }]}>Livre</Text>
+                        </View>
+                        <View style={styles.evoSide}>
+                          <CharacterAvatar characterId={modalFormChangeId} size={56} />
+                          <Text style={[styles.evoName, { color: colors.foreground }]}>{modalFormChangeChar.name}</Text>
+                          <View style={styles.evoBadgesRow}>
+                            <AttributeBadge attr={modalFormChangeChar.attribute} />
+                            <ElementBadge elem={modalFormChangeChar.element} />
+                          </View>
+                        </View>
+                      </View>
+                      <TouchableOpacity
+                        style={[styles.evolveBtn, { backgroundColor: '#06b6d4' }]}
+                        activeOpacity={0.85}
+                        onPress={() => {
+                          if (!modalOwned) return;
+                          changeFormDigimon(modalOwned.ownedId);
+                          closeModal();
+                        }}
+                      >
+                        <Feather name="refresh-cw" size={18} color="#000" />
+                        <Text style={[styles.evolveBtnText, { color: '#000' }]}>Mudar para {modalFormChangeChar.name}</Text>
+                      </TouchableOpacity>
                     </View>
                   )}
 

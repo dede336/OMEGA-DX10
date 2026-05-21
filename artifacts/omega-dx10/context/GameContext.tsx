@@ -1,7 +1,7 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import React, { createContext, useCallback, useContext, useEffect, useState } from 'react';
 import {
-  CHARACTERS, EVOLUTIONS, ALTERNATE_EVOLUTIONS, FUSIONS, GAME_MAPS, expToNextLevel, tamerExpToNextLevel,
+  CHARACTERS, EVOLUTIONS, ALTERNATE_EVOLUTIONS, FORM_CHANGES, FUSIONS, GAME_MAPS, expToNextLevel, tamerExpToNextLevel,
   EquipSlot, TamerGender, EQUIP_SLOTS_ORDER, DEFAULT_INVENTORY,
   CRAFT_RECIPES, CraftRecipe,
   SACRIFICE_DROPS, ROOKIE_OF, SACRIFICE_SCAN_OVERRIDES, SACRIFICE_SCAN_PCT,
@@ -135,6 +135,7 @@ interface GameContextValue extends GameState {
   gainScan: (characterId: string, amount: number) => void;
   createFromScan: (characterId: string) => void;
   evolveDigimon: (ownedId: string, alternate?: boolean) => void;
+  changeFormDigimon: (ownedId: string) => void;
   fuseDigimon: (keepOwnedId: string, sacrificeOwnedId: string) => boolean;
   sacrificeDigimon: (ownedId: string) => SacrificeResult;
   totalPlayerLevel: number;
@@ -326,6 +327,19 @@ export function GameProvider({ children }: { children: React.ReactNode }) {
           : prev.pieces;
         return { ...prev, collection: newCollection, pieces: newPieces };
       }
+    });
+  }, []);
+
+  const changeFormDigimon = useCallback((ownedId: string) => {
+    setState((prev) => {
+      const target = prev.collection.find((c) => c.ownedId === ownedId);
+      if (!target) return prev;
+      const toFormId = FORM_CHANGES[target.characterId];
+      if (!toFormId) return prev;
+      const newCollection = prev.collection.map((c) =>
+        c.ownedId === ownedId ? { ...c, characterId: toFormId } : c
+      );
+      return { ...prev, collection: newCollection };
     });
   }, []);
 
@@ -667,6 +681,7 @@ export function GameProvider({ children }: { children: React.ReactNode }) {
         gainScan,
         createFromScan,
         evolveDigimon,
+        changeFormDigimon,
         fuseDigimon,
         sacrificeDigimon,
         totalPlayerLevel,
