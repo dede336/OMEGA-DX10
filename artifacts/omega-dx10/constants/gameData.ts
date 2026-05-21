@@ -169,6 +169,17 @@ export const CHARACTERS: Record<string, Character> = {
     attackName: 'Growl Claw ○',
     spiritName: 'Exhaust Flame 🔥',
   },
+  megaloGrowlmon: {
+    id: 'megaloGrowlmon',
+    name: 'MegaloGrowlmon',
+    rarity: 'EPIC',
+    attribute: 'VR',
+    element: 'FIRE',
+    baseStats: { hp: 230, mp: 226, atk: 144, def: 124, spt: 98, spd: 92, apt: 50 },
+    description: 'A forma Ultimate do Growlmon. Um dragão cibernético do tipo Vírus com armadura blindada e canhões de fogo capazes de devastar qualquer oponente.',
+    attackName: 'Dramon Claw ○',
+    spiritName: 'Giga Flame 🔥',
+  },
   devimon: {
     id: 'devimon',
     name: 'Devimon',
@@ -296,7 +307,8 @@ export const EVOLUTIONS: Record<string, { evolvesTo: string; requiredLevel: numb
   gabumon:      { evolvesTo: 'garurumon',     requiredLevel: 19, label: 'Garurumon' },
   garurumon:    { evolvesTo: 'wereGarurumon',   requiredLevel: 35, label: 'WereGarurumon' },
   wereGarurumon:{ evolvesTo: 'metalGarurumon', requiredLevel: 52, label: 'MetalGarurumon' },
-  guilmon:      { evolvesTo: 'growlmon',     requiredLevel: 16, label: 'Growlmon' },
+  guilmon:      { evolvesTo: 'growlmon',      requiredLevel: 16, label: 'Growlmon' },
+  growlmon:     { evolvesTo: 'megaloGrowlmon', requiredLevel: 40, label: 'MegaloGrowlmon' },
   demiDevimon:  { evolvesTo: 'devimon',     requiredLevel: 21, label: 'Devimon' },
   devimon:      { evolvesTo: 'myotismon',     requiredLevel: 32, label: 'Myotismon' },
   myotismon:    { evolvesTo: 'vnonMyotismon', requiredLevel: 56, label: 'VenomMyotismon' },
@@ -306,7 +318,7 @@ export const EVOLUTIONS: Record<string, { evolvesTo: string; requiredLevel: numb
 export const SCANNABLE_CHARACTERS: string[] = ['agumon', 'gabumon', 'demiDevimon'];
 
 // Display order in the Codex (grouped by evolution line)
-export const CODEX_ORDER: string[] = ['agumon', 'agumonSaver', 'geoGreymon', 'rizeGreymon', 'shineGreymon', 'greymon', 'metalGreymon', 'warGreymon', 'gabumon', 'garurumon', 'wereGarurumon', 'metalGarurumon', 'omegamon', 'guilmon', 'growlmon', 'demiDevimon', 'devimon', 'myotismon', 'vnonMyotismon', 'gulusGammamon'];
+export const CODEX_ORDER: string[] = ['agumon', 'agumonSaver', 'geoGreymon', 'rizeGreymon', 'shineGreymon', 'greymon', 'metalGreymon', 'warGreymon', 'gabumon', 'garurumon', 'wereGarurumon', 'metalGarurumon', 'omegamon', 'guilmon', 'growlmon', 'megaloGrowlmon', 'demiDevimon', 'devimon', 'myotismon', 'vnonMyotismon', 'gulusGammamon'];
 
 // ─── Maps & Stages ─────────────────────────────────────────────────────────────
 export const GAME_MAPS: GameMap[] = [
