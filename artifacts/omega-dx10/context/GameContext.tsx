@@ -108,6 +108,7 @@ interface GameContextValue extends GameState {
   readMessage: (id: string) => void;
   claimReward: (id: string) => void;
   setTeam: (ownedIds: string[]) => void;
+  loadFromCloud: (apiUrl: string) => Promise<void>;
 }
 
 const STORAGE_KEY = 'omega_dx10_save_v2';
@@ -458,6 +459,45 @@ export function GameProvider({ children }: { children: React.ReactNode }) {
 
   const selectedCharacter = state.collection.find((c) => c.ownedId === state.selectedOwnedId) ?? null;
 
+  const loadFromCloud = useCallback(async (apiUrl: string) => {
+    try {
+      const token = await AsyncStorage.getItem('omega_dx10_auth_token');
+      if (!token) return;
+      const res = await fetch(`${apiUrl}/saves`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      if (!res.ok) return;
+      const { saveData } = await res.json() as { saveData: Partial<GameState & { playerName?: string }> };
+      if (!saveData) return;
+      const parsed = saveData;
+      const hadPreviousSave = !!parsed.playerName && parsed.playerName !== '';
+      const savedMessages: MailMessage[] = parsed.messages ?? [];
+      const savedIds = new Set(savedMessages.map((m) => m.id));
+      const merged = [
+        ...DEFAULT_MESSAGES.filter((m) => !savedIds.has(m.id)),
+        ...savedMessages,
+      ].sort((a, b) => b.createdAt - a.createdAt);
+      const newState: GameState = {
+        ...defaultState,
+        ...parsed,
+        scanProgress: parsed.scanProgress ?? {},
+        gender: parsed.gender ?? 'M',
+        inventory: parsed.inventory ?? DEFAULT_INVENTORY,
+        equippedItems: { ...defaultEquipped, ...(parsed.equippedItems ?? {}) },
+        pieces: parsed.pieces ?? {},
+        bits: parsed.bits ?? 0,
+        tamerExp: parsed.tamerExp ?? 0,
+        tamerLevel: parsed.tamerLevel ?? 1,
+        tamerId: parsed.tamerId ?? null,
+        isOnboarded: parsed.isOnboarded ?? hadPreviousSave,
+        team: parsed.team ?? [],
+        messages: merged,
+      };
+      setState(newState);
+      await AsyncStorage.setItem(STORAGE_KEY, JSON.stringify(newState));
+    } catch {}
+  }, []);
+
   return (
     <GameContext.Provider
       value={{
@@ -490,6 +530,7 @@ export function GameProvider({ children }: { children: React.ReactNode }) {
         readMessage,
         claimReward,
         setTeam,
+        loadFromCloud,
       }}
     >
       {children}

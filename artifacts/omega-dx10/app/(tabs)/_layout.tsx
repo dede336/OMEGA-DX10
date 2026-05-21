@@ -1,4 +1,5 @@
 import { BlurView } from "expo-blur";
+import { Feather } from "@expo/vector-icons";
 import { isLiquidGlassAvailable } from "expo-glass-effect";
 import { Tabs } from "expo-router";
 import { Icon, Label, NativeTabs } from "expo-router/unstable-native-tabs";
@@ -36,6 +37,10 @@ function NativeTabLayout() {
       <NativeTabs.Trigger name="correios">
         <Icon sf={{ default: "envelope", selected: "envelope.fill" }} />
         <Label>Correios</Label>
+      </NativeTabs.Trigger>
+      <NativeTabs.Trigger name="ranking">
+        <Icon sf={{ default: "trophy", selected: "trophy.fill" }} />
+        <Label>Ranking</Label>
       </NativeTabs.Trigger>
     </NativeTabs>
   );
@@ -121,6 +126,15 @@ function ClassicTabLayout() {
           tabBarBadge: unreadMailCount > 0 ? unreadMailCount : undefined,
           tabBarIcon: () => (
             <Image source={MAIL_ICON} style={{ width: 28, height: 28 }} resizeMode="contain" />
+          ),
+        }}
+      />
+      <Tabs.Screen
+        name="ranking"
+        options={{
+          title: "Ranking",
+          tabBarIcon: ({ color }: { color: string }) => (
+            <Feather name="award" size={26} color={color} />
           ),
         }}
       />

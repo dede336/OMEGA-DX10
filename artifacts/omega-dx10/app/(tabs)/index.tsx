@@ -5,6 +5,7 @@ import { Feather } from '@expo/vector-icons';
 import { router } from 'expo-router';
 import { useColors } from '@/hooks/useColors';
 import { useGame } from '@/context/GameContext';
+import { useAuth } from '@/context/AuthContext';
 import { CHARACTERS, ATTRIBUTES, GAME_MAPS, getScaledStats } from '@/constants/gameData';
 import { AttributeBadge, ElementBadge, HPBar, CharacterAvatar } from '@/components/GameComponents';
 
@@ -12,6 +13,7 @@ export default function HomeScreen() {
   const colors = useColors();
   const insets = useSafeAreaInsets();
   const game = useGame();
+  const { user, logout } = useAuth();
   const { selectedCharacter, collection, clearedStages, playerName, totalPlayerLevel, bits } = game;
 
   const totalStages = GAME_MAPS.reduce((s, m) => s + m.stages.length, 0);
@@ -35,9 +37,28 @@ export default function HomeScreen() {
           <Text style={[styles.greeting, { color: colors.mutedForeground }]}>Bem-vindo,</Text>
           <Text style={[styles.playerName, { color: colors.foreground }]}>{playerName}</Text>
         </View>
-        <View style={[styles.levelBadge, { backgroundColor: colors.primary + '22', borderColor: colors.primary }]}>
-          <Text style={[styles.levelBadgeLabel, { color: colors.primary }]}>RANK</Text>
-          <Text style={[styles.levelBadgeNum, { color: colors.primary }]}>{totalPlayerLevel}</Text>
+        <View style={styles.headerRight}>
+          {user ? (
+            <TouchableOpacity
+              onPress={() => logout()}
+              style={[styles.accountBtn, { backgroundColor: '#22c55e22', borderColor: '#22c55e' }]}
+            >
+              <Feather name="user-check" size={14} color="#22c55e" />
+              <Text style={[styles.accountBtnText, { color: '#22c55e' }]} numberOfLines={1}>{user.username}</Text>
+            </TouchableOpacity>
+          ) : (
+            <TouchableOpacity
+              onPress={() => router.push('/login')}
+              style={[styles.accountBtn, { backgroundColor: colors.card, borderColor: colors.border }]}
+            >
+              <Feather name="cloud" size={14} color={colors.mutedForeground} />
+              <Text style={[styles.accountBtnText, { color: colors.mutedForeground }]}>Online</Text>
+            </TouchableOpacity>
+          )}
+          <View style={[styles.levelBadge, { backgroundColor: colors.primary + '22', borderColor: colors.primary }]}>
+            <Text style={[styles.levelBadgeLabel, { color: colors.primary }]}>RANK</Text>
+            <Text style={[styles.levelBadgeNum, { color: colors.primary }]}>{totalPlayerLevel}</Text>
+          </View>
         </View>
       </View>
 
@@ -171,6 +192,9 @@ const styles = StyleSheet.create({
   header: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 20 },
   greeting: { fontSize: 13, fontWeight: '500' as const },
   playerName: { fontSize: 24, fontWeight: '800' as const },
+  headerRight: { flexDirection: 'row', alignItems: 'center', gap: 8 },
+  accountBtn: { flexDirection: 'row', alignItems: 'center', gap: 6, borderWidth: 1, borderRadius: 10, paddingHorizontal: 10, paddingVertical: 6, maxWidth: 120 },
+  accountBtnText: { fontSize: 12, fontWeight: '700' as const, flexShrink: 1 },
   levelBadge: { alignItems: 'center', borderWidth: 1.5, borderRadius: 12, paddingHorizontal: 14, paddingVertical: 8 },
   levelBadgeLabel: { fontSize: 10, fontWeight: '700' as const, letterSpacing: 1 },
   levelBadgeNum: { fontSize: 22, fontWeight: '800' as const },

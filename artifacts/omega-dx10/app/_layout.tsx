@@ -8,6 +8,8 @@ import { SafeAreaProvider } from "react-native-safe-area-context";
 
 import { ErrorBoundary } from "@/components/ErrorBoundary";
 import { GameProvider, useGame } from "@/context/GameContext";
+import { AuthProvider } from "@/context/AuthContext";
+import { useCloudSync } from "@/hooks/useCloudSync";
 
 SplashScreen.preventAutoHideAsync();
 SplashScreen.hideAsync();
@@ -25,16 +27,23 @@ function NavigationGuard() {
   return null;
 }
 
+function CloudSyncManager() {
+  useCloudSync();
+  return null;
+}
+
 function RootLayoutNav() {
   return (
     <>
       <NavigationGuard />
+      <CloudSyncManager />
       <Stack screenOptions={{ headerShown: false }}>
         <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
         <Stack.Screen name="intro" options={{ headerShown: false, gestureEnabled: false, animation: 'none' }} />
         <Stack.Screen name="onboarding" options={{ headerShown: false, gestureEnabled: false }} />
         <Stack.Screen name="battle" options={{ headerShown: false, presentation: "fullScreenModal" }} />
         <Stack.Screen name="character/[id]" options={{ headerShown: false }} />
+        <Stack.Screen name="login" options={{ headerShown: false, presentation: "modal" }} />
       </Stack>
     </>
   );
@@ -45,13 +54,15 @@ export default function RootLayout() {
     <SafeAreaProvider>
       <ErrorBoundary>
         <QueryClientProvider client={queryClient}>
-          <GameProvider>
-            <GestureHandlerRootView style={{ flex: 1 }}>
-              <KeyboardProvider>
-                <RootLayoutNav />
-              </KeyboardProvider>
-            </GestureHandlerRootView>
-          </GameProvider>
+          <AuthProvider>
+            <GameProvider>
+              <GestureHandlerRootView style={{ flex: 1 }}>
+                <KeyboardProvider>
+                  <RootLayoutNav />
+                </KeyboardProvider>
+              </GestureHandlerRootView>
+            </GameProvider>
+          </AuthProvider>
         </QueryClientProvider>
       </ErrorBoundary>
     </SafeAreaProvider>
