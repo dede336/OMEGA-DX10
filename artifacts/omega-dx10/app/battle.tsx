@@ -60,6 +60,8 @@ export default function BattleScreen() {
   const [log, setLog] = useState<BattleLog[]>([]);
   const [winner, setWinner] = useState<'player' | 'enemy' | null>(null);
   const [busy, setBusy] = useState(false);
+  const [autoMode, setAutoMode] = useState(false);
+  const autoModeRef = useRef(false);
 
   const playerShake = useRef(new Animated.Value(0)).current;
   const enemyShake = useRef(new Animated.Value(0)).current;
@@ -76,6 +78,19 @@ export default function BattleScreen() {
       Animated.timing(anim, { toValue: 0, duration: 50, useNativeDriver: true }),
     ]).start();
   }, []);
+
+  // Keep ref in sync so the auto-battle effect always reads the latest value
+  useEffect(() => { autoModeRef.current = autoMode; }, [autoMode]);
+
+  // Auto-battle: whenever busy becomes false in battle phase, fire next ATTACK
+  useEffect(() => {
+    if (!autoMode || busy || phase !== 'battle' || winner !== null) return;
+    const timer = setTimeout(() => {
+      if (autoModeRef.current) handleAction('ATTACK');
+    }, 700);
+    return () => clearTimeout(timer);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [autoMode, busy, phase, winner]);
 
   function addLog(text: string, color: string = colors.foreground) {
     setLog((prev) => [...prev, { text, color }]);
@@ -472,22 +487,53 @@ export default function BattleScreen() {
 
         {/* Actions */}
         <View style={[styles.actions, { paddingBottom: botPad + 16, borderTopColor: colors.border }]}>
+          {/* Manual buttons — hidden while auto is on */}
+          {!autoMode && (
+            <>
+              <TouchableOpacity
+                activeOpacity={busy ? 1 : 0.8}
+                onPress={() => handleAction('ATTACK')}
+                style={[styles.actionBtn, { backgroundColor: '#ef4444' + (busy ? '33' : '22'), borderColor: busy ? colors.border : '#ef4444' }]}
+              >
+                <Feather name="crosshair" size={22} color={busy ? colors.mutedForeground : '#ef4444'} />
+                <Text style={[styles.actionBtnLabel, { color: busy ? colors.mutedForeground : '#ef4444' }]}>Ataque</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                activeOpacity={busy || !canSpirit ? 1 : 0.8}
+                onPress={() => !busy && canSpirit && handleAction('SPIRIT')}
+                style={[styles.actionBtn, { backgroundColor: '#a855f7' + (!canSpirit || busy ? '11' : '22'), borderColor: !canSpirit || busy ? colors.border : '#a855f7' }]}
+              >
+                <Feather name="star" size={22} color={!canSpirit || busy ? colors.mutedForeground : '#a855f7'} />
+                <Text style={[styles.actionBtnLabel, { color: !canSpirit || busy ? colors.mutedForeground : '#a855f7' }]}>
+                  Espírito ({SPIRIT_MP_COST} MP)
+                </Text>
+              </TouchableOpacity>
+            </>
+          )}
+
+          {/* Auto-battle indicator shown while active */}
+          {autoMode && (
+            <View style={[styles.autoIndicator, { backgroundColor: '#22c55e11', borderColor: '#22c55e' }]}>
+              <Feather name="zap" size={18} color="#22c55e" />
+              <Text style={[styles.autoIndicatorText, { color: '#22c55e' }]}>Batalha Automática…</Text>
+            </View>
+          )}
+
+          {/* Toggle auto button */}
           <TouchableOpacity
-            activeOpacity={busy ? 1 : 0.8}
-            onPress={() => handleAction('ATTACK')}
-            style={[styles.actionBtn, { backgroundColor: '#ef4444' + (busy ? '33' : '22'), borderColor: busy ? colors.border : '#ef4444' }]}
+            activeOpacity={0.8}
+            onPress={() => setAutoMode((prev) => !prev)}
+            style={[
+              styles.autoBtn,
+              {
+                backgroundColor: autoMode ? '#22c55e22' : colors.card,
+                borderColor: autoMode ? '#22c55e' : colors.border,
+              },
+            ]}
           >
-            <Feather name="crosshair" size={22} color={busy ? colors.mutedForeground : '#ef4444'} />
-            <Text style={[styles.actionBtnLabel, { color: busy ? colors.mutedForeground : '#ef4444' }]}>Ataque</Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            activeOpacity={busy || !canSpirit ? 1 : 0.8}
-            onPress={() => !busy && canSpirit && handleAction('SPIRIT')}
-            style={[styles.actionBtn, { backgroundColor: '#a855f7' + (!canSpirit || busy ? '11' : '22'), borderColor: !canSpirit || busy ? colors.border : '#a855f7' }]}
-          >
-            <Feather name="star" size={22} color={!canSpirit || busy ? colors.mutedForeground : '#a855f7'} />
-            <Text style={[styles.actionBtnLabel, { color: !canSpirit || busy ? colors.mutedForeground : '#a855f7' }]}>
-              Espírito ({SPIRIT_MP_COST} MP)
+            <Feather name={autoMode ? 'pause' : 'play'} size={16} color={autoMode ? '#22c55e' : colors.mutedForeground} />
+            <Text style={[styles.autoBtnLabel, { color: autoMode ? '#22c55e' : colors.mutedForeground }]}>
+              {autoMode ? 'Pausar Auto' : 'Auto'}
             </Text>
           </TouchableOpacity>
         </View>
@@ -646,6 +692,28 @@ const styles = StyleSheet.create({
     gap: 6,
   },
   actionBtnLabel: { fontSize: 13, fontWeight: '700' as const },
+  autoIndicator: {
+    flex: 1,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 8,
+    borderRadius: 14,
+    borderWidth: 1.5,
+    padding: 16,
+  },
+  autoIndicatorText: { fontSize: 14, fontWeight: '700' as const },
+  autoBtn: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 6,
+    borderRadius: 12,
+    borderWidth: 1.5,
+    paddingVertical: 10,
+    paddingHorizontal: 16,
+  },
+  autoBtnLabel: { fontSize: 12, fontWeight: '700' as const },
   // Result
   resultCenter: { alignItems: 'center', justifyContent: 'center' },
   resultCard: {
