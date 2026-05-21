@@ -80,8 +80,8 @@ export default function RankingScreen() {
           {tamer ? (
             <Image
               source={tamer.image}
-              style={[styles.avatarImg, { top: tamer.avatarOffset }]}
-              resizeMode="contain"
+              style={[styles.avatarImg, { marginTop: tamer.avatarOffset }]}
+              resizeMode="cover"
             />
           ) : (
             <Feather name="user" size={20} color={colors.mutedForeground} />
@@ -181,8 +181,8 @@ const styles = StyleSheet.create({
   list: { padding: 16, gap: 10 },
   entry: { flexDirection: 'row', alignItems: 'center', borderRadius: 14, padding: 14, gap: 10 },
   rankCol: { width: 32, alignItems: 'center' },
-  avatarWrap: { width: 44, height: 44, borderRadius: 22, borderWidth: 2, overflow: 'hidden' as const, backgroundColor: '#0f1629', position: 'relative' as const },
-  avatarImg: { position: 'absolute' as const, left: 0, width: 44, height: 100 },
+  avatarWrap: { width: 44, height: 44, borderRadius: 22, borderWidth: 2, overflow: 'hidden' as const, backgroundColor: '#0f1629' },
+  avatarImg: { width: 44, height: 100 },
   rankEmoji: { fontSize: 22 },
   rankNum: { fontSize: 14, fontWeight: '700' as const },
   infoCol: { flex: 1, gap: 2 },
