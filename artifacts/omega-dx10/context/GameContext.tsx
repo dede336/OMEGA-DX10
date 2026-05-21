@@ -638,8 +638,8 @@ export function GameProvider({ children }: { children: React.ReactNode }) {
         headers: { Authorization: `Bearer ${token}` },
       });
       if (!res.ok) return;
-      const payload = await res.json() as { saveData: Partial<GameState & { playerName?: string }>; isAdmin?: boolean };
-      const { saveData, isAdmin } = payload;
+      const payload = await res.json() as { saveData: Partial<GameState & { playerName?: string }>; isAdmin?: boolean; isDede?: boolean };
+      const { saveData, isAdmin, isDede } = payload;
       if (!saveData) return;
       const parsed = saveData;
       const hadPreviousSave = !!parsed.playerName && parsed.playerName !== '';
@@ -649,18 +649,7 @@ export function GameProvider({ children }: { children: React.ReactNode }) {
         ...DEFAULT_MESSAGES.filter((m) => !savedIds.has(m.id)),
         ...savedMessages,
       ].sort((a, b) => b.createdAt - a.createdAt);
-      let collection: OwnedCharacter[] = parsed.collection ?? [];
-      if (isAdmin) {
-        const ownedIds = new Set(collection.map((c) => c.characterId));
-        const missing = CODEX_ORDER.filter((id) => CHARACTERS[id] && !ownedIds.has(id));
-        const injected: OwnedCharacter[] = missing.map((charId) => ({
-          ownedId: `admin_${charId}`,
-          characterId: charId,
-          level: 100,
-          exp: 0,
-        }));
-        collection = [...collection, ...injected];
-      }
+      const collection: OwnedCharacter[] = parsed.collection ?? [];
       const newState: GameState = {
         ...defaultState,
         ...parsed,
@@ -678,7 +667,7 @@ export function GameProvider({ children }: { children: React.ReactNode }) {
         team: parsed.team ?? [],
         messages: merged,
         lastDailyDate: parsed.lastDailyDate ?? '',
-        isAdmin: isAdmin ?? false,
+        isAdmin: isDede ?? isAdmin ?? false,
       };
       setState(newState);
       await AsyncStorage.setItem(STORAGE_KEY, JSON.stringify(newState));
