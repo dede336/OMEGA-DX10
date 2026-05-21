@@ -97,6 +97,7 @@ export default function BattleScreen() {
 
   // ── Simultaneous enemies ───────────────────────────────────────────────────
   const [enemies, setEnemies] = useState<BattleFighter[]>([]);
+  const [battleCharIds, setBattleCharIds] = useState<string[]>([]);
   const [targetIdx, setTargetIdx] = useState(0);
   const enemiesRef = useRef<BattleFighter[]>([]);
   const targetIdxRef = useRef(0);
@@ -315,6 +316,7 @@ export default function BattleScreen() {
     setTeamFighters(fighters);
     setActiveTeamIdx(0);
     setEnemies(allEnemies);
+    setBattleCharIds(charIds);
     setTargetIdx(0);
     setSelectedCharacter(fighters[0].ownedId);
     setTeam(teamIds);
@@ -712,7 +714,7 @@ export default function BattleScreen() {
             <View style={styles.arenaOverlay}>
               <View style={styles.arenaEnemyRow}>
                 {enemies.map((enemy, i) => {
-                  const charId = stageCharIds[i] ?? stageCharIds[0];
+                  const charId = battleCharIds[i] ?? stageCharIds[i] ?? stageCharIds[0];
                   const eChar = CHARACTERS[charId];
                   const eAttr = eChar ? ATTRIBUTES[eChar.attribute] : null;
                   const isTarget = i === targetIdx;
@@ -767,7 +769,7 @@ export default function BattleScreen() {
           <View style={[styles.arenaFallback, { backgroundColor: colors.card, borderBottomColor: colors.border }]}>
             <View style={styles.arenaEnemyRow}>
               {enemies.map((enemy, i) => {
-                const charId = stageCharIds[i] ?? stageCharIds[0];
+                const charId = battleCharIds[i] ?? stageCharIds[i] ?? stageCharIds[0];
                 const eChar = CHARACTERS[charId];
                 const eAttr = eChar ? ATTRIBUTES[eChar.attribute] : null;
                 const isTarget = i === targetIdx;
