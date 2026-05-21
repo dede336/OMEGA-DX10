@@ -8,7 +8,7 @@ const SAVE_KEY = 'omega_dx10_save_v3';
 
 export function useCloudSync() {
   const { token, getApiUrl } = useAuth();
-  const { collection, tamerLevel, tamerExp, playerName, team, loadFromCloud } = useGame();
+  const { collection, tamerLevel, tamerExp, playerName, team, tamerId, loadFromCloud } = useGame();
   const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const tokenRef = useRef(token);
   const getApiUrlRef = useRef(getApiUrl);
@@ -45,5 +45,5 @@ export function useCloudSync() {
     }, SYNC_DEBOUNCE);
     return () => { if (timerRef.current) clearTimeout(timerRef.current); };
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [collection.length, tamerLevel, tamerExp, playerName, team.length, token]);
+  }, [collection.length, tamerLevel, tamerExp, playerName, team.length, tamerId, token]);
 }
