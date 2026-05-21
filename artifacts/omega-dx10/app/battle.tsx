@@ -91,6 +91,8 @@ export default function BattleScreen() {
 
   const mapId = params.mapId ?? '';
   const stageIndex = Number(params.stageIndex ?? '0');
+  const paramAutoMode = params.auto === '1';
+  const paramAutoCount = Number(params.autoCount ?? '0');
   const map = GAME_MAPS.find((m) => m.id === mapId);
   const stage = map?.stages[stageIndex];
   const alreadyCleared = isStageCleared(mapId, stageIndex);
@@ -132,10 +134,10 @@ export default function BattleScreen() {
   const playerFighter = teamFighters[activeTeamIdx] ?? null;
 
   // ── Auto battle ────────────────────────────────────────────────────────────
-  const [autoMode, setAutoMode] = useState(false);
-  const [autoRunCount, setAutoRunCount] = useState(0);
-  const autoModeRef = useRef(false);
-  const autoRunCountRef = useRef(0);
+  const [autoMode, setAutoMode] = useState(paramAutoMode);
+  const [autoRunCount, setAutoRunCount] = useState(paramAutoCount);
+  const autoModeRef = useRef(paramAutoMode);
+  const autoRunCountRef = useRef(paramAutoCount);
   const AUTO_RUN_MAX = 10;
   useEffect(() => { autoModeRef.current = autoMode; }, [autoMode]);
   useEffect(() => { autoRunCountRef.current = autoRunCount; }, [autoRunCount]);
@@ -177,14 +179,24 @@ export default function BattleScreen() {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [autoMode, busy, phase, winner]);
 
+  // ── Auto-start battle when coming from auto-restart ────────────────────────
+  useEffect(() => {
+    if (!paramAutoMode || collection.length === 0) return;
+    const autoTeam = team.length > 0 ? team : (selectedCharacter ? [selectedCharacter.ownedId] : []);
+    if (autoTeam.length === 0) return;
+    startBattle(autoTeam);
+  // Run only once on mount
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [collection.length]);
+
   // ── Auto-restart after win ─────────────────────────────────────────────────
   useEffect(() => {
     if (!autoMode || winner !== 'player') return;
     if (autoRunCountRef.current >= AUTO_RUN_MAX) { setAutoMode(false); return; }
     const timer = setTimeout(() => {
       if (!autoModeRef.current) return;
-      setAutoRunCount((p) => p + 1);
-      router.replace(`/battle?mapId=${mapId}&stageIndex=${stageIndex}`);
+      const nextCount = autoRunCountRef.current + 1;
+      router.replace(`/battle?mapId=${mapId}&stageIndex=${stageIndex}&auto=1&autoCount=${nextCount}`);
     }, 3000);
     return () => clearTimeout(timer);
   // eslint-disable-next-line react-hooks/exhaustive-deps
