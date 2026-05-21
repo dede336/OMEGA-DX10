@@ -163,7 +163,7 @@ const defaultState: GameState = {
   gender: 'M',
   tamerId: null,
   isOnboarded: false,
-  collection: [{ ownedId: 'owned_agumon_0', characterId: 'agumon', level: 1, exp: 0 }],
+  collection: [{ ownedId: 'owned_agumon_0', characterId: 'agumonSaver', level: 1, exp: 0 }],
   clearedStages: {},
   selectedOwnedId: 'owned_agumon_0',
   team: [],
@@ -388,7 +388,7 @@ export function GameProvider({ children }: { children: React.ReactNode }) {
       tamer_sora: 'pyomon',
       tamer_mimi: 'palmon',
     };
-    const starterId = TAMER_STARTERS[tamerId] ?? 'agumon';
+    const starterId = TAMER_STARTERS[tamerId] ?? 'agumonSaver';
     const ownedId   = `owned_${starterId}_0`;
     const starter   = { ownedId, characterId: starterId, level: 1, exp: 0 };
     setState((prev) => ({
