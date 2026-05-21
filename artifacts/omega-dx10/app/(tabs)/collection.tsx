@@ -15,6 +15,7 @@ import {
 import { CharacterCard, ScanCard, LockedCard, CharacterAvatar, AttributeBadge, ElementBadge } from '@/components/GameComponents';
 
 const DIGIVO_GIF = require('../../assets/images/digivolution.gif');
+const OMEGAMON_GIF = require('../../assets/images/omegamon_digivolve.gif');
 
 // Reverse map: evolvesTo → { fromName, requiredLevel }
 const EVOLVES_FROM: Record<string, { fromName: string; requiredLevel: number }> = {};
@@ -284,7 +285,11 @@ export default function CollectionScreen() {
           onPress={() => { if (evoPhase === 'done') setEvoAnim(null); }}
         >
           {/* GIF background */}
-          <Image source={DIGIVO_GIF} style={styles.evoGifBg} resizeMode="cover" />
+          <Image
+            source={evoAnim?.toCharId === 'omegamon' ? OMEGAMON_GIF : DIGIVO_GIF}
+            style={styles.evoGifBg}
+            resizeMode="cover"
+          />
           <View style={styles.evoOverlayDim} />
 
           {/* Content */}

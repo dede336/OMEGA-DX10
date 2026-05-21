@@ -1,5 +1,8 @@
-import React, { useState } from 'react';
-import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Platform, Modal, Pressable } from 'react-native';
+import React, { useState, useRef, useEffect } from 'react';
+import {
+  View, Text, StyleSheet, ScrollView, TouchableOpacity,
+  Platform, Modal, Pressable, Animated, Image,
+} from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useLocalSearchParams, router } from 'expo-router';
 import { Feather } from '@expo/vector-icons';
@@ -13,6 +16,11 @@ import {
 } from '@/constants/gameData';
 import { AttributeBadge, ElementBadge, StatBar, CharacterAvatar } from '@/components/GameComponents';
 
+const DIGIVO_GIF    = require('../../assets/images/digivolution.gif');
+const OMEGAMON_GIF  = require('../../assets/images/omegamon_digivolve.gif');
+
+type FusePhase = 'flashing' | 'reveal' | 'done';
+
 export default function CharacterDetailScreen() {
   const colors = useColors();
   const insets = useSafeAreaInsets();
@@ -22,8 +30,34 @@ export default function CharacterDetailScreen() {
   const [confirmFuseVisible, setConfirmFuseVisible] = useState(false);
   const [fuseSacrificeId, setFuseSacrificeId] = useState<string | null>(null);
 
+  // ── Fusion animation ────────────────────────────────────────────────────────
+  const [fuseAnim, setFuseAnim] = useState<{ fromCharId: string; toCharId: string } | null>(null);
+  const [fusePhase, setFusePhase] = useState<FusePhase>('flashing');
+  const flashOpacity  = useRef(new Animated.Value(1)).current;
+  const newFormOpacity = useRef(new Animated.Value(0)).current;
+  const titleScale    = useRef(new Animated.Value(0.7)).current;
+
+  useEffect(() => {
+    if (!fuseAnim) return;
+    if (fusePhase === 'flashing') {
+      const flashes = Array.from({ length: 6 }, () =>
+        Animated.sequence([
+          Animated.timing(flashOpacity,  { toValue: 0, duration: 160, useNativeDriver: true }),
+          Animated.timing(flashOpacity,  { toValue: 1, duration: 160, useNativeDriver: true }),
+        ])
+      );
+      Animated.sequence(flashes).start(() => setFusePhase('reveal'));
+    }
+    if (fusePhase === 'reveal') {
+      Animated.parallel([
+        Animated.timing(newFormOpacity, { toValue: 1, duration: 600, useNativeDriver: true }),
+        Animated.spring(titleScale,     { toValue: 1, useNativeDriver: true, friction: 5 }),
+      ]).start(() => setFusePhase('done'));
+    }
+  }, [fuseAnim, fusePhase]);
+
   const owned = collection.find((c) => c.ownedId === id);
-  const char = owned ? CHARACTERS[owned.characterId] : null;
+  const char  = owned ? CHARACTERS[owned.characterId] : null;
 
   if (!owned || !char) {
     return (
@@ -36,9 +70,9 @@ export default function CharacterDetailScreen() {
     );
   }
 
-  const scaled = getScaledStats(char.baseStats, owned.level);
+  const scaled   = getScaledStats(char.baseStats, owned.level);
   const expNeeded = expToNextLevel(owned.level);
-  const expPct = Math.min(1, owned.exp / expNeeded);
+  const expPct   = Math.min(1, owned.exp / expNeeded);
   const rarityColor = RARITY_COLORS[char.rarity];
   const attrData = ATTRIBUTES[char.attribute];
   const elemData = ELEMENTS[char.element];
@@ -46,14 +80,12 @@ export default function CharacterDetailScreen() {
 
   const topPad = Platform.OS === 'web' ? 67 : insets.top;
 
-  // ── Fusion info ──────────────────────────────────────────────────────────────
-  const fusionRecipe = FUSIONS[owned.characterId] ?? null;
-  const partnerOwned = fusionRecipe
-    ? collection.find((c) => c.characterId === fusionRecipe.partner) ?? null
-    : null;
-  const resultChar = fusionRecipe ? CHARACTERS[fusionRecipe.resultId] : null;
-  const partnerChar = fusionRecipe ? CHARACTERS[fusionRecipe.partner] : null;
-  const canFuse = !!(fusionRecipe && partnerOwned);
+  // ── Fusion info ─────────────────────────────────────────────────────────────
+  const fusionRecipe  = FUSIONS[owned.characterId] ?? null;
+  const partnerOwned  = fusionRecipe ? collection.find((c) => c.characterId === fusionRecipe.partner) ?? null : null;
+  const resultChar    = fusionRecipe ? CHARACTERS[fusionRecipe.resultId]  : null;
+  const partnerChar   = fusionRecipe ? CHARACTERS[fusionRecipe.partner]   : null;
+  const canFuse       = !!(fusionRecipe && partnerOwned);
 
   function handleFusePress() {
     if (!partnerOwned) return;
@@ -62,11 +94,21 @@ export default function CharacterDetailScreen() {
   }
 
   function handleFuseConfirm() {
-    if (!fuseSacrificeId || !owned) return;
+    if (!fuseSacrificeId || !owned || !fusionRecipe) return;
     setConfirmFuseVisible(false);
     fuseDigimon(owned.ownedId, fuseSacrificeId);
-    router.back();
+    // Start animation
+    flashOpacity.setValue(1);
+    newFormOpacity.setValue(0);
+    titleScale.setValue(0.7);
+    setFusePhase('flashing');
+    setFuseAnim({ fromCharId: owned.characterId, toCharId: fusionRecipe.resultId });
   }
+
+  // GIF to show during animation
+  const animGif = fuseAnim?.toCharId === 'omegamon' ? OMEGAMON_GIF : DIGIVO_GIF;
+  const fuseToChar   = fuseAnim ? CHARACTERS[fuseAnim.toCharId]   : null;
+  const fuseFromChar = fuseAnim ? CHARACTERS[fuseAnim.fromCharId] : null;
 
   return (
     <>
@@ -145,25 +187,19 @@ export default function CharacterDetailScreen() {
               </View>
             </View>
 
-            {/* Diagram: this + partner → result */}
+            {/* Diagram */}
             <View style={styles.fusionRow}>
               <View style={styles.fusionSide}>
                 <CharacterAvatar characterId={owned.characterId} size={64} />
                 <Text style={[styles.fusionName, { color: colors.foreground }]}>{char.name}</Text>
                 <Text style={[styles.fusionSub, { color: colors.primary }]}>Lv {owned.level}</Text>
               </View>
-
               <View style={styles.fusionCenter}>
                 <Feather name="plus" size={20} color={canFuse ? '#ff3c6e' : colors.mutedForeground} />
                 <Text style={[styles.fusionArrow, { color: canFuse ? '#ff3c6e' : colors.mutedForeground }]}>→</Text>
               </View>
-
               <View style={styles.fusionSide}>
-                <CharacterAvatar
-                  characterId={fusionRecipe.partner}
-                  size={64}
-                  dimmed={!canFuse}
-                />
+                <CharacterAvatar characterId={fusionRecipe.partner} size={64} dimmed={!canFuse} />
                 <Text style={[styles.fusionName, { color: canFuse ? colors.foreground : colors.mutedForeground }]}>
                   {partnerChar.name}
                 </Text>
@@ -171,11 +207,9 @@ export default function CharacterDetailScreen() {
                   {canFuse ? `Lv ${partnerOwned!.level}` : 'Não obtido'}
                 </Text>
               </View>
-
               <View style={styles.fusionCenter}>
                 <Feather name="chevrons-right" size={20} color={canFuse ? '#ff3c6e' : colors.mutedForeground} />
               </View>
-
               <View style={styles.fusionSide}>
                 <CharacterAvatar characterId={fusionRecipe.resultId} size={64} />
                 <Text style={[styles.fusionName, { color: canFuse ? '#ff3c6e' : colors.mutedForeground }]}>
@@ -245,7 +279,11 @@ export default function CharacterDetailScreen() {
           activeOpacity={0.8}
           style={[
             styles.selectBtn,
-            { backgroundColor: isSelected ? '#22c55e22' : colors.primary, borderColor: isSelected ? '#22c55e' : 'transparent', borderWidth: isSelected ? 1.5 : 0 },
+            {
+              backgroundColor: isSelected ? '#22c55e22' : colors.primary,
+              borderColor: isSelected ? '#22c55e' : 'transparent',
+              borderWidth: isSelected ? 1.5 : 0,
+            },
           ]}
         >
           <Feather name={isSelected ? 'check-circle' : 'zap'} size={18} color={isSelected ? '#22c55e' : colors.primaryForeground} />
@@ -255,7 +293,7 @@ export default function CharacterDetailScreen() {
         </TouchableOpacity>
       </ScrollView>
 
-      {/* ── Fusion confirmation modal ─────────────────────────────────────── */}
+      {/* ── Fusion confirmation modal ────────────────────────────────────── */}
       <Modal
         visible={confirmFuseVisible}
         transparent
@@ -276,7 +314,6 @@ export default function CharacterDetailScreen() {
               <Text style={{ color: '#ff3c6e', fontWeight: '700' }}>{resultChar?.name}</Text>.
               {'\n\n'}Esta ação não pode ser desfeita.
             </Text>
-
             <View style={styles.confirmBtnRow}>
               <TouchableOpacity
                 style={[styles.confirmCancel, { borderColor: colors.border }]}
@@ -284,15 +321,69 @@ export default function CharacterDetailScreen() {
               >
                 <Text style={[styles.confirmCancelText, { color: colors.mutedForeground }]}>Cancelar</Text>
               </TouchableOpacity>
-              <TouchableOpacity
-                style={styles.confirmFuse}
-                onPress={handleFuseConfirm}
-              >
+              <TouchableOpacity style={styles.confirmFuse} onPress={handleFuseConfirm}>
                 <Feather name="git-merge" size={16} color="#fff" />
                 <Text style={styles.confirmFuseText}>Fundir!</Text>
               </TouchableOpacity>
             </View>
           </Pressable>
+        </Pressable>
+      </Modal>
+
+      {/* ── Fusion animation overlay ─────────────────────────────────────── */}
+      <Modal
+        visible={fuseAnim !== null}
+        transparent
+        animationType="fade"
+        statusBarTranslucent
+        onRequestClose={() => { if (fusePhase === 'done') { setFuseAnim(null); router.back(); } }}
+      >
+        <Pressable
+          style={styles.evoOverlay}
+          onPress={() => { if (fusePhase === 'done') { setFuseAnim(null); router.back(); } }}
+        >
+          <Image source={animGif} style={styles.evoGifBg} resizeMode="cover" />
+          <View style={styles.evoOverlayDim} />
+
+          <View style={styles.evoContent} pointerEvents="none">
+            {fusePhase === 'flashing' && fuseAnim && (
+              <>
+                <Text style={styles.evoTopLabel}>FUSÃO!</Text>
+                <View style={styles.evoAvatarWrap}>
+                  <Animated.View style={{ opacity: flashOpacity }}>
+                    <CharacterAvatar characterId={fuseAnim.fromCharId} size={140} />
+                  </Animated.View>
+                  <Animated.View
+                    style={[styles.evoSilhouette, { opacity: Animated.subtract(1, flashOpacity) }]}
+                  />
+                </View>
+                <Text style={styles.evoFromName}>{fuseFromChar?.name ?? ''}</Text>
+              </>
+            )}
+
+            {(fusePhase === 'reveal' || fusePhase === 'done') && fuseAnim && (
+              <>
+                <Animated.Text style={[styles.evoTopLabel, styles.evoTopLabelFusion, { transform: [{ scale: titleScale }] }]}>
+                  FUSÃO COMPLETA!
+                </Animated.Text>
+                <Animated.View style={[styles.evoAvatarWrap, { opacity: newFormOpacity }]}>
+                  <CharacterAvatar characterId={fuseAnim.toCharId} size={140} />
+                </Animated.View>
+                <Animated.Text style={[styles.evoToName, { opacity: newFormOpacity }]}>
+                  {fuseToChar?.name ?? ''}
+                </Animated.Text>
+                {fuseToChar && (
+                  <Animated.View style={[styles.evoBadgesRowBig, { opacity: newFormOpacity }]}>
+                    <AttributeBadge attr={fuseToChar.attribute} />
+                    <ElementBadge   elem={fuseToChar.element}   />
+                  </Animated.View>
+                )}
+                {fusePhase === 'done' && (
+                  <Text style={styles.evoDismiss}>Toque para continuar</Text>
+                )}
+              </>
+            )}
+          </View>
         </Pressable>
       </Modal>
     </>
@@ -324,21 +415,13 @@ const styles = StyleSheet.create({
   expNext: { fontSize: 11, textAlign: 'right' },
   statsCard: { borderRadius: 16, borderWidth: 1, padding: 16, marginBottom: 16 },
 
-  // ── Fusion ─────────────────────────────────────────────────────────────────
-  fusionCard: {
-    borderRadius: 16, borderWidth: 1.5, padding: 16, marginBottom: 16, gap: 14,
-  },
+  // ── Fusion ──────────────────────────────────────────────────────────────────
+  fusionCard: { borderRadius: 16, borderWidth: 1.5, padding: 16, marginBottom: 16, gap: 14 },
   fusionHeader: { flexDirection: 'row', alignItems: 'center', gap: 8 },
   fusionTitle: { fontSize: 14, fontWeight: '800' as const, flex: 1 },
-  ultraPill: {
-    borderRadius: 8, borderWidth: 1,
-    paddingHorizontal: 8, paddingVertical: 2,
-  },
+  ultraPill: { borderRadius: 8, borderWidth: 1, paddingHorizontal: 8, paddingVertical: 2 },
   ultraPillText: { fontSize: 10, fontWeight: '800' as const, color: '#ff3c6e' },
-  fusionRow: {
-    flexDirection: 'row', alignItems: 'center',
-    justifyContent: 'space-between',
-  },
+  fusionRow: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' },
   fusionSide: { alignItems: 'center', gap: 4, flex: 1 },
   fusionName: { fontSize: 11, fontWeight: '700' as const, textAlign: 'center' },
   fusionSub: { fontSize: 10, fontWeight: '600' as const },
@@ -363,29 +446,63 @@ const styles = StyleSheet.create({
   selectBtn: { borderRadius: 16, padding: 18, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 10 },
   selectBtnText: { fontSize: 16, fontWeight: '700' as const },
 
-  // ── Confirm modal ──────────────────────────────────────────────────────────
+  // ── Confirm modal ────────────────────────────────────────────────────────────
   confirmOverlay: {
     flex: 1, backgroundColor: '#00000088',
-    alignItems: 'center', justifyContent: 'center',
-    padding: 32,
+    alignItems: 'center', justifyContent: 'center', padding: 32,
   },
-  confirmBox: {
-    borderRadius: 20, borderWidth: 1.5, padding: 24,
-    gap: 14, width: '100%',
-  },
+  confirmBox: { borderRadius: 20, borderWidth: 1.5, padding: 24, gap: 14, width: '100%' },
   confirmTitle: { fontSize: 20, fontWeight: '800' as const, textAlign: 'center' },
   confirmBody: { fontSize: 14, lineHeight: 22, textAlign: 'center' },
   confirmBtnRow: { flexDirection: 'row', gap: 12, marginTop: 4 },
-  confirmCancel: {
-    flex: 1, borderRadius: 12, borderWidth: 1.5,
-    paddingVertical: 13, alignItems: 'center',
-  },
+  confirmCancel: { flex: 1, borderRadius: 12, borderWidth: 1.5, paddingVertical: 13, alignItems: 'center' },
   confirmCancelText: { fontSize: 14, fontWeight: '700' as const },
   confirmFuse: {
-    flex: 1, borderRadius: 12,
-    backgroundColor: '#ff3c6e',
-    paddingVertical: 13,
-    flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 8,
+    flex: 1, borderRadius: 12, backgroundColor: '#ff3c6e',
+    paddingVertical: 13, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 8,
   },
   confirmFuseText: { fontSize: 14, fontWeight: '800' as const, color: '#fff' },
+
+  // ── Fusion animation ─────────────────────────────────────────────────────────
+  evoOverlay: {
+    flex: 1, backgroundColor: '#000',
+    alignItems: 'center', justifyContent: 'center',
+  },
+  evoGifBg: {
+    ...StyleSheet.absoluteFillObject as any,
+    width: '100%', height: '100%', opacity: 0.65,
+  },
+  evoOverlayDim: {
+    ...StyleSheet.absoluteFillObject as any,
+    backgroundColor: '#00000055',
+  },
+  evoContent: {
+    alignItems: 'center', justifyContent: 'center',
+    paddingHorizontal: 32, gap: 16,
+  },
+  evoTopLabel: {
+    fontSize: 26, fontWeight: '900' as const,
+    color: '#facc15',
+    textShadowColor: '#000', textShadowOffset: { width: 0, height: 2 }, textShadowRadius: 8,
+    letterSpacing: 2, textAlign: 'center',
+  },
+  evoTopLabelFusion: { color: '#ff3c6e' },
+  evoAvatarWrap: { position: 'relative' as const, width: 140, height: 140 },
+  evoSilhouette: {
+    ...StyleSheet.absoluteFillObject as any,
+    backgroundColor: '#000', borderRadius: 70,
+  },
+  evoFromName: {
+    fontSize: 18, fontWeight: '700' as const, color: '#fff',
+    textShadowColor: '#000', textShadowOffset: { width: 0, height: 1 }, textShadowRadius: 6,
+  },
+  evoToName: {
+    fontSize: 22, fontWeight: '900' as const, color: '#fff',
+    textShadowColor: '#000', textShadowOffset: { width: 0, height: 2 }, textShadowRadius: 8,
+  },
+  evoBadgesRowBig: { flexDirection: 'row', gap: 10 },
+  evoDismiss: {
+    fontSize: 13, color: 'rgba(255,255,255,0.6)',
+    marginTop: 8, textAlign: 'center',
+  },
 });
