@@ -102,7 +102,7 @@ const ELEMENT_EMOJI: Record<ElementId, string> = {
   LIGHTNING: '⚡',
   WIND:      '🌀',
   METAL:     '⚙️',
-  NULL:      '⭕',
+  NULL:      '—',
 };
 
 // ─── ElementBadge ──────────────────────────────────────────────────────────────
