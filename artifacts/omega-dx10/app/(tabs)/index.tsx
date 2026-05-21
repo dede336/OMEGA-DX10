@@ -12,6 +12,7 @@ import { AttributeBadge, ElementBadge, HPBar, CharacterAvatar } from '@/componen
 const LIGHT_STATUS_GIF = require('../../assets/images/light_status.gif');
 const DARK_STATUS_GIF  = require('../../assets/images/dark_status.gif');
 const FIRE_STATUS_GIF  = require('../../assets/images/fire_status.gif');
+const PLANT_STATUS_GIF = require('../../assets/images/plant_status.gif');
 
 const SPECIAL_GIFS: Record<string, any> = {
   omegamon:              require('../../assets/images/omegamon_digivolve.gif'),
@@ -37,6 +38,11 @@ const SPECIAL_GIFS: Record<string, any> = {
   myotismon:             DARK_STATUS_GIF,
   vnonMyotismon:         DARK_STATUS_GIF,
   gulusGammamon:         DARK_STATUS_GIF,
+  // Plant element — no dedicated GIF
+  palmon:                PLANT_STATUS_GIF,
+  togemon:               PLANT_STATUS_GIF,
+  lillymon:              PLANT_STATUS_GIF,
+  rosemon:               PLANT_STATUS_GIF,
   // Fire element — no dedicated GIF
   agumon:                FIRE_STATUS_GIF,
   agumonSaver:           FIRE_STATUS_GIF,
