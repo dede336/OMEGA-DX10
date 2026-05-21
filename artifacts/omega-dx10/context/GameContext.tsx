@@ -106,6 +106,7 @@ interface GameState {
   gender: TamerGender;
   tamerId: string | null;
   isOnboarded: boolean;
+  isAdmin: boolean;
   collection: OwnedCharacter[];
   clearedStages: Record<string, boolean>;
   selectedOwnedId: string | null;
@@ -164,6 +165,7 @@ const defaultState: GameState = {
   gender: 'M',
   tamerId: null,
   isOnboarded: false,
+  isAdmin: false,
   collection: [{ ownedId: 'owned_agumon_0', characterId: 'agumon', level: 1, exp: 0 }],
   clearedStages: {},
   selectedOwnedId: 'owned_agumon_0',
@@ -228,7 +230,8 @@ export function GameProvider({ children }: { children: React.ReactNode }) {
   const addToCollection = useCallback((characterId: string) => {
     setState((prev) => {
       if (prev.collection.some((c) => c.characterId === characterId)) return prev;
-      if (prev.collection.length >= 100) return prev;
+      const limit = prev.isAdmin ? 500 : 100;
+      if (prev.collection.length >= limit) return prev;
       const ownedId = `owned_${characterId}_${Date.now()}`;
       const newChar: OwnedCharacter = { ownedId, characterId, level: 1, exp: 0 };
       return { ...prev, collection: [...prev.collection, newChar] };
@@ -276,7 +279,8 @@ export function GameProvider({ children }: { children: React.ReactNode }) {
       const scan = prev.scanProgress[characterId] ?? 0;
       if (scan < 100) return prev;
       if (prev.collection.some((c) => c.characterId === characterId)) return prev;
-      if (prev.collection.length >= 100) return prev;
+      const limit = prev.isAdmin ? 500 : 100;
+      if (prev.collection.length >= limit) return prev;
       const ownedId = `owned_${characterId}_${Date.now()}`;
       return {
         ...prev,
@@ -674,6 +678,7 @@ export function GameProvider({ children }: { children: React.ReactNode }) {
         team: parsed.team ?? [],
         messages: merged,
         lastDailyDate: parsed.lastDailyDate ?? '',
+        isAdmin: isAdmin ?? false,
       };
       setState(newState);
       await AsyncStorage.setItem(STORAGE_KEY, JSON.stringify(newState));

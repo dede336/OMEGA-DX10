@@ -34,11 +34,11 @@ type EvoPhase = 'playing' | 'reveal' | 'done';
 export default function CollectionScreen() {
   const colors = useColors();
   const insets = useSafeAreaInsets();
-  const { collection, selectedCharacter, setSelectedCharacter, scanProgress, createFromScan, evolveDigimon, changeFormDigimon, pieces, sacrificeDigimon } = useGame();
+  const { collection, selectedCharacter, setSelectedCharacter, scanProgress, createFromScan, evolveDigimon, changeFormDigimon, pieces, sacrificeDigimon, isAdmin } = useGame();
 
   const bottomPad = Platform.OS === 'web' ? 34 : insets.bottom;
 
-  const DIGIBANK_LIMIT = 100;
+  const DIGIBANK_LIMIT = isAdmin ? 500 : 100;
   const ownedCount = collection.length;
 
   // Modal state
