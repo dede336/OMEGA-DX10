@@ -1,7 +1,7 @@
-import React, { useState } from 'react';
+import React, { useState, useRef, useEffect, useCallback } from 'react';
 import {
   View, Text, StyleSheet, ScrollView, TouchableOpacity,
-  Platform, Modal, Pressable,
+  Platform, Modal, Pressable, Animated, Image,
 } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { router } from 'expo-router';
@@ -14,12 +14,16 @@ import {
 } from '@/constants/gameData';
 import { CharacterCard, ScanCard, LockedCard, CharacterAvatar, AttributeBadge, ElementBadge } from '@/components/GameComponents';
 
+const DIGIVO_GIF = require('../../assets/images/digivolution.gif');
+
 // Reverse map: evolvesTo → { fromName, requiredLevel }
 const EVOLVES_FROM: Record<string, { fromName: string; requiredLevel: number }> = {};
 Object.entries(EVOLUTIONS).forEach(([fromId, evo]) => {
   const fromChar = CHARACTERS[fromId];
   EVOLVES_FROM[evo.evolvesTo] = { fromName: fromChar?.name ?? fromId, requiredLevel: evo.requiredLevel };
 });
+
+type EvoPhase = 'flashing' | 'reveal' | 'done';
 
 export default function CollectionScreen() {
   const colors = useColors();
@@ -34,6 +38,13 @@ export default function CollectionScreen() {
   // Modal state
   const [modalOwned, setModalOwned] = useState<OwnedCharacter | null>(null);
 
+  // Evolution animation state
+  const [evoAnim, setEvoAnim] = useState<{ fromCharId: string; toCharId: string } | null>(null);
+  const [evoPhase, setEvoPhase] = useState<EvoPhase>('flashing');
+  const flashOpacity = useRef(new Animated.Value(1)).current;
+  const newFormOpacity = useRef(new Animated.Value(0)).current;
+  const titleScale = useRef(new Animated.Value(0.7)).current;
+
   function openModal(owned: OwnedCharacter) {
     setSelectedCharacter(owned.ownedId);
     setModalOwned(owned);
@@ -43,10 +54,46 @@ export default function CollectionScreen() {
     setModalOwned(null);
   }
 
+  const handleEvolve = useCallback((ownedId: string, fromCharId: string, toCharId: string) => {
+    closeModal();
+    flashOpacity.setValue(1);
+    newFormOpacity.setValue(0);
+    titleScale.setValue(0.7);
+    setEvoPhase('flashing');
+    setEvoAnim({ fromCharId, toCharId });
+    evolveDigimon(ownedId);
+  }, [evolveDigimon]);
+
+  // Drive the animation phases
+  useEffect(() => {
+    if (!evoAnim) return;
+
+    if (evoPhase === 'flashing') {
+      // Flash old form black ↔ visible × 5, then move to reveal
+      const flashes = Array.from({ length: 5 }, () =>
+        Animated.sequence([
+          Animated.timing(flashOpacity, { toValue: 0, duration: 180, useNativeDriver: true }),
+          Animated.timing(flashOpacity, { toValue: 1, duration: 180, useNativeDriver: true }),
+        ])
+      );
+      Animated.sequence(flashes).start(() => setEvoPhase('reveal'));
+    }
+
+    if (evoPhase === 'reveal') {
+      Animated.parallel([
+        Animated.timing(newFormOpacity, { toValue: 1, duration: 500, useNativeDriver: true }),
+        Animated.spring(titleScale, { toValue: 1, useNativeDriver: true, friction: 5 }),
+      ]).start(() => setEvoPhase('done'));
+    }
+  }, [evoAnim, evoPhase]);
+
   // Computed evolution info for modal
   const modalEvo = modalOwned ? EVOLUTIONS[modalOwned.characterId] : undefined;
   const modalCanEvolve = !!(modalOwned && modalEvo && modalOwned.level >= modalEvo.requiredLevel);
   const modalEvoChar = modalEvo ? CHARACTERS[modalEvo.evolvesTo] : undefined;
+
+  const toChar = evoAnim ? CHARACTERS[evoAnim.toCharId] : null;
+  const fromChar = evoAnim ? CHARACTERS[evoAnim.fromCharId] : null;
 
   return (
     <View style={[styles.container, { backgroundColor: colors.background }]}>
@@ -192,8 +239,8 @@ export default function CollectionScreen() {
                         style={[styles.evolveBtn, { backgroundColor: '#f59e0b' }]}
                         activeOpacity={0.85}
                         onPress={() => {
-                          evolveDigimon(modalOwned.ownedId);
-                          closeModal();
+                          if (!modalOwned || !modalEvo) return;
+                          handleEvolve(modalOwned.ownedId, modalOwned.characterId, modalEvo.evolvesTo);
                         }}
                       >
                         <Feather name="arrow-up-circle" size={20} color="#000" />
@@ -233,6 +280,70 @@ export default function CollectionScreen() {
               );
             })()}
           </Pressable>
+        </Pressable>
+      </Modal>
+
+      {/* ── Digivolution Animation Overlay ── */}
+      <Modal
+        visible={evoAnim !== null}
+        transparent
+        animationType="fade"
+        statusBarTranslucent
+        onRequestClose={() => { if (evoPhase === 'done') setEvoAnim(null); }}
+      >
+        <Pressable
+          style={styles.evoOverlay}
+          onPress={() => { if (evoPhase === 'done') setEvoAnim(null); }}
+        >
+          {/* GIF background */}
+          <Image source={DIGIVO_GIF} style={styles.evoGifBg} resizeMode="cover" />
+          <View style={styles.evoOverlayDim} />
+
+          {/* Content */}
+          <View style={styles.evoContent} pointerEvents="none">
+            {evoPhase === 'flashing' && evoAnim && (
+              <>
+                <Text style={styles.evoTopLabel}>DIGIVOLUÇÃO!</Text>
+                {/* Old form with black flash */}
+                <View style={styles.evoAvatarWrap}>
+                  <Animated.View style={{ opacity: flashOpacity }}>
+                    <CharacterAvatar characterId={evoAnim.fromCharId} size={140} />
+                  </Animated.View>
+                  {/* Black silhouette overlay — visible when opacity flips to 0 */}
+                  <Animated.View
+                    style={[
+                      styles.evoSilhouette,
+                      { opacity: Animated.subtract(1, flashOpacity) },
+                    ]}
+                  />
+                </View>
+                <Text style={styles.evoFromName}>{fromChar?.name ?? ''}</Text>
+              </>
+            )}
+
+            {(evoPhase === 'reveal' || evoPhase === 'done') && evoAnim && (
+              <>
+                <Animated.Text style={[styles.evoTopLabel, { transform: [{ scale: titleScale }] }]}>
+                  DIGIVOLUÇÃO COMPLETA!
+                </Animated.Text>
+                <Animated.View style={[styles.evoAvatarWrap, { opacity: newFormOpacity }]}>
+                  <CharacterAvatar characterId={evoAnim.toCharId} size={140} />
+                </Animated.View>
+                <Animated.Text style={[styles.evoToName, { opacity: newFormOpacity }]}>
+                  {toChar?.name ?? ''}
+                </Animated.Text>
+                {toChar && (
+                  <Animated.View style={[styles.evoBadgesRowBig, { opacity: newFormOpacity }]}>
+                    <AttributeBadge attr={toChar.attribute} />
+                    <ElementBadge elem={toChar.element} />
+                  </Animated.View>
+                )}
+                {evoPhase === 'done' && (
+                  <Text style={styles.evoDismiss}>Toque para continuar</Text>
+                )}
+              </>
+            )}
+          </View>
         </Pressable>
       </Modal>
     </View>
@@ -354,4 +465,81 @@ const styles = StyleSheet.create({
     paddingVertical: 12,
   },
   closeBtnText: { fontSize: 13, fontWeight: '600' as const },
+
+  // ── Digivolution overlay ──────────────────────────────────────────────────
+  evoOverlay: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: '#000',
+  },
+  evoGifBg: {
+    position: 'absolute',
+    width: '100%',
+    height: '100%',
+    opacity: 0.55,
+  },
+  evoOverlayDim: {
+    position: 'absolute',
+    width: '100%',
+    height: '100%',
+    backgroundColor: '#000',
+    opacity: 0.35,
+  },
+  evoContent: {
+    alignItems: 'center',
+    gap: 16,
+    paddingHorizontal: 32,
+  },
+  evoTopLabel: {
+    fontSize: 26,
+    fontWeight: '900' as const,
+    color: '#f59e0b',
+    textAlign: 'center',
+    letterSpacing: 1.5,
+    textShadowColor: '#000',
+    textShadowOffset: { width: 0, height: 2 },
+    textShadowRadius: 8,
+  },
+  evoAvatarWrap: {
+    width: 160,
+    height: 160,
+    alignItems: 'center',
+    justifyContent: 'center',
+    position: 'relative',
+  },
+  evoSilhouette: {
+    position: 'absolute',
+    width: 140,
+    height: 140,
+    borderRadius: 70,
+    backgroundColor: '#000',
+  },
+  evoFromName: {
+    fontSize: 20,
+    fontWeight: '800' as const,
+    color: '#fff',
+    textShadowColor: '#000',
+    textShadowOffset: { width: 0, height: 2 },
+    textShadowRadius: 6,
+  },
+  evoToName: {
+    fontSize: 26,
+    fontWeight: '900' as const,
+    color: '#fff',
+    textShadowColor: '#000',
+    textShadowOffset: { width: 0, height: 2 },
+    textShadowRadius: 8,
+    textAlign: 'center',
+  },
+  evoBadgesRowBig: {
+    flexDirection: 'row',
+    gap: 8,
+    justifyContent: 'center',
+  },
+  evoDismiss: {
+    fontSize: 13,
+    color: '#ffffff88',
+    marginTop: 8,
+  },
 });
