@@ -540,6 +540,8 @@ export const CHARACTERS: Record<string, Character> = {
     attribute: 'VC',
     element: 'FIRE',
     baseStats: { hp: 215, mp: 210, atk: 137, def: 117, spt: 94, spd: 100, apt: 51 },
+    attackName: 'Metal Flame 🔥',
+    spiritName: 'Giga Destroyer ⚙️',
     description: 'A forma Ultimate do Greymon. Metade de seu corpo foi reconstruído com metal cibernético, tornando-o um dos Digimon mais poderosos do tipo Vacina.',
   },
   warGreymon: {
