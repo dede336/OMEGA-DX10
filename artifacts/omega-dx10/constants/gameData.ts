@@ -484,6 +484,19 @@ export const CHARACTERS: Record<string, Character> = {
     spiritName: 'Giga Death 🔥',
     spiritElement: 'FIRE',
   },
+  imperialDramonPM: {
+    id: 'imperialDramonPM',
+    name: 'Imperialdramon PM',
+    rarity: 'LEGENDARY',
+    attribute: 'VC',
+    element: 'LIGHT',
+    baseStats: { hp: 341, mp: 366, atk: 188, def: 150, spt: 166, spd: 145, apt: 95 },
+    description: 'A forma suprema do ImperialDramon, o Paladin Mode. Empunha a Omni Sword forjada do Omegamon sacrificado e emana uma luz sagrada devastadora. Considerado o Digimon mais poderoso do Mundo Digital.',
+    attackName: 'Burning Power 🔥',
+    attackElement: 'FIRE',
+    spiritName: 'Royal Slash ⚔️',
+    spiritElement: 'LIGHT',
+  },
   rosemon: {
     id: 'rosemon',
     name: 'Rosemon',
@@ -624,7 +637,8 @@ export const EVOLUTIONS: Record<string, { evolvesTo: string; requiredLevel: numb
 export const ALTERNATE_EVOLUTIONS: Record<string, { evolvesTo: string; requiredLevel: number; label: string; requiredItem?: string; requiredSacrificeCharacter?: string }> = {
   angewomon:    { evolvesTo: 'ophanimon',            requiredLevel: 60, label: 'Ophanimon',              requiredItem: 'anel_sagrado' },
   magnaAngemon: { evolvesTo: 'seraphimon',           requiredLevel: 60, label: 'Seraphimon',             requiredItem: 'anel_sagrado' },
-  shineGreymon: { evolvesTo: 'shineGreymonBurstMode', requiredLevel: 68, label: 'ShineGreymon Burst Mode', requiredSacrificeCharacter: 'imperialDramonFM' },
+  shineGreymon:      { evolvesTo: 'shineGreymonBurstMode', requiredLevel: 68, label: 'ShineGreymon Burst Mode', requiredSacrificeCharacter: 'imperialDramonFM' },
+  imperialDramonFM:  { evolvesTo: 'imperialDramonPM',     requiredLevel: 60, label: 'Imperialdramon PM',       requiredSacrificeCharacter: 'omegamon' },
 };
 
 export const SACRIFICE_DROPS: Record<string, { itemId: string; chance: number }[]> = {
@@ -645,6 +659,7 @@ export const ROOKIE_OF: Record<string, string> = {
   togemon: 'palmon',        lillymon: 'palmon',       rosemon: 'palmon',
   devimon: 'demiDevimon',   myotismon: 'demiDevimon',     vnonMyotismon: 'demiDevimon',
   imperialDramonFM: 'paildramon',
+  imperialDramonPM: 'paildramon',
 };
 
 export const SACRIFICE_SCAN_OVERRIDES: Record<string, { characterId: string; percent: number }> = {
@@ -666,7 +681,7 @@ export const ITEM_NAMES: Record<string, string> = {
 export const SCANNABLE_CHARACTERS: string[] = ['agumon', 'gabumon', 'demiDevimon', 'patamon', 'pyomon', 'salamon', 'palmon'];
 
 // Display order in the Codex (grouped by evolution line)
-export const CODEX_ORDER: string[] = ['agumon', 'agumonSaver', 'geoGreymon', 'rizeGreymon', 'shineGreymon', 'shineGreymonBurstMode', 'paildramon', 'imperialDramonFM', 'greymon', 'metalGreymon', 'warGreymon', 'gabumon', 'garurumon', 'wereGarurumon', 'metalGarurumon', 'omegamon', 'guilmon', 'growlmon', 'megaloGrowlmon', 'gallantmon', 'gallantmonCrimsonMode', 'lucemon', 'lucemonChaosMode', 'patamon', 'angemon', 'magnaAngemon', 'goldramon', 'seraphimon', 'pyomon', 'birdramon', 'garudamon', 'phoenixmon', 'salamon', 'tailmon', 'angewomon', 'magnadramon', 'ophanimon', 'palmon', 'togemon', 'lillymon', 'rosemon', 'demiDevimon', 'devimon', 'myotismon', 'vnonMyotismon', 'gulusGammamon'];
+export const CODEX_ORDER: string[] = ['agumon', 'agumonSaver', 'geoGreymon', 'rizeGreymon', 'shineGreymon', 'shineGreymonBurstMode', 'paildramon', 'imperialDramonFM', 'imperialDramonPM', 'greymon', 'metalGreymon', 'warGreymon', 'gabumon', 'garurumon', 'wereGarurumon', 'metalGarurumon', 'omegamon', 'guilmon', 'growlmon', 'megaloGrowlmon', 'gallantmon', 'gallantmonCrimsonMode', 'lucemon', 'lucemonChaosMode', 'patamon', 'angemon', 'magnaAngemon', 'goldramon', 'seraphimon', 'pyomon', 'birdramon', 'garudamon', 'phoenixmon', 'salamon', 'tailmon', 'angewomon', 'magnadramon', 'ophanimon', 'palmon', 'togemon', 'lillymon', 'rosemon', 'demiDevimon', 'devimon', 'myotismon', 'vnonMyotismon', 'gulusGammamon'];
 
 // ─── Maps & Stages ─────────────────────────────────────────────────────────────
 export const GAME_MAPS: GameMap[] = [
