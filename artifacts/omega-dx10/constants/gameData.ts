@@ -745,7 +745,7 @@ export const RARITY_COLORS: Record<RarityId, string> = {
   EPIC:      '#8b5cf6',
   LEGENDARY: '#f59e0b',
   ULTRA:     '#ff3c6e',
-  BURST:     '#ff6b00',
+  BURST:     '#ff3c6e',
 };
 
 export const RARITY_LABELS: Record<RarityId, string> = {
