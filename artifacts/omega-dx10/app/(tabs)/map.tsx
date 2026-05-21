@@ -10,6 +10,18 @@ import CHARACTER_IMAGES from '@/constants/characterImages';
 
 const STARS_3 = require('../../assets/images/ui/stars3.png');
 
+// Shows 1-3 stars by clipping the stars3 image
+function StarRating({ count }: { count: number }) {
+  const starW = 24;
+  const starH = 22;
+  const totalW = starW * 3;
+  return (
+    <View style={{ width: starW * count, height: starH, overflow: 'hidden' }}>
+      <Image source={STARS_3} style={{ width: totalW, height: starH }} resizeMode="stretch" />
+    </View>
+  );
+}
+
 function getMsToMidnight(): number {
   const now = new Date();
   const midnight = new Date(now);
@@ -132,8 +144,8 @@ export default function MapScreen() {
                         )}
                       </View>
                       <View style={styles.mapBannerRight}>
-                        {allCleared ? (
-                          <Image source={STARS_3} style={styles.starsImg} resizeMode="contain" />
+                        {clearedInMap > 0 ? (
+                          <StarRating count={allCleared ? 3 : Math.min(clearedInMap, 2)} />
                         ) : (
                           <Text style={[styles.mapProgress, { color: '#ffffff' }]}>
                             {clearedInMap}/{map.stages.length}
@@ -180,8 +192,8 @@ export default function MapScreen() {
                       )}
                     </View>
                     <View style={styles.mapRight}>
-                      {allCleared ? (
-                        <Image source={STARS_3} style={styles.starsImg} resizeMode="contain" />
+                      {clearedInMap > 0 ? (
+                        <StarRating count={allCleared ? 3 : Math.min(clearedInMap, 2)} />
                       ) : (
                         <Text style={[styles.mapProgress, { color: colors.primary }]}>
                           {clearedInMap}/{map.stages.length}
