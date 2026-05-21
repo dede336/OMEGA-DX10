@@ -1131,10 +1131,13 @@ export default function BattleScreen() {
               {won && hasNextStage && (
                 <TouchableOpacity
                   onPress={() => router.replace(`/battle?mapId=${mapId}&stageIndex=${stageIndex + 1}`)}
-                  style={[styles.resultBtnOutline, { borderColor: '#22c55e' }]}
+                  style={[styles.resultBtn, { backgroundColor: 'transparent', borderWidth: 0 }]}
                 >
-                  <Feather name="chevrons-right" size={15} color="#22c55e" />
-                  <Text style={[styles.resultBtnText, { color: '#22c55e' }]}>Próxima Fase</Text>
+                  <Image
+                    source={require('../assets/images/next-stage-btn.png')}
+                    style={styles.startBattleBtnImg}
+                    resizeMode="contain"
+                  />
                 </TouchableOpacity>
               )}
               <TouchableOpacity
