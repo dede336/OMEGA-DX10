@@ -1247,7 +1247,7 @@ const styles = StyleSheet.create({
   startBattleBtn: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 10, marginHorizontal: 20, borderRadius: 16, borderWidth: 1.5, paddingVertical: 4 },
   startBattleBtnText: { fontSize: 15, fontWeight: '800' as const },
   startBattleBtnImgWrap: { alignItems: 'center', gap: 2 },
-  startBattleBtnImg: { width: 220, height: 70 },
+  startBattleBtnImg: { width: 150, height: 48 },
   nextStageBtnImg: { width: 140, height: 44 },
   startBattleBtnCount: { fontSize: 12, fontWeight: '700' as const, marginTop: -8, letterSpacing: 0.5 },
 
