@@ -185,11 +185,15 @@ export default function MochilaScreen() {
               activeOpacity={0.8}
             >
               <View style={[styles.slotIconWrap, { backgroundColor: (rarityCol ?? colors.primary) + '22' }]}>
-                <Feather
-                  name={EQUIP_SLOT_ICONS[slot] as any}
-                  size={18}
-                  color={rarityCol ?? colors.primary}
-                />
+                {equippedItem && EQUIP_ITEM_IMAGES[equippedItem.id] ? (
+                  <Image source={EQUIP_ITEM_IMAGES[equippedItem.id]} style={{ width: 28, height: 28 }} resizeMode="contain" />
+                ) : (
+                  <Feather
+                    name={EQUIP_SLOT_ICONS[slot] as any}
+                    size={18}
+                    color={rarityCol ?? colors.primary}
+                  />
+                )}
               </View>
               <Text style={[styles.slotName, { color: colors.mutedForeground }]}>{EQUIP_SLOT_LABELS[slot]}</Text>
               {equippedItem ? (
