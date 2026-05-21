@@ -424,7 +424,7 @@ export default function MochilaScreen() {
                   </View>
                 );
               })}
-              {recipe.bitsCost && (
+              {!!recipe.bitsCost && (
                 <View style={[styles.craftReqChip, {
                   backgroundColor: bitsMet ? '#facc1522' : colors.background,
                   borderColor: bitsMet ? '#facc15' : colors.border,
