@@ -625,6 +625,7 @@ export const GAME_MAPS: GameMap[] = [
     isDungeon: true,
     isDaily: true,
     requiredTamerLevel: 10,
+    backgroundImage: require('../assets/images/maps/dungeon_gulus.png'),
     bitsReward: 500,
     stages: [
       {
