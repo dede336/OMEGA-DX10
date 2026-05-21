@@ -13,6 +13,7 @@ const LIGHT_STATUS_GIF = require('../../assets/images/light_status.gif');
 const DARK_STATUS_GIF  = require('../../assets/images/dark_status.gif');
 const FIRE_STATUS_GIF  = require('../../assets/images/fire_status.gif');
 const PLANT_STATUS_GIF = require('../../assets/images/plant_status.gif');
+const WIND_STATUS_GIF  = require('../../assets/images/wind_status.gif');
 
 const SPECIAL_GIFS: Record<string, any> = {
   omegamon:              require('../../assets/images/omegamon_digivolve.gif'),
@@ -38,6 +39,13 @@ const SPECIAL_GIFS: Record<string, any> = {
   myotismon:             DARK_STATUS_GIF,
   vnonMyotismon:         DARK_STATUS_GIF,
   gulusGammamon:         DARK_STATUS_GIF,
+  // Wind element — no dedicated GIF
+  magnadramon:           WIND_STATUS_GIF,
+  phoenixmon:            WIND_STATUS_GIF,
+  garudamon:             WIND_STATUS_GIF,
+  birdramon:             WIND_STATUS_GIF,
+  pyomon:                WIND_STATUS_GIF,
+  patamon:               WIND_STATUS_GIF,
   // Plant element — no dedicated GIF
   palmon:                PLANT_STATUS_GIF,
   togemon:               PLANT_STATUS_GIF,
