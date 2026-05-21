@@ -5,6 +5,7 @@ const ELEMENT_IMAGES: Partial<Record<ElementId, ImageSourcePropType>> = {
   LIGHT: require('../assets/images/elements/luz.png'),
   FIRE:  require('../assets/images/elements/fogo.png'),
   WATER: require('../assets/images/elements/agua.png'),
+  PLANT: require('../assets/images/elements/planta.png'),
 };
 
 export default ELEMENT_IMAGES;
