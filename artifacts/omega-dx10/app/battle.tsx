@@ -757,6 +757,7 @@ export default function BattleScreen() {
         <ScrollView
           horizontal
           showsHorizontalScrollIndicator={false}
+          style={{ height: 170 }}
           contentContainerStyle={styles.selectList}
         >
           {collection.map((owned) => {
