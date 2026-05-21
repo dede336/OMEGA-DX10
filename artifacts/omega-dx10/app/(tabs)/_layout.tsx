@@ -1,42 +1,16 @@
 import { BlurView } from "expo-blur";
-import { isLiquidGlassAvailable } from "expo-glass-effect";
 import { Tabs } from "expo-router";
-import { Icon, Label, NativeTabs } from "expo-router/unstable-native-tabs";
-import { SymbolView } from "expo-symbols";
-import { Feather } from "@expo/vector-icons";
 import React from "react";
 import { Platform, StyleSheet, View, Image, useColorScheme } from "react-native";
-import { Image as ExpoImage } from "expo-image";
 
 import { useColors } from "@/hooks/useColors";
 import { useGame } from "@/context/GameContext";
 
-function NativeTabLayout() {
-  return (
-    <NativeTabs>
-      <NativeTabs.Trigger name="index">
-        <Icon sf={{ default: "house", selected: "house.fill" }} />
-        <Label>Início</Label>
-      </NativeTabs.Trigger>
-      <NativeTabs.Trigger name="collection">
-        <Icon sf={{ default: "square.grid.2x2", selected: "square.grid.2x2.fill" }} />
-        <Label>Digibank</Label>
-      </NativeTabs.Trigger>
-      <NativeTabs.Trigger name="craft">
-        <Icon sf={{ default: "hammer", selected: "hammer.fill" }} />
-        <Label>Craft</Label>
-      </NativeTabs.Trigger>
-      <NativeTabs.Trigger name="map">
-        <Icon sf={{ default: "map", selected: "map.fill" }} />
-        <Label>Mundo</Label>
-      </NativeTabs.Trigger>
-      <NativeTabs.Trigger name="correios">
-        <Icon sf={{ default: "envelope", selected: "envelope.fill" }} />
-        <Label>Correios</Label>
-      </NativeTabs.Trigger>
-    </NativeTabs>
-  );
-}
+const HOME_ICON     = require('../../assets/images/home-icon.png');
+const DIGIBANK_ICON = require('../../assets/images/digibank-icon.png');
+const CRAFT_ICON    = require('../../assets/images/craft-icon.png');
+const MAP_ICON      = require('../../assets/images/map-icon.png');
+const MAIL_ICON     = require('../../assets/images/mailbox-icon.png');
 
 function ClassicTabLayout() {
   const colors = useColors();
@@ -80,28 +54,17 @@ function ClassicTabLayout() {
         name="index"
         options={{
           title: "Início",
-          tabBarIcon: ({ color }) =>
-            isIOS ? (
-              <SymbolView name="house" tintColor={color} size={22} />
-            ) : (
-              <Image
-                source={require('../../assets/images/home-icon.png')}
-                style={{ width: 26, height: 26 }}
-                resizeMode="contain"
-              />
-            ),
+          tabBarIcon: () => (
+            <Image source={HOME_ICON} style={{ width: 26, height: 26 }} resizeMode="contain" />
+          ),
         }}
       />
       <Tabs.Screen
         name="collection"
         options={{
           title: "Digibank",
-          tabBarIcon: ({ color }) => (
-            <Image
-              source={require('../../assets/images/digibank-icon.png')}
-              style={{ width: 28, height: 28 }}
-              resizeMode="contain"
-            />
+          tabBarIcon: () => (
+            <Image source={DIGIBANK_ICON} style={{ width: 28, height: 28 }} resizeMode="contain" />
           ),
         }}
       />
@@ -113,32 +76,18 @@ function ClassicTabLayout() {
         name="craft"
         options={{
           title: "Craft",
-          tabBarIcon: ({ color }) =>
-            isIOS ? (
-              <SymbolView name="hammer" tintColor={color} size={22} />
-            ) : (
-              <Image
-                source={require('../../assets/images/craft-icon.png')}
-                style={{ width: 26, height: 26 }}
-                resizeMode="contain"
-              />
-            ),
+          tabBarIcon: () => (
+            <Image source={CRAFT_ICON} style={{ width: 26, height: 26 }} resizeMode="contain" />
+          ),
         }}
       />
       <Tabs.Screen
         name="map"
         options={{
           title: "Mundo",
-          tabBarIcon: ({ color }) =>
-            isIOS ? (
-              <SymbolView name="map" tintColor={color} size={22} />
-            ) : (
-              <Image
-                source={require('../../assets/images/map-icon.png')}
-                style={{ width: 26, height: 26 }}
-                resizeMode="contain"
-              />
-            ),
+          tabBarIcon: () => (
+            <Image source={MAP_ICON} style={{ width: 26, height: 26 }} resizeMode="contain" />
+          ),
         }}
       />
       <Tabs.Screen
@@ -146,12 +95,8 @@ function ClassicTabLayout() {
         options={{
           title: "Correios",
           tabBarBadge: unreadMailCount > 0 ? unreadMailCount : undefined,
-          tabBarIcon: ({ color }) => (
-            <Image
-              source={require('../../assets/images/mailbox-icon.png')}
-              style={{ width: 28, height: 28 }}
-              resizeMode="contain"
-            />
+          tabBarIcon: () => (
+            <Image source={MAIL_ICON} style={{ width: 28, height: 28 }} resizeMode="contain" />
           ),
         }}
       />
@@ -160,8 +105,5 @@ function ClassicTabLayout() {
 }
 
 export default function TabLayout() {
-  if (isLiquidGlassAvailable()) {
-    return <NativeTabLayout />;
-  }
   return <ClassicTabLayout />;
 }
