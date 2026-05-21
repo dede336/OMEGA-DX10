@@ -552,6 +552,7 @@ export function GameProvider({ children }: { children: React.ReactNode }) {
         pieces: newPieces,
         scanProgress: newScanProgress,
         collection: prev.collection.filter((c) => c.ownedId !== ownedId),
+        team: prev.team.filter((id) => id !== ownedId),
         selectedOwnedId: prev.selectedOwnedId === ownedId ? null : prev.selectedOwnedId,
       };
     });
