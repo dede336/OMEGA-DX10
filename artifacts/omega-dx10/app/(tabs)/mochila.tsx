@@ -348,10 +348,10 @@ export default function MochilaScreen() {
             ))}
             <View style={styles.fragmentSummaryItem}>
               <View style={[styles.fragmentSummaryIcon, { backgroundColor: '#facc1522' }]}>
-                <Feather name="dollar-sign" size={18} color="#facc15" />
+                <Image source={require('../../assets/images/bits-icon.png')} style={{ width: 22, height: 22 }} resizeMode="contain" />
               </View>
-              <Text style={[styles.fragmentSummaryCount, { color: colors.foreground }]}>
-                {bits.toLocaleString()}
+              <Text style={[styles.fragmentSummaryCount, { color: '#facc15' }]}>
+                {bits >= 1000 ? `${(bits / 1000).toFixed(1)}k` : bits.toLocaleString()}
               </Text>
               <Text style={[styles.fragmentSummaryLabel, { color: colors.mutedForeground }]}>Bits</Text>
             </View>
@@ -429,7 +429,7 @@ export default function MochilaScreen() {
                   backgroundColor: bitsMet ? '#facc1522' : colors.background,
                   borderColor: bitsMet ? '#facc15' : colors.border,
                 }]}>
-                  <Feather name="dollar-sign" size={13} color={bitsMet ? '#facc15' : colors.mutedForeground} />
+                  <Image source={require('../../assets/images/bits-icon.png')} style={{ width: 14, height: 14, opacity: bitsMet ? 1 : 0.4 }} resizeMode="contain" />
                   <Text style={[styles.craftReqText, { color: bitsMet ? '#facc15' : colors.mutedForeground }]}>
                     {recipe.bitsCost.toLocaleString()} Bits
                   </Text>
