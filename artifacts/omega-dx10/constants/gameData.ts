@@ -288,9 +288,9 @@ export const GAME_MAPS: GameMap[] = [
     bitsReward: 100,
     tamerExpReward: 5,
     stages: [
-      { index: 0, name: 'Entrada da Floresta', enemyCharacterId: 'agumon',      enemyLevel: 1,  expReward: 40  },
-      { index: 1, name: 'Clareira dos Dados',  enemyCharacterId: 'gabumon',     enemyLevel: 2,  expReward: 60  },
-      { index: 2, name: 'Núcleo da Floresta',  enemyCharacterId: 'demiDevimon', enemyLevel: 4,  expReward: 100 },
+      { index: 0, name: 'Entrada da Floresta', enemyCharacterId: 'agumon',      enemyLevel: 1,   expReward: 40  },
+      { index: 1, name: 'Clareira dos Dados',  enemyCharacterId: 'gabumon',     enemyLevel: 4,   expReward: 60  },
+      { index: 2, name: 'Núcleo da Floresta',  enemyCharacterId: 'demiDevimon', enemyLevel: 16,  expReward: 100 },
     ],
   },
   {
@@ -302,9 +302,9 @@ export const GAME_MAPS: GameMap[] = [
     bitsReward: 250,
     tamerExpReward: 10,
     stages: [
-      { index: 0, name: 'Avenida dos Neons',   enemyCharacterId: 'gabumon',     enemyLevel: 5,  expReward: 130 },
-      { index: 1, name: 'Setor Industrial',    enemyCharacterId: 'agumon',      enemyLevel: 7,  expReward: 160 },
-      { index: 2, name: 'Torre Central',       enemyCharacterId: 'demiDevimon', enemyLevel: 9,  expReward: 220 },
+      { index: 0, name: 'Avenida dos Neons',   enemyCharacterId: 'gabumon',     enemyLevel: 64,   expReward: 130 },
+      { index: 1, name: 'Setor Industrial',    enemyCharacterId: 'agumon',      enemyLevel: 256,  expReward: 160 },
+      { index: 2, name: 'Torre Central',       enemyCharacterId: 'demiDevimon', enemyLevel: 1024, expReward: 220 },
     ],
   },
   {
@@ -316,9 +316,9 @@ export const GAME_MAPS: GameMap[] = [
     bitsReward: 500,
     tamerExpReward: 15,
     stages: [
-      { index: 0, name: 'Portal das Trevas',   enemyCharacterId: 'demiDevimon', enemyLevel: 12, expReward: 280 },
-      { index: 1, name: 'Abismo Corrompido',   enemyCharacterId: 'agumon',      enemyLevel: 14, expReward: 340 },
-      { index: 2, name: 'Trono do Caos',       enemyCharacterId: 'devimon',     enemyLevel: 16, expReward: 450, firstClearReward: 'oculos_escuro_fitado' },
+      { index: 0, name: 'Portal das Trevas',   enemyCharacterId: 'demiDevimon', enemyLevel: 4096,  expReward: 280 },
+      { index: 1, name: 'Abismo Corrompido',   enemyCharacterId: 'agumon',      enemyLevel: 16384, expReward: 340 },
+      { index: 2, name: 'Trono do Caos',       enemyCharacterId: 'devimon',     enemyLevel: 65536, expReward: 450, firstClearReward: 'oculos_escuro_fitado' },
     ],
   },
   {

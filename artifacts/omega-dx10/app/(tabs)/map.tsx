@@ -179,15 +179,6 @@ export default function MapScreen() {
                           cleared && { backgroundColor: '#22c55e11' },
                         ]}
                       >
-                        {/* Number / cleared indicator */}
-                        <View style={[styles.stageNum, { backgroundColor: cleared ? '#22c55e22' : colors.secondary, borderColor: cleared ? '#22c55e' : colors.border }]}>
-                          {cleared ? (
-                            <Feather name="check" size={14} color="#22c55e" />
-                          ) : (
-                            <Text style={[styles.stageNumText, { color: colors.mutedForeground }]}>{stage.index + 1}</Text>
-                          )}
-                        </View>
-
                         {/* Info */}
                         <View style={styles.stageInfo}>
                           <Text style={[styles.stageName, { color: isDungeon ? '#e9d5ff' : colors.foreground }]}>{stage.name}</Text>
