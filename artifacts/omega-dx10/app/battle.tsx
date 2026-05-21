@@ -162,7 +162,7 @@ export default function BattleScreen() {
     const timer = setTimeout(() => {
       if (!autoModeRef.current) return;
       setAutoRunCount((p) => p + 1);
-      startBattle(selectedTeamRef.current);
+      router.replace(`/battle?mapId=${mapId}&stageIndex=${stageIndex}`);
     }, 3000);
     return () => clearTimeout(timer);
   // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -1032,6 +1032,7 @@ export default function BattleScreen() {
   if (phase === 'result') {
     const won = winner === 'player';
     const autoRunning = autoMode && won && autoRunCount < AUTO_RUN_MAX;
+    const hasNextStage = !!(map?.stages[stageIndex + 1]);
 
     return (
       <View style={[styles.container, styles.resultCenter, { backgroundColor: colors.background }]}>
@@ -1052,6 +1053,8 @@ export default function BattleScreen() {
               </View>
             );
           })()}
+
+          {/* Auto-battle indicators */}
           {autoRunning && (
             <View style={[styles.autoRestartBanner, { backgroundColor: '#22c55e11', borderColor: '#22c55e55' }]}>
               <Feather name="zap" size={14} color="#22c55e" />
@@ -1071,15 +1074,34 @@ export default function BattleScreen() {
               <Text style={[styles.resultBtnText, { color: '#ef4444' }]}>Cancelar Auto</Text>
             </TouchableOpacity>
           )}
-          {!autoMode && (
-            <TouchableOpacity onPress={() => router.replace('/(tabs)/map')} style={[styles.resultBtn, { backgroundColor: colors.primary }]}>
-              <Text style={[styles.resultBtnText, { color: colors.primaryForeground }]}>Voltar ao Mapa</Text>
-            </TouchableOpacity>
-          )}
-          {!won && (
-            <TouchableOpacity onPress={() => { setPhase('select'); setLog([]); setWinner(null); }} style={[styles.resultBtnOutline, { borderColor: colors.border }]}>
-              <Text style={[styles.resultBtnText, { color: colors.foreground }]}>Tentar Novamente</Text>
-            </TouchableOpacity>
+
+          {/* Post-battle action buttons (shown when not in auto-loop) */}
+          {!autoRunning && (
+            <View style={styles.resultActions}>
+              <TouchableOpacity
+                onPress={() => router.replace(`/battle?mapId=${mapId}&stageIndex=${stageIndex}`)}
+                style={[styles.resultBtn, { backgroundColor: colors.primary }]}
+              >
+                <Feather name="refresh-cw" size={15} color={colors.primaryForeground} />
+                <Text style={[styles.resultBtnText, { color: colors.primaryForeground }]}>Batalhar Novamente</Text>
+              </TouchableOpacity>
+              {won && hasNextStage && (
+                <TouchableOpacity
+                  onPress={() => router.replace(`/battle?mapId=${mapId}&stageIndex=${stageIndex + 1}`)}
+                  style={[styles.resultBtnOutline, { borderColor: '#22c55e' }]}
+                >
+                  <Feather name="chevrons-right" size={15} color="#22c55e" />
+                  <Text style={[styles.resultBtnText, { color: '#22c55e' }]}>Próxima Fase</Text>
+                </TouchableOpacity>
+              )}
+              <TouchableOpacity
+                onPress={() => router.replace('/(tabs)/map')}
+                style={[styles.resultBtnOutline, { borderColor: colors.border }]}
+              >
+                <Feather name="map" size={15} color={colors.mutedForeground} />
+                <Text style={[styles.resultBtnText, { color: colors.mutedForeground }]}>Voltar ao Mapa</Text>
+              </TouchableOpacity>
+            </View>
           )}
         </View>
       </View>
@@ -1173,8 +1195,9 @@ const styles = StyleSheet.create({
   resultTitle: { fontSize: 32, fontWeight: '900' as const },
   rewardBox: { flexDirection: 'row', alignItems: 'center', gap: 8, borderWidth: 1, borderRadius: 12, paddingHorizontal: 16, paddingVertical: 8 },
   rewardText: { fontSize: 14, fontWeight: '700' as const },
-  resultBtn: { width: '100%', borderRadius: 12, padding: 16, alignItems: 'center' },
-  resultBtnOutline: { width: '100%', borderRadius: 12, padding: 16, alignItems: 'center', borderWidth: 1 },
+  resultActions: { width: '100%', gap: 10 },
+  resultBtn: { width: '100%', borderRadius: 12, padding: 14, alignItems: 'center', flexDirection: 'row', justifyContent: 'center', gap: 8 },
+  resultBtnOutline: { width: '100%', borderRadius: 12, padding: 14, alignItems: 'center', borderWidth: 1, flexDirection: 'row', justifyContent: 'center', gap: 8 },
   resultBtnText: { fontSize: 15, fontWeight: '700' as const },
   autoRestartBanner: { width: '100%', borderRadius: 12, borderWidth: 1, padding: 12, alignItems: 'center', gap: 4 },
   autoRestartText: { fontSize: 13, fontWeight: '700' as const },
