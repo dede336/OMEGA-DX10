@@ -704,7 +704,7 @@ export default function BattleScreen() {
                         resizeMode="contain"
                       />
                     ) : (
-                      <CharacterAvatar key={cid} characterId={cid} size={stageCharIds.length > 1 ? 60 : 90} />
+                      <CharacterAvatar key={cid} characterId={cid} size={stageCharIds.length > 1 ? 60 : 90} plain />
                     )
                   )}
                 </View>
