@@ -239,11 +239,13 @@ export function GameProvider({ children }: { children: React.ReactNode }) {
       const updated = prev.collection.map((c) => {
         if (c.ownedId !== ownedId) return c;
         let { exp, level } = c;
+        if (level >= 100) return { ...c, level: 100, exp: 0 };
         exp += amount;
-        while (exp >= expToNextLevel(level)) {
+        while (level < 100 && exp >= expToNextLevel(level)) {
           exp -= expToNextLevel(level);
           level += 1;
         }
+        if (level >= 100) { level = 100; exp = 0; }
         return { ...c, exp, level };
       });
       return { ...prev, collection: updated };

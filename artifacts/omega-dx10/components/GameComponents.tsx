@@ -203,7 +203,8 @@ export function CharacterCard({ owned, onPress, isSelected, compact, canEvolve }
   const char = CHARACTERS[owned.characterId];
   if (!char) return null;
 
-  const expNeeded = expToNextLevel(owned.level);
+  const isMaxLevel = owned.level >= 100;
+  const expNeeded = isMaxLevel ? 1 : expToNextLevel(owned.level);
   const rarityColor = RARITY_COLORS[char.rarity];
 
   if (compact) {
@@ -271,9 +272,11 @@ export function CharacterCard({ owned, onPress, isSelected, compact, canEvolve }
       <View style={[cardStyles.expRow, { paddingHorizontal: 16, paddingBottom: 14 }]}>
         <Text style={[cardStyles.expLabel, { color: colors.mutedForeground }]}>EXP</Text>
         <View style={[cardStyles.expTrack, { backgroundColor: colors.border }]}>
-          <View style={[cardStyles.expFill, { width: `${Math.min(1, owned.exp / expNeeded) * 100}%` as any, backgroundColor: colors.primary }]} />
+          <View style={[cardStyles.expFill, { width: isMaxLevel ? '100%' : `${Math.min(1, owned.exp / expNeeded) * 100}%` as any, backgroundColor: isMaxLevel ? '#f59e0b' : colors.primary }]} />
         </View>
-        <Text style={[cardStyles.expText, { color: colors.mutedForeground }]}>{owned.exp}/{expNeeded}</Text>
+        <Text style={[cardStyles.expText, { color: isMaxLevel ? '#f59e0b' : colors.mutedForeground, fontWeight: isMaxLevel ? 'bold' : 'normal' }]}>
+          {isMaxLevel ? 'MAX' : `${owned.exp}/${expNeeded}`}
+        </Text>
       </View>
     </TouchableOpacity>
   );

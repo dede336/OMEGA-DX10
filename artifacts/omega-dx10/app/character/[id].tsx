@@ -70,8 +70,9 @@ export default function CharacterDetailScreen() {
   }
 
   const scaled   = getScaledStats(char.baseStats, owned.level);
-  const expNeeded = expToNextLevel(owned.level);
-  const expPct   = Math.min(1, owned.exp / expNeeded);
+  const isMaxLevel = owned.level >= 100;
+  const expNeeded = isMaxLevel ? 1 : expToNextLevel(owned.level);
+  const expPct   = isMaxLevel ? 1 : Math.min(1, owned.exp / expNeeded);
   const rarityColor = RARITY_COLORS[char.rarity];
   const attrData = ATTRIBUTES[char.attribute];
   const elemData = ELEMENTS[char.element];
@@ -190,14 +191,19 @@ export default function CharacterDetailScreen() {
           <View style={styles.expBlock}>
             <View style={styles.expHeader}>
               <Text style={[styles.expLabel, { color: colors.mutedForeground }]}>EXP</Text>
-              <Text style={[styles.expValue, { color: colors.foreground }]}>{owned.exp} / {expNeeded}</Text>
+              {isMaxLevel
+                ? <Text style={[styles.expValue, { color: colors.primary, fontWeight: 'bold' }]}>MAX</Text>
+                : <Text style={[styles.expValue, { color: colors.foreground }]}>{owned.exp} / {expNeeded}</Text>
+              }
             </View>
             <View style={[styles.expTrack, { backgroundColor: colors.border }]}>
-              <View style={[styles.expFill, { width: `${expPct * 100}%` as any, backgroundColor: colors.primary }]} />
+              <View style={[styles.expFill, { width: `${expPct * 100}%` as any, backgroundColor: isMaxLevel ? '#f59e0b' : colors.primary }]} />
             </View>
-            <Text style={[styles.expNext, { color: colors.mutedForeground }]}>
-              {expNeeded - owned.exp} EXP para Nível {owned.level + 1}
-            </Text>
+            {!isMaxLevel && (
+              <Text style={[styles.expNext, { color: colors.mutedForeground }]}>
+                {expNeeded - owned.exp} EXP para Nível {owned.level + 1}
+              </Text>
+            )}
           </View>
         </View>
 
