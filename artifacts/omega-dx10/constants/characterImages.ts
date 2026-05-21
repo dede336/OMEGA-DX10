@@ -16,7 +16,7 @@ const CHARACTER_IMAGES: Record<string, any> = {
   wereGarurumon:  require('../assets/images/characters/wereGarurumon.gif'),
   metalGarurumon: require('../assets/images/characters/metalGarurumon.gif'),
   gulusGammamon:  require('../assets/images/characters/gulusGammamon.gif'),
-  omegamon:       require('../assets/images/characters/omegamon.gif'),
+  omegamon:       require('../assets/images/characters/omegamon.webp'),
   guilmon:        require('../assets/images/characters/guilmon.webp'),
   growlmon:       require('../assets/images/characters/growlmon.webp'),
   megaloGrowlmon: require('../assets/images/characters/megaloGrowlmon.webp'),
