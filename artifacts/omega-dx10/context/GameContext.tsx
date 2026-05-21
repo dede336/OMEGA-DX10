@@ -10,6 +10,7 @@ export interface MailReward {
   bits?: number;
   items?: string[];
   digimon?: string[];
+  digimonWithLevel?: { characterId: string; level: number }[];
 }
 
 export interface MailMessage {
@@ -56,6 +57,24 @@ const DEFAULT_MESSAGES: MailMessage[] = [
     isRead: false,
     createdAt: 1716000001000,
     unlocksAtTamerLevel: 5,
+  },
+  {
+    id: 'fusion_gift_wargreymon_v1',
+    title: 'Guerreiro Lendário — WarGreymon Lv 60!',
+    body: 'Um WarGreymon no auge de sua força foi enviado para você. Com ele e um parceiro à altura, algo extraordinário pode acontecer... Boa sorte, Tamer!',
+    reward: { digimonWithLevel: [{ characterId: 'warGreymon', level: 60 }] },
+    rewardClaimed: false,
+    isRead: false,
+    createdAt: 1716000002000,
+  },
+  {
+    id: 'fusion_gift_weregarurumon_v1',
+    title: 'Lobo Místico — WereGarurumon Lv 60!',
+    body: 'Um WereGarurumon poderoso chegou ao seu Digibank. Evolua-o até MetalGarurumon e combine-o com o WarGreymon para revelar uma fusão épica!',
+    reward: { digimonWithLevel: [{ characterId: 'wereGarurumon', level: 60 }] },
+    rewardClaimed: false,
+    isRead: false,
+    createdAt: 1716000003000,
   },
 ];
 
@@ -342,6 +361,15 @@ export function GameProvider({ children }: { children: React.ReactNode }) {
           if (!alreadyOwned && newCollection.length < 100) {
             const ownedId = `owned_${characterId}_${Date.now()}`;
             newCollection.push({ ownedId, characterId, level: 1, exp: 0 });
+          }
+        }
+      }
+      if (msg.reward?.digimonWithLevel) {
+        for (const { characterId, level } of msg.reward.digimonWithLevel) {
+          const alreadyOwned = newCollection.some((c) => c.characterId === characterId);
+          if (!alreadyOwned && newCollection.length < 100) {
+            const ownedId = `owned_${characterId}_${Date.now()}`;
+            newCollection.push({ ownedId, characterId, level, exp: 0 });
           }
         }
       }
