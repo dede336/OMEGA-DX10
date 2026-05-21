@@ -702,7 +702,7 @@ export default function BattleScreen() {
                 {stageCharIds.length > 1 ? `${stageCharIds.length} INIMIGOS` : 'INIMIGO'}
               </Text>
               <View style={styles.previewEnemyRow}>
-                {stageCharIds.map((cid) => <CharacterAvatar key={cid} characterId={cid} size={stageCharIds.length > 1 ? 60 : 90} />)}
+                {stageCharIds.map((cid) => <CharacterAvatar key={cid} characterId={cid} size={stageCharIds.length > 1 ? 60 : 90} borderColor="transparent" bgColor="transparent" />)}
               </View>
             </View>
           )}
@@ -828,7 +828,7 @@ export default function BattleScreen() {
                             resizeMode="contain"
                           />
                         ) : (
-                          <CharacterAvatar characterId={charId} size={enemies.length === 1 ? 90 : 64} />
+                          <CharacterAvatar characterId={charId} size={enemies.length === 1 ? 90 : 64} borderColor="transparent" bgColor="transparent" />
                         )}
                         {hitFlash?.idx === i && ELEMENT_IMAGES[hitFlash.element] && (
                           <Animated.Image
@@ -882,7 +882,7 @@ export default function BattleScreen() {
                       <View style={[styles.targetRing, { borderColor: colors.primary }]} />
                     )}
                     <Animated.View style={{ transform: [{ translateX: getEnemyShake(i) }] }}>
-                      <CharacterAvatar characterId={charId} size={enemies.length === 1 ? 90 : 64} />
+                      <CharacterAvatar characterId={charId} size={enemies.length === 1 ? 90 : 64} borderColor="transparent" bgColor="transparent" />
                       {hitFlash?.idx === i && ELEMENT_IMAGES[hitFlash.element] && (
                         <Animated.Image
                           source={ELEMENT_IMAGES[hitFlash.element]!}
