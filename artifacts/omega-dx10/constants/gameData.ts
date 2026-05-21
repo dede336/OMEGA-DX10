@@ -452,11 +452,11 @@ export const CHARACTERS: Record<string, Character> = {
     name: 'Palmon',
     rarity: 'COMMON',
     attribute: 'DA',
-    element: 'EARTH',
-    baseStats: { hp: 55, mp: 60, atk: 22, def: 18, spt: 28, spd: 20, apt: 50 },
+    element: 'PLANT',
+    baseStats: { hp: 103, mp: 114, atk: 74, def: 57, spt: 55, spd: 61, apt: 20 },
     description: 'Um Digimon planta do tipo Data com pétalas coloridas e uma personalidade calorosa. Apesar da aparência delicada, suas vinhas são surpreendentemente fortes e seu veneno pode paralisar inimigos.',
     attackName: 'Poison Ivy 🌿',
-    spiritName: 'Stinking Attack 💨',
+    spiritName: 'Stun Whipping ⚡',
   },
   gulusGammamon: {
     id: 'gulusGammamon',
@@ -581,7 +581,7 @@ export const ITEM_NAMES: Record<string, string> = {
 };
 
 // Characters that can be scanned (encountered as enemies in battle)
-export const SCANNABLE_CHARACTERS: string[] = ['agumon', 'gabumon', 'demiDevimon', 'patamon', 'pyomon', 'salamon'];
+export const SCANNABLE_CHARACTERS: string[] = ['agumon', 'gabumon', 'demiDevimon', 'patamon', 'pyomon', 'salamon', 'palmon'];
 
 // Display order in the Codex (grouped by evolution line)
 export const CODEX_ORDER: string[] = ['agumon', 'agumonSaver', 'geoGreymon', 'rizeGreymon', 'shineGreymon', 'greymon', 'metalGreymon', 'warGreymon', 'gabumon', 'garurumon', 'wereGarurumon', 'metalGarurumon', 'omegamon', 'guilmon', 'growlmon', 'megaloGrowlmon', 'gallantmon', 'gallantmonCrimsonMode', 'lucemon', 'lucemonChaosMode', 'patamon', 'angemon', 'magnaAngemon', 'goldramon', 'seraphimon', 'pyomon', 'birdramon', 'garudamon', 'phoenixmon', 'salamon', 'tailmon', 'angewomon', 'magnadramon', 'ophanimon', 'palmon', 'demiDevimon', 'devimon', 'myotismon', 'vnonMyotismon', 'gulusGammamon'];
@@ -596,9 +596,9 @@ export const GAME_MAPS: GameMap[] = [
     bitsReward: 100,
     tamerExpReward: 5,
     stages: [
-      { index: 0, name: 'Entrada da Floresta', enemyCharacterId: 'demiDevimon', enemyLevel: 1,  expReward: 40,  enemyCharacterIds: ['demiDevimon', 'agumon', 'pyomon', 'patamon', 'gabumon', 'salamon'], randomEnemyCount: 1 },
-      { index: 1, name: 'Clareira dos Dados',  enemyCharacterId: 'gabumon',     enemyLevel: 4,  expReward: 60,  enemyCharacterIds: ['demiDevimon', 'agumon', 'pyomon', 'patamon', 'gabumon', 'salamon'], randomEnemyCount: 2 },
-      { index: 2, name: 'Núcleo da Floresta',  enemyCharacterId: 'pyomon',      enemyLevel: 8,  expReward: 100, enemyCharacterIds: ['demiDevimon', 'agumon', 'pyomon', 'patamon', 'gabumon', 'salamon'], randomEnemyCount: 3 },
+      { index: 0, name: 'Entrada da Floresta', enemyCharacterId: 'demiDevimon', enemyLevel: 1,  expReward: 40,  enemyCharacterIds: ['demiDevimon', 'agumon', 'pyomon', 'patamon', 'gabumon', 'salamon', 'palmon'], randomEnemyCount: 1 },
+      { index: 1, name: 'Clareira dos Dados',  enemyCharacterId: 'gabumon',     enemyLevel: 4,  expReward: 60,  enemyCharacterIds: ['demiDevimon', 'agumon', 'pyomon', 'patamon', 'gabumon', 'salamon', 'palmon'], randomEnemyCount: 2 },
+      { index: 2, name: 'Núcleo da Floresta',  enemyCharacterId: 'pyomon',      enemyLevel: 8,  expReward: 100, enemyCharacterIds: ['demiDevimon', 'agumon', 'pyomon', 'patamon', 'gabumon', 'salamon', 'palmon'], randomEnemyCount: 3 },
     ],
   },
   {
