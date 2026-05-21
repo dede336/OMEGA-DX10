@@ -22,6 +22,8 @@ export interface Character {
   description: string;
   attackName?: string;
   spiritName?: string;
+  attackElement?: ElementId;
+  spiritElement?: ElementId;
   spiritHitsAll?: boolean;
 }
 
@@ -477,8 +479,10 @@ export const CHARACTERS: Record<string, Character> = {
     element: 'FIRE',
     baseStats: { hp: 320, mp: 340, atk: 174, def: 142, spt: 120, spd: 128, apt: 80 },
     description: 'A forma Fighter Mode do ImperialDramon, um cavaleiro bípede de poder incomparável. Empunha a lâmina Positron Laser com maestria absoluta e é considerado um dos Digimon mais poderosos do Mundo Digital.',
-    attackName: 'Positron Laser 🔥',
-    spiritName: 'Giga Death 💥',
+    attackName: 'Positron Laser ✨',
+    attackElement: 'LIGHT',
+    spiritName: 'Giga Death 🔥',
+    spiritElement: 'FIRE',
   },
   rosemon: {
     id: 'rosemon',

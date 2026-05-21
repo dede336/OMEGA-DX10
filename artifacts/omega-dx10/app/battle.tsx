@@ -1048,7 +1048,7 @@ export default function BattleScreen() {
                 style={[styles.actionBtn, { backgroundColor: '#ef4444' + (busy ? '11' : '22'), borderColor: busy ? colors.border : '#ef4444' }]}
               >
                 <Text style={{ fontSize: 22, opacity: busy ? 0.3 : 1 }}>
-                  {ELEMENT_EMOJI[playerFighter.element] ?? '⚔️'}
+                  {ELEMENT_EMOJI[playerFighter.attackElement ?? playerFighter.element] ?? '⚔️'}
                 </Text>
                 <Text style={[styles.actionBtnLabel, { color: busy ? colors.mutedForeground : '#ef4444' }]}>
                   {playerFighter.attackName ?? 'Ataque'}
@@ -1063,7 +1063,7 @@ export default function BattleScreen() {
                 }]}
               >
                 <Text style={{ fontSize: 22, opacity: !canSpirit || busy ? 0.3 : 1 }}>
-                  {ELEMENT_EMOJI[playerFighter.element] ?? '✨'}
+                  {ELEMENT_EMOJI[playerFighter.spiritElement ?? playerFighter.element] ?? '✨'}
                 </Text>
                 <Text style={[styles.actionBtnLabel, { color: !canSpirit || busy ? colors.mutedForeground : '#a855f7' }]}>
                   {playerFighter.spiritName ?? 'Espírito'} ({SPIRIT_MP_COST} MP)
