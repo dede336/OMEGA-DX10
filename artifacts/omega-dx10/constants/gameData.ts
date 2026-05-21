@@ -204,6 +204,17 @@ export const CHARACTERS: Record<string, Character> = {
     spiritName: 'Shining Laser ✨',
     spiritHitsAll: true,
   },
+  patamon: {
+    id: 'patamon',
+    name: 'Patamon',
+    rarity: 'COMMON',
+    attribute: 'VC',
+    element: 'WIND',
+    baseStats: { hp: 121, mp: 114, atk: 68, def: 54, spt: 58, spd: 55, apt: 20 },
+    description: 'O Digimon Asa-Orelha. Um Rookiedo tipo Vacina com personalidade gentil e corajosa. Apesar de sua aparência fofa, esconde um poder divino capaz de evoluir para poderosos anjos guerreiros.',
+    attackName: 'Tackle ○',
+    spiritName: 'Air Shot 🌀',
+  },
   angemon: {
     id: 'angemon',
     name: 'Angemon',
@@ -380,7 +391,7 @@ export const EVOLUTIONS: Record<string, { evolvesTo: string; requiredLevel: numb
 export const SCANNABLE_CHARACTERS: string[] = ['agumon', 'gabumon', 'demiDevimon'];
 
 // Display order in the Codex (grouped by evolution line)
-export const CODEX_ORDER: string[] = ['agumon', 'agumonSaver', 'geoGreymon', 'rizeGreymon', 'shineGreymon', 'greymon', 'metalGreymon', 'warGreymon', 'gabumon', 'garurumon', 'wereGarurumon', 'metalGarurumon', 'omegamon', 'guilmon', 'growlmon', 'megaloGrowlmon', 'gallantmon', 'gallantmonCrimsonMode', 'angemon', 'magnaAngemon', 'seraphimon', 'demiDevimon', 'devimon', 'myotismon', 'vnonMyotismon', 'gulusGammamon'];
+export const CODEX_ORDER: string[] = ['agumon', 'agumonSaver', 'geoGreymon', 'rizeGreymon', 'shineGreymon', 'greymon', 'metalGreymon', 'warGreymon', 'gabumon', 'garurumon', 'wereGarurumon', 'metalGarurumon', 'omegamon', 'guilmon', 'growlmon', 'megaloGrowlmon', 'gallantmon', 'gallantmonCrimsonMode', 'patamon', 'angemon', 'magnaAngemon', 'seraphimon', 'demiDevimon', 'devimon', 'myotismon', 'vnonMyotismon', 'gulusGammamon'];
 
 // ─── Maps & Stages ─────────────────────────────────────────────────────────────
 export const GAME_MAPS: GameMap[] = [
