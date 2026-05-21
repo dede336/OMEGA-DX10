@@ -9,6 +9,7 @@ import {
 export interface MailReward {
   bits?: number;
   items?: string[];
+  digimon?: string[];
 }
 
 export interface MailMessage {
@@ -19,6 +20,7 @@ export interface MailMessage {
   rewardClaimed: boolean;
   isRead: boolean;
   createdAt: number;
+  unlocksAtTamerLevel?: number;
 }
 
 export interface OwnedCharacter {
@@ -44,6 +46,16 @@ const DEFAULT_MESSAGES: MailMessage[] = [
     rewardClaimed: false,
     isRead: false,
     createdAt: 1716000000000,
+  },
+  {
+    id: 'agumon_saver_gift_v1',
+    title: 'Presente de Nível 5 — Agumon (Saver)!',
+    body: 'Parabéns por atingir o Tamer Rank 5! Como recompensa especial, você recebe o Agumon (Saver) — uma variante poderosa do Agumon com ataque e defesa superiores. Boa sorte nas batalhas!',
+    reward: { digimon: ['agumonSaver'] },
+    rewardClaimed: false,
+    isRead: false,
+    createdAt: 1716000001000,
+    unlocksAtTamerLevel: 5,
   },
 ];
 
@@ -294,16 +306,27 @@ export function GameProvider({ children }: { children: React.ReactNode }) {
       if (!msg || msg.rewardClaimed) return prev;
       let newBits = prev.bits;
       let newInventory = [...prev.inventory];
+      let newCollection = [...prev.collection];
       if (msg.reward?.bits) newBits += msg.reward.bits;
       if (msg.reward?.items) {
         for (const itemId of msg.reward.items) {
           if (!newInventory.includes(itemId)) newInventory.push(itemId);
         }
       }
+      if (msg.reward?.digimon) {
+        for (const characterId of msg.reward.digimon) {
+          const alreadyOwned = newCollection.some((c) => c.characterId === characterId);
+          if (!alreadyOwned && newCollection.length < 100) {
+            const ownedId = `owned_${characterId}_${Date.now()}`;
+            newCollection.push({ ownedId, characterId, level: 1, exp: 0 });
+          }
+        }
+      }
       return {
         ...prev,
         bits: newBits,
         inventory: newInventory,
+        collection: newCollection,
         messages: prev.messages.map((m) =>
           m.id === id ? { ...m, isRead: true, rewardClaimed: true } : m
         ),
@@ -388,7 +411,9 @@ export function GameProvider({ children }: { children: React.ReactNode }) {
   }, [state.equippedItems]);
 
   const totalPlayerLevel = state.tamerLevel;
-  const unreadMailCount = state.messages.filter((m) => !m.isRead).length;
+  const unreadMailCount = state.messages.filter(
+    (m) => !m.isRead && (!m.unlocksAtTamerLevel || state.tamerLevel >= m.unlocksAtTamerLevel)
+  ).length;
 
   const selectedCharacter = state.collection.find((c) => c.ownedId === state.selectedOwnedId) ?? null;
 

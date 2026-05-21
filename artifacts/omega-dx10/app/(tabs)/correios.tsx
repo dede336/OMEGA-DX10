@@ -5,8 +5,9 @@ import {
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Feather } from '@expo/vector-icons';
 import { useColors } from '@/hooks/useColors';
-import { useGame } from '@/context/GameContext';
-import { MailMessage } from '@/context/GameContext';
+import { useGame, MailMessage } from '@/context/GameContext';
+import { CHARACTERS } from '@/constants/gameData';
+import CHARACTER_IMAGES from '@/constants/characterImages';
 
 function formatDate(ts: number): string {
   const d = new Date(ts);
@@ -16,12 +17,16 @@ function formatDate(ts: number): string {
 export default function CorreiosScreen() {
   const colors = useColors();
   const insets = useSafeAreaInsets();
-  const { messages, readMessage, claimReward } = useGame();
+  const { messages, tamerLevel, readMessage, claimReward } = useGame();
 
   const sorted = [...messages].sort((a, b) => b.createdAt - a.createdAt);
 
+  function isUnlocked(msg: MailMessage): boolean {
+    return !msg.unlocksAtTamerLevel || tamerLevel >= msg.unlocksAtTamerLevel;
+  }
+
   function handleOpen(msg: MailMessage) {
-    if (!msg.isRead) readMessage(msg.id);
+    if (!msg.isRead && isUnlocked(msg)) readMessage(msg.id);
   }
 
   return (
@@ -52,12 +57,16 @@ export default function CorreiosScreen() {
         </View>
       ) : (
         sorted.map((msg) => {
+          const unlocked = isUnlocked(msg);
           const hasUnclaimed = !!msg.reward && !msg.rewardClaimed;
-          const borderColor = !msg.isRead
+          const borderColor = !unlocked
+            ? colors.border
+            : !msg.isRead
             ? '#3b82f6'
             : hasUnclaimed
             ? '#f59e0b'
             : colors.border;
+
           return (
             <TouchableOpacity
               key={msg.id}
@@ -66,26 +75,27 @@ export default function CorreiosScreen() {
                 {
                   backgroundColor: colors.card,
                   borderColor,
-                  borderWidth: !msg.isRead ? 2 : 1,
+                  borderWidth: (!msg.isRead && unlocked) ? 2 : 1,
+                  opacity: !unlocked ? 0.65 : 1,
                 },
               ]}
               onPress={() => handleOpen(msg)}
-              activeOpacity={0.85}
+              activeOpacity={unlocked ? 0.85 : 1}
             >
               {/* unread dot */}
-              {!msg.isRead && (
+              {!msg.isRead && unlocked && (
                 <View style={[styles.unreadDot, { backgroundColor: '#3b82f6' }]} />
               )}
 
               <View style={styles.msgTop}>
                 <View style={styles.msgTitleRow}>
                   <Feather
-                    name="mail"
+                    name={!unlocked ? 'lock' : 'mail'}
                     size={16}
-                    color={!msg.isRead ? '#3b82f6' : colors.mutedForeground}
+                    color={!unlocked ? colors.mutedForeground : (!msg.isRead ? '#3b82f6' : colors.mutedForeground)}
                     style={{ marginTop: 1 }}
                   />
-                  <Text style={[styles.msgTitle, { color: colors.foreground, fontWeight: !msg.isRead ? '800' : '600' }]}>
+                  <Text style={[styles.msgTitle, { color: colors.foreground, fontWeight: (!msg.isRead && unlocked) ? '800' : '600' }]}>
                     {msg.title}
                   </Text>
                 </View>
@@ -94,12 +104,24 @@ export default function CorreiosScreen() {
                 </Text>
               </View>
 
-              <Text style={[styles.msgBody, { color: colors.mutedForeground }]}>
-                {msg.body}
-              </Text>
+              {/* locked notice */}
+              {!unlocked && msg.unlocksAtTamerLevel && (
+                <View style={[styles.lockedBanner, { backgroundColor: '#6b728022', borderColor: '#6b728055' }]}>
+                  <Feather name="lock" size={12} color={colors.mutedForeground} />
+                  <Text style={[styles.lockedText, { color: colors.mutedForeground }]}>
+                    Disponível no Tamer Rank {msg.unlocksAtTamerLevel} (atual: Lv{tamerLevel})
+                  </Text>
+                </View>
+              )}
+
+              {unlocked && (
+                <Text style={[styles.msgBody, { color: colors.mutedForeground }]}>
+                  {msg.body}
+                </Text>
+              )}
 
               {/* reward section */}
-              {msg.reward && (
+              {msg.reward && unlocked && (
                 <View style={[styles.rewardBox, { backgroundColor: msg.rewardClaimed ? colors.background : '#f59e0b11', borderColor: msg.rewardClaimed ? colors.border : '#f59e0b66' }]}>
                   <View style={styles.rewardRow}>
                     <Feather name="gift" size={14} color={msg.rewardClaimed ? colors.mutedForeground : '#f59e0b'} />
@@ -120,6 +142,20 @@ export default function CorreiosScreen() {
                         <Text style={[styles.rewardChipText, { color: '#8b5cf6' }]}>{itemId}</Text>
                       </View>
                     ))}
+                    {msg.reward.digimon?.map((charId) => {
+                      const char = CHARACTERS[charId];
+                      const img = CHARACTER_IMAGES[charId];
+                      return (
+                        <View key={charId} style={[styles.digiRewardChip, { backgroundColor: '#22c55e22', borderColor: '#22c55e55' }]}>
+                          {img && (
+                            <Image source={img} style={styles.digiRewardImg} resizeMode="contain" />
+                          )}
+                          <Text style={[styles.rewardChipText, { color: '#22c55e' }]}>
+                            {char?.name ?? charId}
+                          </Text>
+                        </View>
+                      );
+                    })}
                   </View>
                   {!msg.rewardClaimed ? (
                     <TouchableOpacity
@@ -183,6 +219,12 @@ const styles = StyleSheet.create({
   msgDate: { fontSize: 11, marginLeft: 8 },
   msgBody: { fontSize: 13, lineHeight: 19 },
 
+  lockedBanner: {
+    flexDirection: 'row', alignItems: 'center', gap: 6,
+    borderRadius: 8, borderWidth: 1, paddingHorizontal: 10, paddingVertical: 6,
+  },
+  lockedText: { fontSize: 12 },
+
   rewardBox: {
     borderRadius: 12, borderWidth: 1, padding: 12, gap: 8, marginTop: 4,
   },
@@ -193,6 +235,11 @@ const styles = StyleSheet.create({
     borderRadius: 8, borderWidth: 1, paddingHorizontal: 10, paddingVertical: 4,
   },
   rewardChipText: { fontSize: 12, fontWeight: '700' },
+  digiRewardChip: {
+    flexDirection: 'row', alignItems: 'center', gap: 6,
+    borderRadius: 8, borderWidth: 1, paddingHorizontal: 10, paddingVertical: 4,
+  },
+  digiRewardImg: { width: 28, height: 28 },
   claimBtn: {
     flexDirection: 'row', alignItems: 'center', justifyContent: 'center',
     gap: 6, borderRadius: 10, borderWidth: 1, paddingVertical: 10,
