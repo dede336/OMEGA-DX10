@@ -118,7 +118,7 @@ const defaultState: GameState = {
   gender: 'M',
   tamerId: null,
   isOnboarded: false,
-  collection: [{ ownedId: 'owned_agumon_0', characterId: 'agumon', level: 1, exp: 0 }],
+  collection: [{ ownedId: 'owned_agumon_0', characterId: 'agumonSaver', level: 1, exp: 0 }],
   clearedStages: {},
   selectedOwnedId: 'owned_agumon_0',
   team: [],
