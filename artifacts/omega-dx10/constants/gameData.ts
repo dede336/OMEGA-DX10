@@ -474,6 +474,19 @@ export const CHARACTERS: Record<string, Character> = {
     spiritName: 'Boom Boom Punch 🔥',
     spiritElement: 'FIRE',
   },
+  exVeemon: {
+    id: 'exVeemon',
+    name: 'ExVeemon',
+    rarity: 'EPIC',
+    attribute: 'FR',
+    element: 'FIRE',
+    baseStats: { hp: 204, mp: 178, atk: 131, def: 97, spt: 85, spd: 105, apt: 60 },
+    description: 'A evolução poderosa do Veemon, com asas de dragão e músculos forjados em batalha. Seu corpo livre de qualquer atributo fixo o torna imprevisível. Com o parceiro certo, pode transcender ao Paildramon.',
+    attackName: 'Vee Laser 🔥',
+    attackElement: 'FIRE',
+    spiritName: 'Flashing Wyvern ⚡',
+    spiritElement: 'LIGHTNING',
+  },
   paildramon: {
     id: 'paildramon',
     name: 'Paildramon',
@@ -640,6 +653,7 @@ export const EVOLUTIONS: Record<string, { evolvesTo: string; requiredLevel: numb
   patamon:        { evolvesTo: 'angemon',      requiredLevel: 19, label: 'Angemon' },
   angemon:        { evolvesTo: 'magnaAngemon', requiredLevel: 33, label: 'MagnaAngemon' },
   magnaAngemon:   { evolvesTo: 'goldramon',    requiredLevel: 60, label: 'Goldramon' },
+  veemon:       { evolvesTo: 'exVeemon',         requiredLevel: 22, label: 'ExVeemon' },
   paildramon:   { evolvesTo: 'imperialDramonFM', requiredLevel: 60, label: 'Imperialdramon FM' },
   demiDevimon:  { evolvesTo: 'devimon',     requiredLevel: 21, label: 'Devimon' },
   devimon:      { evolvesTo: 'myotismon',     requiredLevel: 32, label: 'Myotismon' },
@@ -672,6 +686,7 @@ export const ROOKIE_OF: Record<string, string> = {
   tailmon: 'salamon',       angewomon: 'salamon',         ophanimon: 'salamon',     magnadramon: 'salamon',
   togemon: 'palmon',        lillymon: 'palmon',       rosemon: 'palmon',
   devimon: 'demiDevimon',   myotismon: 'demiDevimon',     vnonMyotismon: 'demiDevimon',
+  exVeemon:         'veemon',
   imperialDramonFM: 'paildramon',
   imperialDramonPM: 'paildramon',
 };
@@ -695,7 +710,7 @@ export const ITEM_NAMES: Record<string, string> = {
 export const SCANNABLE_CHARACTERS: string[] = ['agumon', 'gabumon', 'demiDevimon', 'patamon', 'pyomon', 'salamon', 'palmon'];
 
 // Display order in the Codex (grouped by evolution line)
-export const CODEX_ORDER: string[] = ['agumon', 'agumonSaver', 'geoGreymon', 'rizeGreymon', 'shineGreymon', 'shineGreymonBurstMode', 'veemon', 'paildramon', 'imperialDramonFM', 'imperialDramonPM', 'greymon', 'metalGreymon', 'warGreymon', 'gabumon', 'garurumon', 'wereGarurumon', 'metalGarurumon', 'omegamon', 'guilmon', 'growlmon', 'megaloGrowlmon', 'gallantmon', 'gallantmonCrimsonMode', 'lucemon', 'lucemonChaosMode', 'patamon', 'angemon', 'magnaAngemon', 'goldramon', 'seraphimon', 'pyomon', 'birdramon', 'garudamon', 'phoenixmon', 'salamon', 'tailmon', 'angewomon', 'magnadramon', 'ophanimon', 'palmon', 'togemon', 'lillymon', 'rosemon', 'demiDevimon', 'devimon', 'myotismon', 'vnonMyotismon', 'gulusGammamon'];
+export const CODEX_ORDER: string[] = ['agumon', 'agumonSaver', 'geoGreymon', 'rizeGreymon', 'shineGreymon', 'shineGreymonBurstMode', 'veemon', 'exVeemon', 'paildramon', 'imperialDramonFM', 'imperialDramonPM', 'greymon', 'metalGreymon', 'warGreymon', 'gabumon', 'garurumon', 'wereGarurumon', 'metalGarurumon', 'omegamon', 'guilmon', 'growlmon', 'megaloGrowlmon', 'gallantmon', 'gallantmonCrimsonMode', 'lucemon', 'lucemonChaosMode', 'patamon', 'angemon', 'magnaAngemon', 'goldramon', 'seraphimon', 'pyomon', 'birdramon', 'garudamon', 'phoenixmon', 'salamon', 'tailmon', 'angewomon', 'magnadramon', 'ophanimon', 'palmon', 'togemon', 'lillymon', 'rosemon', 'demiDevimon', 'devimon', 'myotismon', 'vnonMyotismon', 'gulusGammamon'];
 
 // ─── Maps & Stages ─────────────────────────────────────────────────────────────
 export const GAME_MAPS: GameMap[] = [
