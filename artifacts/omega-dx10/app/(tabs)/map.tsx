@@ -8,6 +8,8 @@ import { useGame } from '@/context/GameContext';
 import { GAME_MAPS, CHARACTERS, ATTRIBUTES, ELEMENTS } from '@/constants/gameData';
 import CHARACTER_IMAGES from '@/constants/characterImages';
 
+const STARS_3 = require('../../assets/images/ui/stars3.png');
+
 function getMsToMidnight(): number {
   const now = new Date();
   const midnight = new Date(now);
@@ -130,9 +132,13 @@ export default function MapScreen() {
                         )}
                       </View>
                       <View style={styles.mapBannerRight}>
-                        <Text style={[styles.mapProgress, { color: allCleared ? '#22c55e' : '#ffffff' }]}>
-                          {clearedInMap}/{map.stages.length}
-                        </Text>
+                        {allCleared ? (
+                          <Image source={STARS_3} style={styles.starsImg} resizeMode="contain" />
+                        ) : (
+                          <Text style={[styles.mapProgress, { color: '#ffffff' }]}>
+                            {clearedInMap}/{map.stages.length}
+                          </Text>
+                        )}
                         {unlocked && (
                           <Feather
                             name={expanded ? 'chevron-up' : 'chevron-down'}
@@ -174,9 +180,13 @@ export default function MapScreen() {
                       )}
                     </View>
                     <View style={styles.mapRight}>
-                      <Text style={[styles.mapProgress, { color: allCleared ? '#22c55e' : colors.primary }]}>
-                        {clearedInMap}/{map.stages.length}
-                      </Text>
+                      {allCleared ? (
+                        <Image source={STARS_3} style={styles.starsImg} resizeMode="contain" />
+                      ) : (
+                        <Text style={[styles.mapProgress, { color: colors.primary }]}>
+                          {clearedInMap}/{map.stages.length}
+                        </Text>
+                      )}
                       {unlocked && (
                         <Feather
                           name={expanded ? 'chevron-up' : 'chevron-down'}
@@ -327,6 +337,7 @@ const styles = StyleSheet.create({
   lockHint: { fontSize: 11, marginTop: 4 },
   mapRight: { alignItems: 'center', gap: 4 },
   mapProgress: { fontSize: 16, fontWeight: '800' as const },
+  starsImg: { width: 72, height: 28 },
 
   dungeonBanner: { flexDirection: 'row', alignItems: 'center', gap: 6, paddingHorizontal: 16, paddingVertical: 7, borderBottomWidth: 1 },
   dungeonBannerText: { fontSize: 11, fontWeight: '700' as const, letterSpacing: 0.6 },
