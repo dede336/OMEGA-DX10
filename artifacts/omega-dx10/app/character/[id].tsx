@@ -135,6 +135,13 @@ export default function CharacterDetailScreen() {
         {/* Hero Card */}
         <View style={[styles.heroCard, { backgroundColor: colors.card, borderColor: attrData.color + '66' }]}>
           <View style={[styles.heroStrip, { backgroundColor: rarityColor + '22' }]}>
+            {isOmegamon && (
+              <Image
+                source={OMEGAMON_GIF}
+                style={styles.heroStripGif}
+                resizeMode="cover"
+              />
+            )}
             <CharacterAvatar characterId={char.id} size={120} />
           </View>
           <View style={styles.heroInfo}>
@@ -412,7 +419,12 @@ const styles = StyleSheet.create({
   backBtn: { marginBottom: 16, alignSelf: 'flex-start', padding: 4 },
   errorText: { textAlign: 'center', fontSize: 16, margin: 40 },
   heroCard: { borderRadius: 20, borderWidth: 1.5, overflow: 'hidden', marginBottom: 16 },
-  heroStrip: { alignItems: 'center', paddingTop: 24, paddingBottom: 16 },
+  heroStrip: { alignItems: 'center', paddingTop: 24, paddingBottom: 16, overflow: 'hidden' as const },
+  heroStripGif: {
+    ...StyleSheet.absoluteFillObject as any,
+    width: '100%', height: '100%',
+    opacity: 0.35,
+  },
   heroInfo: { padding: 20, gap: 8 },
   heroName: { fontSize: 28, fontWeight: '800' as const },
   heroRarity: { fontSize: 13, fontWeight: '700' as const },
