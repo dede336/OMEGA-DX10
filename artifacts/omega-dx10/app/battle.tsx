@@ -1096,7 +1096,11 @@ export default function BattleScreen() {
     return (
       <View style={[styles.container, styles.resultCenter, { backgroundColor: colors.background }]}>
         <View style={[styles.resultCard, { backgroundColor: colors.card, borderColor: won ? '#22c55e' : '#ef4444' }]}>
-          <Feather name={won ? 'award' : 'x-circle'} size={64} color={won ? '#22c55e' : '#ef4444'} />
+          {won ? (
+            <Image source={require('../assets/images/victory-gabumon.gif')} style={{ width: 100, height: 100 }} resizeMode="contain" />
+          ) : (
+            <Feather name="x-circle" size={64} color="#ef4444" />
+          )}
           <Text style={[styles.resultTitle, { color: won ? '#22c55e' : '#ef4444' }]}>
             {won ? 'Vitória!' : 'Derrota'}
           </Text>
