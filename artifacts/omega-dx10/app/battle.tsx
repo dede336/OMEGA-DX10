@@ -42,7 +42,26 @@ import {
 import { HPBar, AttributeBadge, CharacterAvatar } from '@/components/GameComponents';
 
 const AUTO_BATTLE_IMG = require('../assets/images/auto_battle.png');
-const EXPLOSION_GIF = require('../assets/images/effects/explosion.gif');
+
+function HitEffect({ color }: { color: string }) {
+  const scale   = useRef(new Animated.Value(0.2)).current;
+  const opacity = useRef(new Animated.Value(0)).current;
+  useEffect(() => {
+    Animated.parallel([
+      Animated.timing(scale,   { toValue: 2.4, duration: 550, useNativeDriver: false }),
+      Animated.sequence([
+        Animated.timing(opacity, { toValue: 1,   duration: 80,  useNativeDriver: false }),
+        Animated.timing(opacity, { toValue: 0,   duration: 470, useNativeDriver: false }),
+      ]),
+    ]).start();
+  }, []);
+  const inner = color + '55';
+  return (
+    <Animated.View pointerEvents="none" style={[StyleSheet.absoluteFillObject, { alignItems: 'center', justifyContent: 'center', zIndex: 30 }]}>
+      <Animated.View style={{ width: 68, height: 68, borderRadius: 34, borderWidth: 4, borderColor: color, backgroundColor: inner, opacity, transform: [{ scale }] }} />
+    </Animated.View>
+  );
+}
 
 type Phase = 'select' | 'battle' | 'result';
 type BattleLog = { text: string; color: string };
@@ -138,27 +157,17 @@ export default function BattleScreen() {
   }, []);
 
   // ── Element hit flash ───────────────────────────────────────────────────────
-  const hitFlashAnim = useRef(new Animated.Value(0)).current;
-  const [hitFlash, setHitFlash] = useState<{ element: ElementId; idx: number } | null>(null);
+  const [hitFlash, setHitFlash] = useState<{ element: ElementId; idx: number; key: number } | null>(null);
   const flashElementHit = useCallback((element: ElementId, idx: number) => {
-    setHitFlash({ element, idx });
-    hitFlashAnim.setValue(0);
-    Animated.sequence([
-      Animated.timing(hitFlashAnim, { toValue: 1, duration: 140, useNativeDriver: true }),
-      Animated.timing(hitFlashAnim, { toValue: 0, duration: 380, useNativeDriver: true }),
-    ]).start(() => setHitFlash(null));
-  }, [hitFlashAnim]);
+    setHitFlash({ element, idx, key: Date.now() });
+    setTimeout(() => setHitFlash(null), 600);
+  }, []);
 
-  const playerHitFlashAnim = useRef(new Animated.Value(0)).current;
-  const [playerHitFlash, setPlayerHitFlash] = useState<ElementId | null>(null);
+  const [playerHitFlash, setPlayerHitFlash] = useState<{ element: ElementId; key: number } | null>(null);
   const flashPlayerHit = useCallback((element: ElementId) => {
-    setPlayerHitFlash(element);
-    playerHitFlashAnim.setValue(0);
-    Animated.sequence([
-      Animated.timing(playerHitFlashAnim, { toValue: 1, duration: 140, useNativeDriver: true }),
-      Animated.timing(playerHitFlashAnim, { toValue: 0, duration: 380, useNativeDriver: true }),
-    ]).start(() => setPlayerHitFlash(null));
-  }, [playerHitFlashAnim]);
+    setPlayerHitFlash({ element, key: Date.now() });
+    setTimeout(() => setPlayerHitFlash(null), 600);
+  }, []);
 
   // ── Auto-battle tick ───────────────────────────────────────────────────────
   useEffect(() => {
@@ -818,12 +827,7 @@ export default function BattleScreen() {
                           <CharacterAvatar characterId={charId} size={enemies.length === 1 ? 90 : 64} plain />
                         )}
                         {hitFlash?.idx === i && (
-                          <Animated.Image
-                            source={EXPLOSION_GIF}
-                            style={[styles.elementFlashImg, { opacity: hitFlashAnim }]}
-                            resizeMode="contain"
-                            tintColor={ELEMENTS[hitFlash.element]?.color}
-                          />
+                          <HitEffect key={hitFlash.key} color={ELEMENTS[hitFlash.element]?.color ?? '#ffffff'} />
                         )}
                       </Animated.View>
                       <View style={[styles.arenaEnemyInfo, { backgroundColor: 'rgba(0,0,0,0.6)' }]}>
@@ -872,12 +876,7 @@ export default function BattleScreen() {
                     <Animated.View style={{ transform: [{ translateX: getEnemyShake(i) }] }}>
                       <CharacterAvatar characterId={charId} size={enemies.length === 1 ? 90 : 64} borderColor="transparent" bgColor="transparent" />
                       {hitFlash?.idx === i && (
-                        <Animated.Image
-                          source={EXPLOSION_GIF}
-                          style={[styles.elementFlashImg, { opacity: hitFlashAnim }]}
-                          resizeMode="contain"
-                          tintColor={ELEMENTS[hitFlash.element]?.color}
-                        />
+                        <HitEffect key={hitFlash.key} color={ELEMENTS[hitFlash.element]?.color ?? '#ffffff'} />
                       )}
                     </Animated.View>
                     <View style={[styles.arenaEnemyInfo, { backgroundColor: colors.card }]}>
@@ -940,12 +939,7 @@ export default function BattleScreen() {
               <View style={{ position: 'relative' }}>
                 <CharacterAvatar characterId={pOwned?.characterId ?? ''} size={64} />
                 {playerHitFlash && (
-                  <Animated.Image
-                    source={EXPLOSION_GIF}
-                    style={[styles.elementFlashImg, { opacity: playerHitFlashAnim }]}
-                    resizeMode="contain"
-                    tintColor={ELEMENTS[playerHitFlash]?.color}
-                  />
+                  <HitEffect key={playerHitFlash.key} color={ELEMENTS[playerHitFlash.element]?.color ?? '#ffffff'} />
                 )}
               </View>
             </Animated.View>
