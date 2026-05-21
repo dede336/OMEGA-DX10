@@ -553,7 +553,7 @@ export const CHARACTERS: Record<string, Character> = {
   rosemonBurstMode: {
     id: 'rosemonBurstMode',
     name: 'Rosemon BM',
-    rarity: 'ULTRA',
+    rarity: 'BURST',
     attribute: 'DA',
     element: 'PLANT',
     baseStats: { hp: 318, mp: 378, atk: 161, def: 135, spt: 158, spd: 142, apt: 88 },
