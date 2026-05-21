@@ -7,7 +7,7 @@ const EQUIP_ITEM_IMAGES: Record<string, any> = {
   brasao_amor:      require('../assets/images/brasao_amor.png'),
   brasao_luz:           require('../assets/images/brasao_luz.png'),
   digivice_d2:             require('../assets/images/digivice_d2.png'),
-  digivice_d3:             require('../assets/images/digivice_d2.png'),
+  digivice_d3:             require('../assets/images/digivice_d3.png'),
   oculos_escuro_fitado:    require('../assets/images/oculos_escuro_fitado.png'),
   brasao_conhecimento:  require('../assets/images/brasao_conhecimento.png'),
   pulseira_ouro:        require('../assets/images/pulseira_ouro.png'),
