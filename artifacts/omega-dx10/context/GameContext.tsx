@@ -324,7 +324,7 @@ export function GameProvider({ children }: { children: React.ReactNode }) {
 
   const completeOnboarding = useCallback((name: string, gender: TamerGender, tamerId: string) => {
     const TAMER_STARTERS: Record<string, string> = {
-      tamer_tai:  'agumonSaver',
+      tamer_tai:  'agumon',
       tamer_tk:   'patamon',
       tamer_matt: 'gabumon',
       tamer_kari: 'salamon',
