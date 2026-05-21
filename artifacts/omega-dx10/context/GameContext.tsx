@@ -4,7 +4,13 @@ import {
   CHARACTERS, EVOLUTIONS, FUSIONS, GAME_MAPS, expToNextLevel, tamerExpToNextLevel,
   EquipSlot, TamerGender, EQUIP_SLOTS_ORDER, DEFAULT_INVENTORY,
   CRAFT_RECIPES, CraftRecipe,
+  SACRIFICE_DROPS, ROOKIE_OF, SACRIFICE_SCAN_OVERRIDES, SACRIFICE_SCAN_PCT,
 } from '@/constants/gameData';
+
+export interface SacrificeResult {
+  droppedItem: string | null;
+  scanGained: { characterId: string; amount: number } | null;
+}
 
 export interface MailReward {
   bits?: number;
@@ -94,6 +100,7 @@ interface GameContextValue extends GameState {
   createFromScan: (characterId: string) => void;
   evolveDigimon: (ownedId: string) => void;
   fuseDigimon: (keepOwnedId: string, sacrificeOwnedId: string) => boolean;
+  sacrificeDigimon: (ownedId: string) => SacrificeResult;
   totalPlayerLevel: number;
   setGender: (g: TamerGender) => void;
   equipItem: (slot: EquipSlot, itemId: string) => void;
@@ -237,13 +244,18 @@ export function GameProvider({ children }: { children: React.ReactNode }) {
 
   const evolveDigimon = useCallback((ownedId: string) => {
     setState((prev) => {
-      const updated = prev.collection.map((c) => {
-        if (c.ownedId !== ownedId) return c;
-        const evo = EVOLUTIONS[c.characterId];
-        if (!evo || c.level < evo.requiredLevel) return c;
-        return { ...c, characterId: evo.evolvesTo, level: 1, exp: 0 };
-      });
-      return { ...prev, collection: updated };
+      const target = prev.collection.find((c) => c.ownedId === ownedId);
+      if (!target) return prev;
+      const evo = EVOLUTIONS[target.characterId];
+      if (!evo || target.level < evo.requiredLevel) return prev;
+      if (evo.requiredItem && (prev.pieces[evo.requiredItem] ?? 0) <= 0) return prev;
+      const newCollection = prev.collection.map((c) =>
+        c.ownedId === ownedId ? { ...c, characterId: evo.evolvesTo, level: 1, exp: 0 } : c
+      );
+      const newPieces = evo.requiredItem
+        ? { ...prev.pieces, [evo.requiredItem]: (prev.pieces[evo.requiredItem] ?? 0) - 1 }
+        : prev.pieces;
+      return { ...prev, collection: newCollection, pieces: newPieces };
     });
   }, []);
 
@@ -415,6 +427,51 @@ export function GameProvider({ children }: { children: React.ReactNode }) {
     return success;
   }, []);
 
+  const sacrificeDigimon = useCallback((ownedId: string): SacrificeResult => {
+    let result: SacrificeResult = { droppedItem: null, scanGained: null };
+    setState((prev) => {
+      const target = prev.collection.find((c) => c.ownedId === ownedId);
+      if (!target) return prev;
+      const char = CHARACTERS[target.characterId];
+      if (!char) return prev;
+      let newPieces = { ...prev.pieces };
+      let newScanProgress = { ...prev.scanProgress };
+      const drops = SACRIFICE_DROPS[target.characterId];
+      if (drops) {
+        for (const drop of drops) {
+          if (Math.random() < drop.chance) {
+            newPieces[drop.itemId] = (newPieces[drop.itemId] ?? 0) + 1;
+            result.droppedItem = drop.itemId;
+          }
+        }
+      }
+      const override = SACRIFICE_SCAN_OVERRIDES[target.characterId];
+      if (override) {
+        const gain = Math.round(override.percent * 100);
+        newScanProgress[override.characterId] = Math.min(100, (newScanProgress[override.characterId] ?? 0) + gain);
+        result.scanGained = { characterId: override.characterId, amount: gain };
+      } else {
+        const rookieId = ROOKIE_OF[target.characterId];
+        if (rookieId) {
+          const pct = SACRIFICE_SCAN_PCT[char.rarity] ?? 0;
+          if (pct > 0) {
+            const gain = Math.round(pct * 100);
+            newScanProgress[rookieId] = Math.min(100, (newScanProgress[rookieId] ?? 0) + gain);
+            result.scanGained = { characterId: rookieId, amount: gain };
+          }
+        }
+      }
+      return {
+        ...prev,
+        pieces: newPieces,
+        scanProgress: newScanProgress,
+        collection: prev.collection.filter((c) => c.ownedId !== ownedId),
+        selectedOwnedId: prev.selectedOwnedId === ownedId ? null : prev.selectedOwnedId,
+      };
+    });
+    return result;
+  }, []);
+
   const isStageCleared = useCallback(
     (mapId: string, stageIndex: number) => {
       return !!state.clearedStages[`${mapId}-${stageIndex}`];
@@ -514,6 +571,7 @@ export function GameProvider({ children }: { children: React.ReactNode }) {
         createFromScan,
         evolveDigimon,
         fuseDigimon,
+        sacrificeDigimon,
         totalPlayerLevel,
         setGender,
         equipItem,

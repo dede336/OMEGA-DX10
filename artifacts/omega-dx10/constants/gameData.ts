@@ -390,7 +390,7 @@ export const FUSIONS: Record<string, FusionRecipe> = {
 };
 
 // ─── Evolution paths ──────────────────────────────────────────────────────────
-export const EVOLUTIONS: Record<string, { evolvesTo: string; requiredLevel: number; label: string }> = {
+export const EVOLUTIONS: Record<string, { evolvesTo: string; requiredLevel: number; label: string; requiredItem?: string }> = {
   agumon:       { evolvesTo: 'greymon',       requiredLevel: 16, label: 'Greymon' },
   agumonSaver:  { evolvesTo: 'geoGreymon',    requiredLevel: 20, label: 'GeoGreymon' },
   geoGreymon:   { evolvesTo: 'rizeGreymon',   requiredLevel: 35, label: 'RizeGreymon' },
@@ -406,10 +406,43 @@ export const EVOLUTIONS: Record<string, { evolvesTo: string; requiredLevel: numb
   lucemon:        { evolvesTo: 'lucemonChaosMode', requiredLevel: 40, label: 'Lucemon Chaos Mode' },
   patamon:        { evolvesTo: 'angemon',      requiredLevel: 19, label: 'Angemon' },
   angemon:        { evolvesTo: 'magnaAngemon', requiredLevel: 33, label: 'MagnaAngemon' },
-  magnaAngemon:   { evolvesTo: 'seraphimon',   requiredLevel: 60, label: 'Seraphimon' },
+  magnaAngemon:   { evolvesTo: 'seraphimon',   requiredLevel: 60, label: 'Seraphimon', requiredItem: 'anel_sagrado' },
   demiDevimon:  { evolvesTo: 'devimon',     requiredLevel: 21, label: 'Devimon' },
   devimon:      { evolvesTo: 'myotismon',     requiredLevel: 32, label: 'Myotismon' },
   myotismon:    { evolvesTo: 'vnonMyotismon', requiredLevel: 56, label: 'VenomMyotismon' },
+};
+
+// ─── Sacrifice System ────────────────────────────────────────────────────────
+
+export const SACRIFICE_DROPS: Record<string, { itemId: string; chance: number }[]> = {
+  magnaAngemon:     [{ itemId: 'anel_sagrado', chance: 0.30 }],
+  angewomon:        [{ itemId: 'anel_sagrado', chance: 0.30 }],
+  lucemonChaosMode: [{ itemId: 'anel_sagrado', chance: 0.40 }],
+  angemon:          [{ itemId: 'anel_sagrado', chance: 0.10 }],
+  tailmon:          [{ itemId: 'anel_sagrado', chance: 0.10 }],
+};
+
+export const ROOKIE_OF: Record<string, string> = {
+  greymon: 'agumon',        metalGreymon: 'agumon',       warGreymon: 'agumon',
+  geoGreymon: 'agumonSaver', rizeGreymon: 'agumonSaver',  shineGreymon: 'agumonSaver',
+  garurumon: 'gabumon',     wereGarurumon: 'gabumon',     metalGarurumon: 'gabumon',
+  growlmon: 'guilmon',      megaloGrowlmon: 'guilmon',    gallantmon: 'guilmon',
+  angemon: 'patamon',       magnaAngemon: 'patamon',      seraphimon: 'patamon',
+  devimon: 'demiDevimon',   myotismon: 'demiDevimon',     vnonMyotismon: 'demiDevimon',
+};
+
+export const SACRIFICE_SCAN_OVERRIDES: Record<string, { characterId: string; percent: number }> = {
+  lucemonChaosMode: { characterId: 'lucemon', percent: 0.05 },
+};
+
+export const SACRIFICE_SCAN_PCT: Partial<Record<RarityId, number>> = {
+  RARE:      0.10,
+  EPIC:      0.20,
+  LEGENDARY: 0.50,
+};
+
+export const ITEM_NAMES: Record<string, string> = {
+  anel_sagrado: 'Anel Sagrado ✨',
 };
 
 // Characters that can be scanned (encountered as enemies in battle)

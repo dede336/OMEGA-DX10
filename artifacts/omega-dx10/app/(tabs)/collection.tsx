@@ -7,10 +7,11 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { router } from 'expo-router';
 import { Feather } from '@expo/vector-icons';
 import { useColors } from '@/hooks/useColors';
-import { useGame, OwnedCharacter } from '@/context/GameContext';
+import { useGame, OwnedCharacter, SacrificeResult } from '@/context/GameContext';
 import {
   CHARACTERS, EVOLUTIONS, SCANNABLE_CHARACTERS, CODEX_ORDER,
   RARITY_COLORS, RARITY_LABELS,
+  SACRIFICE_DROPS, ROOKIE_OF, SACRIFICE_SCAN_OVERRIDES, SACRIFICE_SCAN_PCT, ITEM_NAMES,
 } from '@/constants/gameData';
 import { CharacterCard, ScanCard, LockedCard, CharacterAvatar, AttributeBadge, ElementBadge } from '@/components/GameComponents';
 
@@ -30,7 +31,7 @@ type EvoPhase = 'playing' | 'reveal' | 'done';
 export default function CollectionScreen() {
   const colors = useColors();
   const insets = useSafeAreaInsets();
-  const { collection, selectedCharacter, setSelectedCharacter, scanProgress, createFromScan, evolveDigimon } = useGame();
+  const { collection, selectedCharacter, setSelectedCharacter, scanProgress, createFromScan, evolveDigimon, pieces, sacrificeDigimon } = useGame();
 
   const bottomPad = Platform.OS === 'web' ? 34 : insets.bottom;
 
@@ -39,6 +40,8 @@ export default function CollectionScreen() {
 
   // Modal state
   const [modalOwned, setModalOwned] = useState<OwnedCharacter | null>(null);
+  const [confirmSacrificeVisible, setConfirmSacrificeVisible] = useState(false);
+  const [sacrificeResult, setSacrificeResult] = useState<SacrificeResult | null>(null);
 
   // Evolution animation state
   const [evoAnim, setEvoAnim] = useState<{ fromCharId: string; toCharId: string } | null>(null);
@@ -86,9 +89,18 @@ export default function CollectionScreen() {
   }, [evoAnim, evoPhase]);
 
   // Computed evolution info for modal
-  const modalEvo = modalOwned ? EVOLUTIONS[modalOwned.characterId] : undefined;
-  const modalCanEvolve = !!(modalOwned && modalEvo && modalOwned.level >= modalEvo.requiredLevel);
+  const modalEvo     = modalOwned ? EVOLUTIONS[modalOwned.characterId] : undefined;
+  const hasReqItem   = !modalEvo?.requiredItem || (pieces[modalEvo.requiredItem] ?? 0) > 0;
+  const modalCanEvolve = !!(modalOwned && modalEvo && modalOwned.level >= modalEvo.requiredLevel && hasReqItem);
   const modalEvoChar = modalEvo ? CHARACTERS[modalEvo.evolvesTo] : undefined;
+
+  // Sacrifice info for current modal character
+  const modalChar = modalOwned ? CHARACTERS[modalOwned.characterId] : null;
+  const sacrificeDrops = modalOwned ? (SACRIFICE_DROPS[modalOwned.characterId] ?? []) : [];
+  const sacrificeOverride = modalOwned ? SACRIFICE_SCAN_OVERRIDES[modalOwned.characterId] : undefined;
+  const sacrificeRookieId = modalOwned ? (ROOKIE_OF[modalOwned.characterId] ?? null) : null;
+  const sacrificeScanPct  = modalChar ? (SACRIFICE_SCAN_PCT[modalChar.rarity] ?? 0) : 0;
+  const canSacrifice = !!(modalChar && modalChar.rarity !== 'COMMON');
 
   const toChar = evoAnim ? CHARACTERS[evoAnim.toCharId] : null;
   const fromChar = evoAnim ? CHARACTERS[evoAnim.fromCharId] : null;
@@ -197,6 +209,12 @@ export default function CollectionScreen() {
                         <Text style={[styles.evoReqText, { color: modalCanEvolve ? '#f59e0b' : colors.mutedForeground }]}>
                           Lv {modalEvo.requiredLevel}
                         </Text>
+                        {modalEvo.requiredItem && (
+                          <Text style={[styles.evoReqText, { color: hasReqItem ? '#f59e0b' : '#ef4444', fontSize: 10, marginTop: 2 }]}>
+                            {ITEM_NAMES[modalEvo.requiredItem] ?? modalEvo.requiredItem}{'\n'}
+                            ({pieces[modalEvo.requiredItem] ?? 0} possuído{(pieces[modalEvo.requiredItem] ?? 0) !== 1 ? 's' : ''})
+                          </Text>
+                        )}
                       </View>
 
                       {/* To */}
@@ -232,6 +250,13 @@ export default function CollectionScreen() {
                         <Feather name="arrow-up-circle" size={20} color="#000" />
                         <Text style={styles.evolveBtnText}>Evoluir para {modalEvo.label}</Text>
                       </TouchableOpacity>
+                    ) : !hasReqItem ? (
+                      <View style={[styles.evolveLocked, { backgroundColor: colors.background, borderColor: '#ef444466' }]}>
+                        <Feather name="package" size={16} color="#ef4444" />
+                        <Text style={[styles.evolveLockedText, { color: '#ef4444' }]}>
+                          Requer {ITEM_NAMES[modalEvo.requiredItem!] ?? modalEvo.requiredItem} para evoluir
+                        </Text>
+                      </View>
                     ) : (
                       <View style={[styles.evolveLocked, { backgroundColor: colors.background, borderColor: colors.border }]}>
                         <Feather name="lock" size={16} color={colors.mutedForeground} />
@@ -241,6 +266,32 @@ export default function CollectionScreen() {
                         </Text>
                       </View>
                     )
+                  )}
+
+                  {/* Sacrifice section */}
+                  {canSacrifice && (
+                    <View style={[styles.sacrificeSection, { borderColor: '#ef444433', backgroundColor: '#ef444408' }]}>
+                      <View style={styles.sacrificeHeader}>
+                        <Feather name="zap-off" size={13} color="#ef4444" />
+                        <Text style={[styles.sacrificeTitle, { color: '#ef4444' }]}>Sacrifício</Text>
+                      </View>
+                      <Text style={[styles.sacrificeDesc, { color: colors.mutedForeground }]}>
+                        {sacrificeOverride
+                          ? `+${Math.round(sacrificeOverride.percent * 100)}% scan de ${CHARACTERS[sacrificeOverride.characterId]?.name ?? sacrificeOverride.characterId}`
+                          : sacrificeRookieId
+                            ? `+${Math.round(sacrificeScanPct * 100)}% scan de ${CHARACTERS[sacrificeRookieId]?.name ?? sacrificeRookieId}`
+                            : 'Sem bônus de scan'}
+                        {sacrificeDrops.length > 0 && ` · ${Math.round(sacrificeDrops[0].chance * 100)}% de chance: ${ITEM_NAMES[sacrificeDrops[0].itemId] ?? sacrificeDrops[0].itemId}`}
+                      </Text>
+                      <TouchableOpacity
+                        style={[styles.sacrificeBtn, { borderColor: '#ef4444' }]}
+                        activeOpacity={0.8}
+                        onPress={() => setConfirmSacrificeVisible(true)}
+                      >
+                        <Feather name="trash-2" size={14} color="#ef4444" />
+                        <Text style={[styles.sacrificeBtnText, { color: '#ef4444' }]}>Sacrificar</Text>
+                      </TouchableOpacity>
+                    </View>
                   )}
 
                   {/* Detail & close buttons */}
@@ -329,6 +380,93 @@ export default function CollectionScreen() {
             )}
           </View>
         </Pressable>
+      </Modal>
+
+      {/* ── Sacrifice Confirm Modal ───────────────────────────────────── */}
+      <Modal visible={confirmSacrificeVisible} transparent animationType="fade">
+        <View style={styles.modalOverlay}>
+          <View style={[styles.confirmSheet, { backgroundColor: colors.card }]}>
+            <Text style={[styles.confirmTitle, { color: '#ef4444' }]}>Sacrificar Digimon?</Text>
+            <Text style={[styles.confirmBody, { color: colors.mutedForeground }]}>
+              <Text style={{ fontWeight: '700', color: colors.foreground }}>
+                {modalChar?.name}
+              </Text>
+              {' '}será removido permanentemente da sua DigiBank.{'\n\n'}
+              Possíveis recompensas:{'\n'}
+              {sacrificeOverride
+                ? `• +${Math.round(sacrificeOverride.percent * 100)}% scan de ${CHARACTERS[sacrificeOverride.characterId]?.name}`
+                : sacrificeRookieId
+                  ? `• +${Math.round(sacrificeScanPct * 100)}% scan de ${CHARACTERS[sacrificeRookieId]?.name ?? sacrificeRookieId}`
+                  : '• Sem bônus de scan'}
+              {sacrificeDrops.length > 0
+                ? `\n• ${Math.round(sacrificeDrops[0].chance * 100)}% de ${ITEM_NAMES[sacrificeDrops[0].itemId] ?? sacrificeDrops[0].itemId}`
+                : ''}
+            </Text>
+            <View style={styles.confirmActions}>
+              <TouchableOpacity
+                style={[styles.confirmCancelBtn, { borderColor: colors.border }]}
+                onPress={() => setConfirmSacrificeVisible(false)}
+              >
+                <Text style={[styles.confirmCancelText, { color: colors.mutedForeground }]}>Cancelar</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={styles.confirmSacrificeBtn}
+                onPress={() => {
+                  if (!modalOwned) return;
+                  const result = sacrificeDigimon(modalOwned.ownedId);
+                  setConfirmSacrificeVisible(false);
+                  setSacrificeResult(result);
+                  setModalOwned(null);
+                }}
+              >
+                <Feather name="trash-2" size={15} color="#fff" />
+                <Text style={styles.confirmSacrificeText}>Confirmar Sacrifício</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </View>
+      </Modal>
+
+      {/* ── Sacrifice Result Modal ────────────────────────────────────── */}
+      <Modal visible={!!sacrificeResult} transparent animationType="fade">
+        <View style={styles.modalOverlay}>
+          <View style={[styles.confirmSheet, { backgroundColor: colors.card }]}>
+            <Text style={[styles.confirmTitle, { color: colors.foreground }]}>Resultado do Sacrifício</Text>
+            {sacrificeResult?.scanGained && (
+              <View style={styles.resultRow}>
+                <Feather name="search" size={16} color={colors.primary} />
+                <Text style={[styles.resultText, { color: colors.foreground }]}>
+                  +{sacrificeResult.scanGained.amount}% scan de{' '}
+                  <Text style={{ fontWeight: '700' }}>
+                    {CHARACTERS[sacrificeResult.scanGained.characterId]?.name ?? sacrificeResult.scanGained.characterId}
+                  </Text>
+                </Text>
+              </View>
+            )}
+            {sacrificeResult?.droppedItem && (
+              <View style={styles.resultRow}>
+                <Feather name="package" size={16} color="#f59e0b" />
+                <Text style={[styles.resultText, { color: colors.foreground }]}>
+                  Obteve:{' '}
+                  <Text style={{ fontWeight: '700', color: '#f59e0b' }}>
+                    {ITEM_NAMES[sacrificeResult.droppedItem] ?? sacrificeResult.droppedItem}
+                  </Text>
+                </Text>
+              </View>
+            )}
+            {!sacrificeResult?.scanGained && !sacrificeResult?.droppedItem && (
+              <Text style={[styles.confirmBody, { color: colors.mutedForeground }]}>
+                Nenhuma recompensa desta vez.
+              </Text>
+            )}
+            <TouchableOpacity
+              style={[styles.confirmSacrificeBtn, { backgroundColor: colors.primary }]}
+              onPress={() => setSacrificeResult(null)}
+            >
+              <Text style={styles.confirmSacrificeText}>Fechar</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
       </Modal>
     </View>
   );
@@ -525,5 +663,105 @@ const styles = StyleSheet.create({
     fontSize: 13,
     color: '#ffffff88',
     marginTop: 8,
+  },
+
+  // ── Sacrifice section ─────────────────────────────────────────────────────
+  sacrificeSection: {
+    borderRadius: 12,
+    borderWidth: 1,
+    padding: 12,
+    gap: 6,
+  },
+  sacrificeHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
+  },
+  sacrificeTitle: {
+    fontSize: 13,
+    fontWeight: '800' as const,
+    textTransform: 'uppercase' as const,
+    letterSpacing: 0.8,
+  },
+  sacrificeDesc: {
+    fontSize: 12,
+    lineHeight: 17,
+  },
+  sacrificeBtn: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 6,
+    borderRadius: 10,
+    borderWidth: 1,
+    paddingVertical: 9,
+    marginTop: 2,
+  },
+  sacrificeBtnText: {
+    fontSize: 13,
+    fontWeight: '700' as const,
+  },
+
+  // ── Confirm & result sheets ───────────────────────────────────────────────
+  confirmSheet: {
+    margin: 24,
+    borderRadius: 20,
+    padding: 22,
+    gap: 14,
+    alignSelf: 'center' as const,
+    width: '88%',
+  },
+  confirmTitle: {
+    fontSize: 18,
+    fontWeight: '800' as const,
+    textAlign: 'center' as const,
+  },
+  confirmBody: {
+    fontSize: 13,
+    lineHeight: 20,
+    textAlign: 'center' as const,
+  },
+  confirmActions: {
+    flexDirection: 'row',
+    gap: 10,
+    marginTop: 4,
+  },
+  confirmCancelBtn: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderRadius: 12,
+    borderWidth: 1,
+    paddingVertical: 12,
+  },
+  confirmCancelText: {
+    fontSize: 13,
+    fontWeight: '600' as const,
+  },
+  confirmSacrificeBtn: {
+    flex: 1,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 6,
+    borderRadius: 12,
+    backgroundColor: '#ef4444',
+    paddingVertical: 12,
+  },
+  confirmSacrificeText: {
+    fontSize: 13,
+    fontWeight: '700' as const,
+    color: '#fff',
+  },
+  resultRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+    paddingVertical: 4,
+  },
+  resultText: {
+    fontSize: 14,
+    lineHeight: 20,
+    flex: 1,
   },
 });
