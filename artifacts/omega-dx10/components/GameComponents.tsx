@@ -128,7 +128,7 @@ const attrBadgeStyles = StyleSheet.create({
 });
 
 // ─── Element emoji map ─────────────────────────────────────────────────────────
-const ELEMENT_EMOJI: Record<ElementId, string> = {
+export const ELEMENT_EMOJI: Record<ElementId, string> = {
   FIRE:      '🔥',
   WATER:     '💧',
   PLANT:     '🍃',

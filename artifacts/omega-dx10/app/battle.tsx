@@ -40,7 +40,7 @@ import {
   EquipBonuses,
   SPIRIT_MP_COST,
 } from '@/utils/battleEngine';
-import { HPBar, AttributeBadge, CharacterAvatar } from '@/components/GameComponents';
+import { HPBar, AttributeBadge, CharacterAvatar, ELEMENT_EMOJI } from '@/components/GameComponents';
 
 const AUTO_BATTLE_IMG = require('../assets/images/auto_battle.png');
 
@@ -1049,7 +1049,9 @@ export default function BattleScreen() {
                 onPress={() => handleAction('ATTACK')}
                 style={[styles.actionBtn, { backgroundColor: '#ef4444' + (busy ? '11' : '22'), borderColor: busy ? colors.border : '#ef4444' }]}
               >
-                <Feather name="crosshair" size={22} color={busy ? colors.mutedForeground : '#ef4444'} />
+                <Text style={{ fontSize: 22, opacity: busy ? 0.3 : 1 }}>
+                  {ELEMENT_EMOJI[playerFighter.element] ?? '⚔️'}
+                </Text>
                 <Text style={[styles.actionBtnLabel, { color: busy ? colors.mutedForeground : '#ef4444' }]}>
                   {playerFighter.attackName ?? 'Ataque'}
                 </Text>
@@ -1062,7 +1064,9 @@ export default function BattleScreen() {
                   borderColor: !canSpirit || busy ? colors.border : '#a855f7',
                 }]}
               >
-                <Feather name="star" size={22} color={!canSpirit || busy ? colors.mutedForeground : '#a855f7'} />
+                <Text style={{ fontSize: 22, opacity: !canSpirit || busy ? 0.3 : 1 }}>
+                  {ELEMENT_EMOJI[playerFighter.element] ?? '✨'}
+                </Text>
                 <Text style={[styles.actionBtnLabel, { color: !canSpirit || busy ? colors.mutedForeground : '#a855f7' }]}>
                   {playerFighter.spiritName ?? 'Espírito'} ({SPIRIT_MP_COST} MP)
                 </Text>
