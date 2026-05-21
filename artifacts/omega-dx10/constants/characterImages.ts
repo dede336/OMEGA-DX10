@@ -51,6 +51,7 @@ const CHARACTER_IMAGES: Record<string, any> = {
   togemon:        require('../assets/images/characters/togemon.gif'),
   lillymon:       require('../assets/images/characters/lillymon.gif'),
   rosemon:        require('../assets/images/characters/rosemon.webp'),
+  rosemonBurstMode: require('../assets/images/characters/rosemonBurstMode.webp'),
   shineGreymonBurstMode: require('../assets/images/characters/shinegreymonbm.gif'),
   goldramon:      require('../assets/images/characters/goldramon.gif'),
   seraphimon:     require('../assets/images/characters/seraphimon.gif'),

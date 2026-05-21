@@ -550,6 +550,19 @@ export const CHARACTERS: Record<string, Character> = {
     attackName: 'Beauty Slap 🌸',
     spiritName: 'Rose Spear 🌹',
   },
+  rosemonBurstMode: {
+    id: 'rosemonBurstMode',
+    name: 'Rosemon BM',
+    rarity: 'ULTRA',
+    attribute: 'DA',
+    element: 'PLANT',
+    baseStats: { hp: 318, mp: 378, atk: 161, def: 135, spt: 158, spd: 142, apt: 88 },
+    description: 'O Burst Mode de Rosemon, forjado com o sacrifício da luz de Ophanimon. Uma força da natureza transcendente que mistura o poder das plantas com relámpagos e luz celestial. Considerada por muitos a forma mais poderosa da linhagem verde.',
+    attackName: 'Beauty Shock ⚡',
+    attackElement: 'LIGHTNING',
+    spiritName: 'Aguichant Lèvres ✨',
+    spiritElement: 'LIGHT',
+  },
   lillymon: {
     id: 'lillymon',
     name: 'Lillymon',
@@ -681,6 +694,7 @@ export const ALTERNATE_EVOLUTIONS: Record<string, { evolvesTo: string; requiredL
   angewomon:    { evolvesTo: 'ophanimon',            requiredLevel: 60, label: 'Ophanimon',              requiredItem: 'anel_sagrado' },
   magnaAngemon: { evolvesTo: 'seraphimon',           requiredLevel: 60, label: 'Seraphimon',             requiredItem: 'anel_sagrado' },
   shineGreymon:      { evolvesTo: 'shineGreymonBurstMode', requiredLevel: 68, label: 'ShineGreymon Burst Mode', requiredSacrificeCharacter: 'imperialDramonFM' },
+  rosemon:           { evolvesTo: 'rosemonBurstMode',      requiredLevel: 64, label: 'Rosemon Burst Mode',      requiredSacrificeCharacter: 'ophanimon' },
   imperialDramonFM:  { evolvesTo: 'imperialDramonPM',     requiredLevel: 60, label: 'Imperialdramon PM',       requiredSacrificeCharacter: 'omegamon' },
   exVeemon:          { evolvesTo: 'paildramon',            requiredLevel: 36, label: 'Paildramon',              requiredSacrificeCharacter: 'stingmon' },
   stingmon:          { evolvesTo: 'paildramon',            requiredLevel: 36, label: 'Paildramon',              requiredSacrificeCharacter: 'exVeemon' },
@@ -707,7 +721,7 @@ export const ROOKIE_OF: Record<string, string> = {
   growlmon: 'guilmon',      megaloGrowlmon: 'guilmon',    gallantmon: 'guilmon',
   angemon: 'patamon',       magnaAngemon: 'patamon',      seraphimon: 'patamon',     goldramon: 'patamon',
   tailmon: 'salamon',       angewomon: 'salamon',         ophanimon: 'salamon',     magnadramon: 'salamon',
-  togemon: 'palmon',        lillymon: 'palmon',       rosemon: 'palmon',
+  togemon: 'palmon',        lillymon: 'palmon',       rosemon: 'palmon',        rosemonBurstMode: 'palmon',
   devimon: 'demiDevimon',   myotismon: 'demiDevimon',     vnonMyotismon: 'demiDevimon',
   exVeemon:         'veemon',
   paildramon:       'veemon',
@@ -735,7 +749,7 @@ export const ITEM_NAMES: Record<string, string> = {
 export const SCANNABLE_CHARACTERS: string[] = ['agumon', 'gabumon', 'demiDevimon', 'patamon', 'pyomon', 'salamon', 'palmon'];
 
 // Display order in the Codex (grouped by evolution line)
-export const CODEX_ORDER: string[] = ['agumon', 'agumonSaver', 'geoGreymon', 'rizeGreymon', 'shineGreymon', 'shineGreymonBurstMode', 'veemon', 'exVeemon', 'paildramon', 'imperialDramonFM', 'imperialDramonRM', 'imperialDramonPM', 'greymon', 'metalGreymon', 'warGreymon', 'gabumon', 'garurumon', 'wereGarurumon', 'metalGarurumon', 'omegamon', 'guilmon', 'growlmon', 'megaloGrowlmon', 'gallantmon', 'gallantmonCrimsonMode', 'lucemon', 'lucemonChaosMode', 'patamon', 'angemon', 'magnaAngemon', 'goldramon', 'seraphimon', 'pyomon', 'birdramon', 'garudamon', 'phoenixmon', 'salamon', 'tailmon', 'angewomon', 'magnadramon', 'ophanimon', 'palmon', 'togemon', 'lillymon', 'rosemon', 'demiDevimon', 'devimon', 'myotismon', 'vnonMyotismon', 'gulusGammamon'];
+export const CODEX_ORDER: string[] = ['agumon', 'agumonSaver', 'geoGreymon', 'rizeGreymon', 'shineGreymon', 'shineGreymonBurstMode', 'veemon', 'exVeemon', 'paildramon', 'imperialDramonFM', 'imperialDramonRM', 'imperialDramonPM', 'greymon', 'metalGreymon', 'warGreymon', 'gabumon', 'garurumon', 'wereGarurumon', 'metalGarurumon', 'omegamon', 'guilmon', 'growlmon', 'megaloGrowlmon', 'gallantmon', 'gallantmonCrimsonMode', 'lucemon', 'lucemonChaosMode', 'patamon', 'angemon', 'magnaAngemon', 'goldramon', 'seraphimon', 'pyomon', 'birdramon', 'garudamon', 'phoenixmon', 'salamon', 'tailmon', 'angewomon', 'magnadramon', 'ophanimon', 'palmon', 'togemon', 'lillymon', 'rosemon', 'rosemonBurstMode', 'demiDevimon', 'devimon', 'myotismon', 'vnonMyotismon', 'gulusGammamon'];
 
 // ─── Maps & Stages ─────────────────────────────────────────────────────────────
 export const GAME_MAPS: GameMap[] = [
