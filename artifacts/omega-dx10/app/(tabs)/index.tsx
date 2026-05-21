@@ -19,6 +19,7 @@ const TAI_BG           = require('../../assets/images/tai_bg.webp');
 const SORA_BG          = require('../../assets/images/sora_bg.jpg');
 const MIMI_BG          = require('../../assets/images/mimi_bg.jpg');
 const KARI_BG          = require('../../assets/images/kari_bg.jpg');
+const MATT_BG          = require('../../assets/images/matt_bg.png');
 
 const SPECIAL_GIFS: Record<string, any> = {
   omegamon:              require('../../assets/images/omegamon_digivolve.gif'),
@@ -97,6 +98,7 @@ export default function HomeScreen() {
   const isSora = tamerId === 'tamer_sora';
   const isMimi = tamerId === 'tamer_mimi';
   const isKari = tamerId === 'tamer_kari';
+  const isMatt = tamerId === 'tamer_matt';
 
   const botPad = Platform.OS === 'web' ? 20 : insets.bottom + 20;
 
@@ -139,6 +141,13 @@ export default function HomeScreen() {
         {isKari && (
           <Image
             source={KARI_BG}
+            style={[StyleSheet.absoluteFillObject, { opacity: 0.30 }]}
+            resizeMode="cover"
+          />
+        )}
+        {isMatt && (
+          <Image
+            source={MATT_BG}
             style={[StyleSheet.absoluteFillObject, { opacity: 0.30 }]}
             resizeMode="cover"
           />
