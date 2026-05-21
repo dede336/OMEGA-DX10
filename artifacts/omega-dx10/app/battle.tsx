@@ -731,21 +731,19 @@ export default function BattleScreen() {
           <View style={{ width: 32 }} />
         </View>
 
-        {/* Enemy preview — background only, enemies listed below */}
-        <View style={[styles.enemyPreviewCard, { borderColor: firstEnemyAttr ? firstEnemyAttr.color + '88' : colors.border }]}>
-          {map.backgroundImage ? (
-            <ImageBackground source={map.backgroundImage} style={styles.previewBg} imageStyle={{ resizeMode: 'cover' }} />
-          ) : (
-            <View style={[styles.previewBgOverlay, { backgroundColor: colors.card, minHeight: 140 }]} />
+        {/* Enemy preview — compact row */}
+        <View style={[styles.enemyPreviewCompact, { backgroundColor: colors.card, borderColor: firstEnemyAttr ? firstEnemyAttr.color + '88' : colors.border }]}>
+          {map.backgroundImage && (
+            <ImageBackground source={map.backgroundImage} style={styles.previewBgSmall} imageStyle={{ resizeMode: 'cover' }} />
           )}
-          <View style={[styles.previewInfo, { backgroundColor: colors.card }]}>
+          <View style={styles.previewInfoCompact}>
             <Text style={[styles.enemyLevel, { color: colors.primary }]}>Nível {stage.enemyLevel}</Text>
             <View style={[styles.expBadge, { backgroundColor: colors.primary + '22', borderColor: colors.primary }]}>
-              <Feather name="award" size={12} color={colors.primary} />
+              <Feather name="award" size={11} color={colors.primary} />
               <Text style={[styles.expBadgeText, { color: colors.primary }]}>+{stage.expReward} EXP</Text>
             </View>
-            <Text style={[styles.possibleLabel, { color: colors.mutedForeground }]}>
-              Possíveis aparições: {stageCharIds.map((id) => CHARACTERS[id]?.name ?? id).join(', ')}
+            <Text style={[styles.possibleLabel, { color: colors.mutedForeground }]} numberOfLines={2}>
+              {stageCharIds.map((id) => CHARACTERS[id]?.name ?? id).join(', ')}
             </Text>
           </View>
         </View>
@@ -757,7 +755,7 @@ export default function BattleScreen() {
         <ScrollView
           horizontal
           showsHorizontalScrollIndicator={false}
-          style={{ height: 170 }}
+          style={styles.selectScroll}
           contentContainerStyle={styles.selectList}
         >
           {collection.map((owned) => {
@@ -782,10 +780,9 @@ export default function BattleScreen() {
                     <Text style={styles.teamPosBadgeText}>{pos + 1}</Text>
                   </View>
                 )}
-                <CharacterAvatar characterId={owned.characterId} size={64} />
-                <Text style={[styles.selectName, { color: colors.foreground }]}>{c?.name}</Text>
+                <CharacterAvatar characterId={owned.characterId} size={52} />
+                <Text style={[styles.selectName, { color: colors.foreground }]} numberOfLines={1}>{c?.name}</Text>
                 <Text style={[styles.selectLevel, { color: colors.primary }]}>Lv {owned.level}</Text>
-                <AttributeBadge attr={c?.attribute ?? 'NO'} />
               </TouchableOpacity>
             );
           })}
@@ -1229,6 +1226,10 @@ const styles = StyleSheet.create({
   enemyPreviewCard: { margin: 20, borderRadius: 16, borderWidth: 1.5, overflow: 'hidden' },
   previewBg: { width: '100%', height: 150 },
   previewBgOverlay: { flex: 1, backgroundColor: 'rgba(0,0,0,0.25)', alignItems: 'center', justifyContent: 'center', paddingVertical: 12, gap: 6 },
+  enemyPreviewCompact: { flexDirection: 'row', marginHorizontal: 16, marginTop: 12, marginBottom: 4, borderRadius: 14, borderWidth: 1.5, overflow: 'hidden', height: 90 },
+  previewBgSmall: { width: 110, height: '100%' as any },
+  previewInfoCompact: { flex: 1, paddingHorizontal: 12, paddingVertical: 8, gap: 4, justifyContent: 'center' },
+  selectScroll: { flexGrow: 0, flexShrink: 0, height: 150 },
   previewLabel: { fontSize: 10, fontWeight: '800' as const, letterSpacing: 1.5, color: '#ffffffcc' },
   previewEnemyRow: { flexDirection: 'row', gap: 8, alignItems: 'center', justifyContent: 'center', flexWrap: 'wrap' },
   previewSprite: { width: 90, height: 90 },
@@ -1240,7 +1241,7 @@ const styles = StyleSheet.create({
   possibleLabel: { fontSize: 11, fontWeight: '500' as const, textAlign: 'center', marginTop: 6 },
   chooseLabel: { fontSize: 11, fontWeight: '700' as const, letterSpacing: 1, paddingHorizontal: 20, marginBottom: 10 },
   selectList: { paddingHorizontal: 20, paddingBottom: 20, gap: 12 },
-  selectCard: { width: 120, borderRadius: 14, borderWidth: 1.5, padding: 14, alignItems: 'center', gap: 8, position: 'relative' as const },
+  selectCard: { width: 100, borderRadius: 14, borderWidth: 1.5, padding: 10, alignItems: 'center', gap: 6, position: 'relative' as const },
   teamPosBadge: { position: 'absolute', top: 6, right: 6, width: 20, height: 20, borderRadius: 10, alignItems: 'center', justifyContent: 'center' },
   teamPosBadgeText: { fontSize: 11, fontWeight: '800' as const, color: '#fff' },
   selectName: { fontSize: 14, fontWeight: '700' as const },
