@@ -207,7 +207,7 @@ export const CHARACTERS: Record<string, Character> = {
   lucemonChaosMode: {
     id: 'lucemonChaosMode',
     name: 'Lucemon Chaos Mode',
-    rarity: 'LEGENDARY',
+    rarity: 'EPIC',
     attribute: 'VR',
     element: 'DARK',
     baseStats: { hp: 243, mp: 265, atk: 142, def: 113, spt: 119, spd: 118, apt: 70 },
