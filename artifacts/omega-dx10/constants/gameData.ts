@@ -196,6 +196,15 @@ export const CHARACTERS: Record<string, Character> = {
     baseStats: { hp: 312, mp: 338, atk: 167, def: 121, spt: 124, spd: 131, apt: 72 },
     description: 'A forma Mega do WereGarurumon. Um lobo metálico blindado que domina os elementos gelo e água, disparando mísseis criogênicos devastadores. Considerado um dos Digimon Vacina mais poderosos.',
   },
+  omegamon: {
+    id: 'omegamon',
+    name: 'Omegamon',
+    rarity: 'ULTRA',
+    attribute: 'VC',
+    element: 'LIGHT',
+    baseStats: { hp: 334, mp: 358, atk: 185, def: 143, spt: 170, spd: 143, apt: 99 },
+    description: 'A fusão suprema entre WarGreymon e MetalGarurumon. Um Digimon Ultra lendário do tipo Vacina, portador da espada Grey Sword e do canhão Garuru Cannon. Protege o mundo digital com poder absoluto.',
+  },
   gulusGammamon: {
     id: 'gulusGammamon',
     name: 'GulusGammamon',
@@ -234,6 +243,18 @@ export const CHARACTERS: Record<string, Character> = {
   },
 };
 
+// ─── Fusion paths ─────────────────────────────────────────────────────────────
+export interface FusionRecipe {
+  partner: string;
+  resultId: string;
+  resultName: string;
+}
+
+export const FUSIONS: Record<string, FusionRecipe> = {
+  warGreymon:    { partner: 'metalGarurumon', resultId: 'omegamon', resultName: 'Omegamon' },
+  metalGarurumon:{ partner: 'warGreymon',     resultId: 'omegamon', resultName: 'Omegamon' },
+};
+
 // ─── Evolution paths ──────────────────────────────────────────────────────────
 export const EVOLUTIONS: Record<string, { evolvesTo: string; requiredLevel: number; label: string }> = {
   agumon:       { evolvesTo: 'greymon',       requiredLevel: 16, label: 'Greymon' },
@@ -254,7 +275,7 @@ export const EVOLUTIONS: Record<string, { evolvesTo: string; requiredLevel: numb
 export const SCANNABLE_CHARACTERS: string[] = ['agumon', 'gabumon', 'demiDevimon'];
 
 // Display order in the Codex (grouped by evolution line)
-export const CODEX_ORDER: string[] = ['agumon', 'agumonSaver', 'geoGreymon', 'rizeGreymon', 'shineGreymon', 'greymon', 'metalGreymon', 'warGreymon', 'gabumon', 'garurumon', 'wereGarurumon', 'metalGarurumon', 'demiDevimon', 'devimon', 'myotismon', 'vnonMyotismon', 'gulusGammamon'];
+export const CODEX_ORDER: string[] = ['agumon', 'agumonSaver', 'geoGreymon', 'rizeGreymon', 'shineGreymon', 'greymon', 'metalGreymon', 'warGreymon', 'gabumon', 'garurumon', 'wereGarurumon', 'metalGarurumon', 'omegamon', 'demiDevimon', 'devimon', 'myotismon', 'vnonMyotismon', 'gulusGammamon'];
 
 // ─── Maps & Stages ─────────────────────────────────────────────────────────────
 export const GAME_MAPS: GameMap[] = [

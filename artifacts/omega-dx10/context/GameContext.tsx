@@ -1,7 +1,7 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import React, { createContext, useCallback, useContext, useEffect, useState } from 'react';
 import {
-  CHARACTERS, EVOLUTIONS, GAME_MAPS, expToNextLevel, tamerExpToNextLevel,
+  CHARACTERS, EVOLUTIONS, FUSIONS, GAME_MAPS, expToNextLevel, tamerExpToNextLevel,
   EquipSlot, TamerGender, EQUIP_SLOTS_ORDER, DEFAULT_INVENTORY,
   CRAFT_RECIPES, CraftRecipe,
 } from '@/constants/gameData';
@@ -91,6 +91,7 @@ interface GameContextValue extends GameState {
   gainScan: (characterId: string, amount: number) => void;
   createFromScan: (characterId: string) => void;
   evolveDigimon: (ownedId: string) => void;
+  fuseDigimon: (keepOwnedId: string, sacrificeOwnedId: string) => boolean;
   totalPlayerLevel: number;
   setGender: (g: TamerGender) => void;
   equipItem: (slot: EquipSlot, itemId: string) => void;
@@ -238,6 +239,27 @@ export function GameProvider({ children }: { children: React.ReactNode }) {
       });
       return { ...prev, collection: updated };
     });
+  }, []);
+
+  const fuseDigimon = useCallback((keepOwnedId: string, sacrificeOwnedId: string): boolean => {
+    let success = false;
+    setState((prev) => {
+      const keep = prev.collection.find((c) => c.ownedId === keepOwnedId);
+      const sacrifice = prev.collection.find((c) => c.ownedId === sacrificeOwnedId);
+      if (!keep || !sacrifice) return prev;
+      const fusion = FUSIONS[keep.characterId];
+      if (!fusion || fusion.partner !== sacrifice.characterId) return prev;
+      success = true;
+      const newSelected = prev.selectedOwnedId === sacrificeOwnedId ? keepOwnedId : prev.selectedOwnedId;
+      return {
+        ...prev,
+        selectedOwnedId: newSelected,
+        collection: prev.collection
+          .filter((c) => c.ownedId !== sacrificeOwnedId)
+          .map((c) => c.ownedId === keepOwnedId ? { ...c, characterId: fusion.resultId, level: 1, exp: 0 } : c),
+      };
+    });
+    return success;
   }, []);
 
   const setSelectedCharacter = useCallback((ownedId: string) => {
@@ -432,6 +454,7 @@ export function GameProvider({ children }: { children: React.ReactNode }) {
         gainScan,
         createFromScan,
         evolveDigimon,
+        fuseDigimon,
         totalPlayerLevel,
         setGender,
         equipItem,
