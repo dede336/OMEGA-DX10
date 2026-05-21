@@ -8,7 +8,8 @@ import { useGame } from '@/context/GameContext';
 import { GAME_MAPS, CHARACTERS, ATTRIBUTES, ELEMENTS } from '@/constants/gameData';
 import CHARACTER_IMAGES from '@/constants/characterImages';
 
-const STARS_3 = require('../../assets/images/ui/stars3.png');
+const STARS_3  = require('../../assets/images/ui/stars3.png');
+const PADLOCK  = require('../../assets/images/ui/padlock.png');
 
 // Shows 1-3 gold stars based on progress
 function StarRating({ count }: { count: number }) {
@@ -122,11 +123,11 @@ export default function MapScreen() {
                     imageStyle={styles.mapBannerImage}
                   >
                     <View style={styles.mapBannerOverlay}>
+                      {!unlocked && (
+                        <Image source={PADLOCK} style={styles.padlockImg} resizeMode="contain" />
+                      )}
                       <View style={styles.mapBannerInfo}>
-                        <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6 }}>
-                          {!unlocked && <Feather name="lock" size={14} color="#ffffffaa" />}
-                          <Text style={styles.mapBannerName}>{map.name}</Text>
-                        </View>
+                        <Text style={styles.mapBannerName}>{map.name}</Text>
                         <Text style={styles.mapBannerDesc} numberOfLines={1}>{map.description}</Text>
                         {!unlocked && !isDungeon && (
                           <Text style={styles.mapBannerLock}>Complete o mapa anterior para desbloquear</Text>
@@ -158,12 +159,14 @@ export default function MapScreen() {
                 ) : (
                   /* Plain header for maps without a background */
                   <View style={styles.mapHeader}>
+                    {!unlocked && (
+                      <Image source={PADLOCK} style={styles.padlockImg} resizeMode="contain" />
+                    )}
+                    {isDungeon && unlocked && (
+                      <Feather name="shield-off" size={20} color={dungeonBorderColor} />
+                    )}
                     <View style={styles.mapInfo}>
-                      <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6 }}>
-                        {!unlocked && <Feather name="lock" size={14} color={colors.mutedForeground} />}
-                        {isDungeon && unlocked && <Feather name="shield-off" size={14} color={dungeonBorderColor} />}
-                        <Text style={[styles.mapName, { color: isDungeon ? '#c4b5fd' : (unlocked ? colors.foreground : colors.mutedForeground) }]}>{map.name}</Text>
-                      </View>
+                      <Text style={[styles.mapName, { color: isDungeon ? '#c4b5fd' : (unlocked ? colors.foreground : colors.mutedForeground) }]}>{map.name}</Text>
                       <Text style={[styles.mapDesc, { color: colors.mutedForeground }]} numberOfLines={2}>{map.description}</Text>
                       {!unlocked && !isDungeon && (
                         <Text style={[styles.lockHint, { color: colors.mutedForeground }]}>
@@ -335,6 +338,7 @@ const styles = StyleSheet.create({
   mapRight: { alignItems: 'center', gap: 4 },
   mapProgress: { fontSize: 16, fontWeight: '800' as const },
   starsImg: { width: 72, height: 28 },
+  padlockImg: { width: 36, height: 36 },
 
   dungeonBanner: { flexDirection: 'row', alignItems: 'center', gap: 6, paddingHorizontal: 16, paddingVertical: 7, borderBottomWidth: 1 },
   dungeonBannerText: { fontSize: 11, fontWeight: '700' as const, letterSpacing: 0.6 },
