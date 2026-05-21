@@ -633,7 +633,7 @@ export const GAME_MAPS: GameMap[] = [
         name: 'Boss — Lucemon Chaos Mode',
         enemyCharacterId: 'lucemonChaosMode',
         enemyLevel: 10,
-        expReward: 1200,
+        expReward: 3600,
         bossMultipliers: { hp: 1.5, def: 1.2 },
         drops: [
           { type: 'bits', amount: 500, chance: 1.00 },
