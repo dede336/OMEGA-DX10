@@ -1,5 +1,5 @@
-import React from 'react';
-import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Platform, Image, ImageBackground } from 'react-native';
+import React, { useState } from 'react';
+import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Platform, Image, ImageBackground, Modal, FlatList } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Feather } from '@expo/vector-icons';
 import { router } from 'expo-router';
@@ -21,7 +21,9 @@ export default function HomeScreen() {
   const insets = useSafeAreaInsets();
   const game = useGame();
   const { user } = useAuth();
-  const { selectedCharacter, collection, clearedStages, playerName, totalPlayerLevel, bits, tamerId } = game;
+  const { selectedCharacter, collection, clearedStages, playerName, totalPlayerLevel, bits, tamerId, setSelectedCharacter } = game;
+
+  const [swapModalVisible, setSwapModalVisible] = useState(false);
 
   const totalStages = GAME_MAPS.reduce((s, m) => s + m.stages.length, 0);
   const clearedCount = Object.keys(clearedStages).length;
@@ -138,7 +140,19 @@ export default function HomeScreen() {
         </View>
 
         {/* ── Active Digimon ── */}
-        <Text style={[styles.sectionTitle, { color: colors.foreground }]}>Digimon Ativo</Text>
+        <View style={styles.sectionHeader}>
+          <Text style={[styles.sectionTitle, { color: colors.foreground }]}>Digimon Ativo</Text>
+          {collection.length > 0 && (
+            <TouchableOpacity
+              onPress={() => setSwapModalVisible(true)}
+              style={[styles.swapBtn, { backgroundColor: colors.primary + '22', borderColor: colors.primary + '66' }]}
+              activeOpacity={0.7}
+            >
+              <Feather name="refresh-cw" size={11} color={colors.primary} />
+              <Text style={[styles.swapBtnText, { color: colors.primary }]}>Trocar</Text>
+            </TouchableOpacity>
+          )}
+        </View>
         {char && scaled && selectedCharacter && attrData ? (
           <TouchableOpacity
             activeOpacity={0.85}
@@ -199,6 +213,63 @@ export default function HomeScreen() {
           </TouchableOpacity>
         )}
       </View>
+
+      {/* ── Swap Modal ── */}
+      <Modal
+        visible={swapModalVisible}
+        transparent
+        animationType="slide"
+        onRequestClose={() => setSwapModalVisible(false)}
+      >
+        <View style={styles.modalOverlay}>
+          <View style={[styles.modalSheet, { backgroundColor: colors.background, borderColor: colors.border }]}>
+            {/* Header */}
+            <View style={[styles.modalHeader, { borderBottomColor: colors.border }]}>
+              <Text style={[styles.modalTitle, { color: colors.foreground }]}>Escolher Digimon Ativo</Text>
+              <TouchableOpacity onPress={() => setSwapModalVisible(false)}>
+                <Feather name="x" size={22} color={colors.mutedForeground} />
+              </TouchableOpacity>
+            </View>
+
+            <FlatList
+              data={collection}
+              keyExtractor={(item) => item.ownedId}
+              contentContainerStyle={{ paddingBottom: insets.bottom + 16 }}
+              renderItem={({ item }) => {
+                const c = CHARACTERS[item.characterId];
+                if (!c) return null;
+                const isActive = item.ownedId === selectedCharacter?.ownedId;
+                const attr = ATTRIBUTES[c.attribute];
+                return (
+                  <TouchableOpacity
+                    activeOpacity={0.7}
+                    onPress={() => { setSelectedCharacter(item.ownedId); setSwapModalVisible(false); }}
+                    style={[
+                      styles.swapRow,
+                      { borderBottomColor: colors.border },
+                      isActive && { backgroundColor: colors.primary + '14' },
+                    ]}
+                  >
+                    <View style={[styles.swapAvatarWrap, { borderColor: isActive ? colors.primary : attr.color + '66' }]}>
+                      <CharacterAvatar characterId={c.id} size={44} />
+                    </View>
+                    <View style={{ flex: 1 }}>
+                      <Text style={[styles.swapName, { color: colors.foreground }]}>{c.name}</Text>
+                      <Text style={[styles.swapLevel, { color: colors.mutedForeground }]}>Nível {item.level}</Text>
+                    </View>
+                    <AttributeBadge attr={c.attribute} />
+                    {isActive && (
+                      <View style={[styles.activePill, { backgroundColor: colors.primary }]}>
+                        <Text style={[styles.activePillText, { color: colors.primaryForeground }]}>Ativo</Text>
+                      </View>
+                    )}
+                  </TouchableOpacity>
+                );
+              }}
+            />
+          </View>
+        </View>
+      </Modal>
     </ScrollView>
   );
 }
@@ -258,4 +329,21 @@ const styles = StyleSheet.create({
 
   emptyCard: { borderRadius: 16, borderWidth: 1, padding: 40, alignItems: 'center', gap: 12, marginBottom: 20 },
   emptyText: { fontSize: 13, textAlign: 'center' as const },
+
+  // Section header row
+  sectionHeader: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: 10 },
+  swapBtn: { flexDirection: 'row', alignItems: 'center', gap: 5, borderRadius: 8, borderWidth: 1, paddingHorizontal: 10, paddingVertical: 5 },
+  swapBtnText: { fontSize: 11, fontWeight: '700' as const },
+
+  // Swap modal
+  modalOverlay: { flex: 1, justifyContent: 'flex-end', backgroundColor: '#00000088' },
+  modalSheet: { borderTopLeftRadius: 22, borderTopRightRadius: 22, borderWidth: 1, maxHeight: '80%' },
+  modalHeader: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', padding: 18, borderBottomWidth: 1 },
+  modalTitle: { fontSize: 15, fontWeight: '800' as const, letterSpacing: 0.5 },
+  swapRow: { flexDirection: 'row', alignItems: 'center', gap: 12, paddingHorizontal: 16, paddingVertical: 10, borderBottomWidth: StyleSheet.hairlineWidth },
+  swapAvatarWrap: { borderRadius: 26, borderWidth: 2, padding: 2, overflow: 'hidden' as const },
+  swapName: { fontSize: 14, fontWeight: '700' as const },
+  swapLevel: { fontSize: 12, marginTop: 2 },
+  activePill: { borderRadius: 8, paddingHorizontal: 8, paddingVertical: 3, marginLeft: 6 },
+  activePillText: { fontSize: 10, fontWeight: '800' as const },
 });
