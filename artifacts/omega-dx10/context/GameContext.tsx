@@ -388,7 +388,7 @@ export function GameProvider({ children }: { children: React.ReactNode }) {
       tamer_sora: 'pyomon',
       tamer_mimi: 'palmon',
     };
-    const starterId = TAMER_STARTERS[tamerId] ?? 'agumon';
+    const starterId = TAMER_STARTERS[tamerId];
     const ownedId   = `owned_${starterId}_0`;
     const starter   = { ownedId, characterId: starterId, level: 1, exp: 0 };
     setState((prev) => ({
