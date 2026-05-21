@@ -9,7 +9,7 @@ import { Feather } from '@expo/vector-icons';
 import { useColors } from '@/hooks/useColors';
 import { useGame, OwnedCharacter, SacrificeResult } from '@/context/GameContext';
 import {
-  CHARACTERS, EVOLUTIONS, SCANNABLE_CHARACTERS, CODEX_ORDER,
+  CHARACTERS, EVOLUTIONS, ALTERNATE_EVOLUTIONS, SCANNABLE_CHARACTERS, CODEX_ORDER,
   RARITY_COLORS, RARITY_LABELS,
   SACRIFICE_DROPS, ROOKIE_OF, SACRIFICE_SCAN_OVERRIDES, SACRIFICE_SCAN_PCT, ITEM_NAMES,
 } from '@/constants/gameData';
@@ -59,14 +59,14 @@ export default function CollectionScreen() {
     setModalOwned(null);
   }
 
-  const handleEvolve = useCallback((ownedId: string, fromCharId: string, toCharId: string) => {
+  const handleEvolve = useCallback((ownedId: string, fromCharId: string, toCharId: string, alternate?: boolean) => {
     closeModal();
     fromOpacity.setValue(1);
     newFormOpacity.setValue(0);
     titleScale.setValue(0.7);
     setEvoPhase('playing');
     setEvoAnim({ fromCharId, toCharId });
-    evolveDigimon(ownedId);
+    evolveDigimon(ownedId, alternate);
   }, [evolveDigimon]);
 
   // Drive the animation phases
@@ -89,10 +89,15 @@ export default function CollectionScreen() {
   }, [evoAnim, evoPhase]);
 
   // Computed evolution info for modal
-  const modalEvo     = modalOwned ? EVOLUTIONS[modalOwned.characterId] : undefined;
-  const hasReqItem   = !modalEvo?.requiredItem || (pieces[modalEvo.requiredItem] ?? 0) > 0;
+  const modalEvo       = modalOwned ? EVOLUTIONS[modalOwned.characterId] : undefined;
+  const hasReqItem     = !modalEvo?.requiredItem || (pieces[modalEvo.requiredItem] ?? 0) > 0;
   const modalCanEvolve = !!(modalOwned && modalEvo && modalOwned.level >= modalEvo.requiredLevel && hasReqItem);
-  const modalEvoChar = modalEvo ? CHARACTERS[modalEvo.evolvesTo] : undefined;
+  const modalEvoChar   = modalEvo ? CHARACTERS[modalEvo.evolvesTo] : undefined;
+
+  const modalAltEvo       = modalOwned ? ALTERNATE_EVOLUTIONS[modalOwned.characterId] : undefined;
+  const hasAltReqItem     = !modalAltEvo?.requiredItem || (pieces[modalAltEvo.requiredItem] ?? 0) > 0;
+  const modalCanAltEvolve = !!(modalOwned && modalAltEvo && modalOwned.level >= modalAltEvo.requiredLevel && hasAltReqItem);
+  const modalAltEvoChar   = modalAltEvo ? CHARACTERS[modalAltEvo.evolvesTo] : undefined;
 
   // Sacrifice info for current modal character
   const modalChar = modalOwned ? CHARACTERS[modalOwned.characterId] : null;
@@ -266,6 +271,65 @@ export default function CollectionScreen() {
                         </Text>
                       </View>
                     )
+                  )}
+
+                  {/* Alternate evolve button (e.g. Ophanimon via Anel Sagrado) */}
+                  {modalAltEvo && modalAltEvoChar && (
+                    <View style={[styles.evoSection, { borderColor: modalCanAltEvolve ? '#a855f7' : colors.border, marginTop: 4 }]}>
+                      <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
+                        <View style={styles.evoSide}>
+                          <CharacterAvatar characterId={modalOwned!.characterId} size={56} />
+                        </View>
+                        <View style={styles.evoArrow}>
+                          <Feather name="arrow-right" size={24} color={modalCanAltEvolve ? '#a855f7' : colors.mutedForeground} />
+                          <Text style={[styles.evoReqText, { color: modalCanAltEvolve ? '#a855f7' : colors.mutedForeground }]}>
+                            Lv {modalAltEvo.requiredLevel}
+                          </Text>
+                          {modalAltEvo.requiredItem && (
+                            <Text style={[styles.evoReqText, { color: hasAltReqItem ? '#a855f7' : '#ef4444', fontSize: 10, marginTop: 2 }]}>
+                              {ITEM_NAMES[modalAltEvo.requiredItem] ?? modalAltEvo.requiredItem}{'\n'}
+                              ({pieces[modalAltEvo.requiredItem] ?? 0} possuído{(pieces[modalAltEvo.requiredItem] ?? 0) !== 1 ? 's' : ''})
+                            </Text>
+                          )}
+                        </View>
+                        <View style={styles.evoSide}>
+                          <CharacterAvatar characterId={modalAltEvo.evolvesTo} size={56} />
+                          <Text style={[styles.evoName, { color: colors.foreground }]}>{modalAltEvoChar.name}</Text>
+                          <View style={styles.evoBadgesRow}>
+                            <AttributeBadge attr={modalAltEvoChar.attribute} />
+                            <ElementBadge elem={modalAltEvoChar.element} />
+                          </View>
+                        </View>
+                      </View>
+                      {modalCanAltEvolve ? (
+                        <TouchableOpacity
+                          style={[styles.evolveBtn, { backgroundColor: '#a855f7' }]}
+                          activeOpacity={0.85}
+                          onPress={() => {
+                            if (!modalOwned || !modalAltEvo) return;
+                            handleEvolve(modalOwned.ownedId, modalOwned.characterId, modalAltEvo.evolvesTo, true);
+                          }}
+                        >
+                          <Feather name="arrow-up-circle" size={20} color="#fff" />
+                          <Text style={[styles.evolveBtnText, { color: '#fff' }]}>Evoluir para {modalAltEvo.label}</Text>
+                        </TouchableOpacity>
+                      ) : !hasAltReqItem ? (
+                        <View style={[styles.evolveLocked, { backgroundColor: colors.background, borderColor: '#ef444466' }]}>
+                          <Feather name="package" size={16} color="#ef4444" />
+                          <Text style={[styles.evolveLockedText, { color: '#ef4444' }]}>
+                            Requer {ITEM_NAMES[modalAltEvo.requiredItem!] ?? modalAltEvo.requiredItem} para evoluir
+                          </Text>
+                        </View>
+                      ) : (
+                        <View style={[styles.evolveLocked, { backgroundColor: colors.background, borderColor: colors.border }]}>
+                          <Feather name="lock" size={16} color={colors.mutedForeground} />
+                          <Text style={[styles.evolveLockedText, { color: colors.mutedForeground }]}>
+                            Alcance o Nível {modalAltEvo.requiredLevel} para evoluir
+                            {' '}(faltam {modalAltEvo.requiredLevel - modalOwned!.level} níveis)
+                          </Text>
+                        </View>
+                      )}
+                    </View>
                   )}
 
                   {/* Sacrifice section */}

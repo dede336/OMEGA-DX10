@@ -227,6 +227,17 @@ export const CHARACTERS: Record<string, Character> = {
     attackName: 'Divine Dasher ✨',
     spiritName: 'Chaos Blast 🌑',
   },
+  magnadramon: {
+    id: 'magnadramon',
+    name: 'Magnadramon',
+    rarity: 'LEGENDARY',
+    attribute: 'VC',
+    element: 'WIND',
+    baseStats: { hp: 261, mp: 296, atk: 139, def: 134, spt: 149, spd: 131, apt: 66 },
+    description: 'O Dragão Sagrado das Chamas Rosadas. A forma Mega da Angewomon, um poderoso dragão do tipo Vacina que incorpora o poder puro da luz e do vento. Sua presença sagrada é capaz de purificar qualquer corrupção no Mundo Digital.',
+    attackName: 'Giga Scissor ⚡',
+    spiritName: 'Holy Bolt ✨',
+  },
   ophanimon: {
     id: 'ophanimon',
     name: 'Ophanimon',
@@ -498,7 +509,7 @@ export const EVOLUTIONS: Record<string, { evolvesTo: string; requiredLevel: numb
   garudamon:      { evolvesTo: 'phoenixmon',   requiredLevel: 48, label: 'Phoenixmon' },
   salamon:        { evolvesTo: 'tailmon',      requiredLevel: 13, label: 'Tailmon' },
   tailmon:        { evolvesTo: 'angewomon',    requiredLevel: 35, label: 'Angewomon' },
-  angewomon:      { evolvesTo: 'ophanimon',    requiredLevel: 60, label: 'Ophanimon', requiredItem: 'anel_sagrado' },
+  angewomon:      { evolvesTo: 'magnadramon',  requiredLevel: 60, label: 'Magnadramon' },
   patamon:        { evolvesTo: 'angemon',      requiredLevel: 19, label: 'Angemon' },
   angemon:        { evolvesTo: 'magnaAngemon', requiredLevel: 33, label: 'MagnaAngemon' },
   magnaAngemon:   { evolvesTo: 'seraphimon',   requiredLevel: 60, label: 'Seraphimon', requiredItem: 'anel_sagrado' },
@@ -508,6 +519,10 @@ export const EVOLUTIONS: Record<string, { evolvesTo: string; requiredLevel: numb
 };
 
 // ─── Sacrifice System ────────────────────────────────────────────────────────
+
+export const ALTERNATE_EVOLUTIONS: Record<string, { evolvesTo: string; requiredLevel: number; label: string; requiredItem?: string }> = {
+  angewomon: { evolvesTo: 'ophanimon', requiredLevel: 60, label: 'Ophanimon', requiredItem: 'anel_sagrado' },
+};
 
 export const SACRIFICE_DROPS: Record<string, { itemId: string; chance: number }[]> = {
   magnaAngemon:     [{ itemId: 'anel_sagrado', chance: 0.30 }],
@@ -523,7 +538,7 @@ export const ROOKIE_OF: Record<string, string> = {
   garurumon: 'gabumon',     wereGarurumon: 'gabumon',     metalGarurumon: 'gabumon',
   growlmon: 'guilmon',      megaloGrowlmon: 'guilmon',    gallantmon: 'guilmon',
   angemon: 'patamon',       magnaAngemon: 'patamon',      seraphimon: 'patamon',
-  tailmon: 'salamon',       angewomon: 'salamon',         ophanimon: 'salamon',
+  tailmon: 'salamon',       angewomon: 'salamon',         ophanimon: 'salamon',     magnadramon: 'salamon',
   devimon: 'demiDevimon',   myotismon: 'demiDevimon',     vnonMyotismon: 'demiDevimon',
 };
 
@@ -545,7 +560,7 @@ export const ITEM_NAMES: Record<string, string> = {
 export const SCANNABLE_CHARACTERS: string[] = ['agumon', 'gabumon', 'demiDevimon', 'patamon', 'pyomon', 'salamon'];
 
 // Display order in the Codex (grouped by evolution line)
-export const CODEX_ORDER: string[] = ['agumon', 'agumonSaver', 'geoGreymon', 'rizeGreymon', 'shineGreymon', 'greymon', 'metalGreymon', 'warGreymon', 'gabumon', 'garurumon', 'wereGarurumon', 'metalGarurumon', 'omegamon', 'guilmon', 'growlmon', 'megaloGrowlmon', 'gallantmon', 'gallantmonCrimsonMode', 'lucemon', 'lucemonChaosMode', 'patamon', 'angemon', 'magnaAngemon', 'seraphimon', 'pyomon', 'birdramon', 'garudamon', 'phoenixmon', 'salamon', 'tailmon', 'angewomon', 'ophanimon', 'demiDevimon', 'devimon', 'myotismon', 'vnonMyotismon', 'gulusGammamon'];
+export const CODEX_ORDER: string[] = ['agumon', 'agumonSaver', 'geoGreymon', 'rizeGreymon', 'shineGreymon', 'greymon', 'metalGreymon', 'warGreymon', 'gabumon', 'garurumon', 'wereGarurumon', 'metalGarurumon', 'omegamon', 'guilmon', 'growlmon', 'megaloGrowlmon', 'gallantmon', 'gallantmonCrimsonMode', 'lucemon', 'lucemonChaosMode', 'patamon', 'angemon', 'magnaAngemon', 'seraphimon', 'pyomon', 'birdramon', 'garudamon', 'phoenixmon', 'salamon', 'tailmon', 'angewomon', 'magnadramon', 'ophanimon', 'demiDevimon', 'devimon', 'myotismon', 'vnonMyotismon', 'gulusGammamon'];
 
 // ─── Maps & Stages ─────────────────────────────────────────────────────────────
 export const GAME_MAPS: GameMap[] = [

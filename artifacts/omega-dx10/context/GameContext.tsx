@@ -1,7 +1,7 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import React, { createContext, useCallback, useContext, useEffect, useState } from 'react';
 import {
-  CHARACTERS, EVOLUTIONS, FUSIONS, GAME_MAPS, expToNextLevel, tamerExpToNextLevel,
+  CHARACTERS, EVOLUTIONS, ALTERNATE_EVOLUTIONS, FUSIONS, GAME_MAPS, expToNextLevel, tamerExpToNextLevel,
   EquipSlot, TamerGender, EQUIP_SLOTS_ORDER, DEFAULT_INVENTORY,
   CRAFT_RECIPES, CraftRecipe,
   SACRIFICE_DROPS, ROOKIE_OF, SACRIFICE_SCAN_OVERRIDES, SACRIFICE_SCAN_PCT,
@@ -98,7 +98,7 @@ interface GameContextValue extends GameState {
   isMapUnlocked: (mapId: string) => boolean;
   gainScan: (characterId: string, amount: number) => void;
   createFromScan: (characterId: string) => void;
-  evolveDigimon: (ownedId: string) => void;
+  evolveDigimon: (ownedId: string, alternate?: boolean) => void;
   fuseDigimon: (keepOwnedId: string, sacrificeOwnedId: string) => boolean;
   sacrificeDigimon: (ownedId: string) => SacrificeResult;
   totalPlayerLevel: number;
@@ -242,11 +242,13 @@ export function GameProvider({ children }: { children: React.ReactNode }) {
     });
   }, []);
 
-  const evolveDigimon = useCallback((ownedId: string) => {
+  const evolveDigimon = useCallback((ownedId: string, alternate?: boolean) => {
     setState((prev) => {
       const target = prev.collection.find((c) => c.ownedId === ownedId);
       if (!target) return prev;
-      const evo = EVOLUTIONS[target.characterId];
+      const evo = alternate
+        ? ALTERNATE_EVOLUTIONS[target.characterId]
+        : EVOLUTIONS[target.characterId];
       if (!evo || target.level < evo.requiredLevel) return prev;
       if (evo.requiredItem && (prev.pieces[evo.requiredItem] ?? 0) <= 0) return prev;
       const newCollection = prev.collection.map((c) =>
