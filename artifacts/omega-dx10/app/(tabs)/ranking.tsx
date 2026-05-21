@@ -189,7 +189,7 @@ const styles = StyleSheet.create({
   retryBtn: { borderWidth: 1, borderRadius: 10, paddingHorizontal: 20, paddingVertical: 10 },
   emptyText: { fontSize: 15, textAlign: 'center', lineHeight: 24 },
   list: { padding: 16, gap: 10 },
-  entry: { flexDirection: 'row', alignItems: 'center', borderRadius: 14, padding: 14, gap: 10 },
+  entry: { flexDirection: 'row', alignItems: 'center', borderRadius: 14, padding: 14, gap: 10, overflow: 'hidden' as const },
   rankCol: { width: 32, alignItems: 'center' },
   avatarWrap: { width: 44, height: 44, borderRadius: 22, borderWidth: 2, overflow: 'hidden' as const, backgroundColor: '#0f1629' },
   avatarImg: { width: 44, height: 100 },
