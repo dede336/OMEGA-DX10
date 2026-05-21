@@ -19,12 +19,18 @@ interface AvatarProps {
   dimmed?: boolean;
 }
 
+// Characters that need a bigger image scale inside the avatar circle
+const AVATAR_SCALE: Record<string, number> = {
+  omegamon: 1.0,
+};
+
 export function CharacterAvatar({ characterId, size = 72, borderColor, bgColor, dimmed }: AvatarProps) {
   const img = CHARACTER_IMAGES[characterId];
   const char = CHARACTERS[characterId];
   const attrData = char ? ATTRIBUTES[char.attribute] : null;
   const bc = borderColor ?? attrData?.color ?? '#00d4ff';
   const bg = bgColor ?? (attrData?.color ?? '#00d4ff') + '22';
+  const imgScale = AVATAR_SCALE[characterId] ?? 0.8;
 
   return (
     <View
@@ -43,7 +49,7 @@ export function CharacterAvatar({ characterId, size = 72, borderColor, bgColor, 
       {img ? (
         <Image
           source={img}
-          style={{ width: size * 0.8, height: size * 0.8 }}
+          style={{ width: size * imgScale, height: size * imgScale }}
           resizeMode="contain"
         />
       ) : (
