@@ -186,8 +186,8 @@ export default function BattleScreen() {
     }
   }
 
-  function doEnemyTurn(pF: BattleFighter, eF: BattleFighter) {
-    if (!eF || !pF) return;
+  function doEnemyTurn(pF: BattleFighter, eF: BattleFighter): boolean {
+    if (!eF || !pF) return false;
     const action = enemyChooseAction(eF);
     const result = executeTurn(eF, pF, action);
 
@@ -207,11 +207,14 @@ export default function BattleScreen() {
         setWinner('enemy');
         setPhase('result');
       }, 400);
+      return true;
     }
+    return false;
   }
 
   function handleAction(action: ActionType) {
     if (busy || !playerFighter || !enemyFighter || phase !== 'battle') return;
+    if (playerFighter.currentHP <= 0 || enemyFighter.currentHP <= 0) return;
     if (action === 'SPIRIT' && playerFighter.currentMP < SPIRIT_MP_COST) return;
 
     setBusy(true);
@@ -324,8 +327,8 @@ export default function BattleScreen() {
 
     // Enemy turn after delay
     setTimeout(() => {
-      doEnemyTurn(updatedPlayer, updatedEnemy);
-      setBusy(false);
+      const playerDied = doEnemyTurn(updatedPlayer, updatedEnemy);
+      if (!playerDied) setBusy(false);
     }, 900);
   }
 
