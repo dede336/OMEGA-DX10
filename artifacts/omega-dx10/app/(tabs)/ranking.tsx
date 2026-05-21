@@ -73,8 +73,8 @@ export default function RankingScreen() {
         {isTK && (
           <Image
             source={TK_BG_GIF}
-            style={[StyleSheet.absoluteFillObject, { opacity: 0.30, borderRadius: 12 }]}
-            resizeMode="cover"
+            style={[StyleSheet.absoluteFillObject, { opacity: 0.40, borderRadius: 12 }]}
+            resizeMode="contain"
           />
         )}
         <View style={styles.rankCol}>
