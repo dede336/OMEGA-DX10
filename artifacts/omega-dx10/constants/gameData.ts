@@ -656,9 +656,9 @@ export const GAME_MAPS: GameMap[] = [
     bitsReward: 100,
     tamerExpReward: 5,
     stages: [
-      { index: 0, name: 'Entrada da Floresta', enemyCharacterId: 'demiDevimon', enemyLevel: 1,  expReward: 40,  enemyCharacterIds: ['demiDevimon', 'agumon', 'pyomon', 'patamon', 'gabumon', 'salamon', 'palmon'], randomEnemyCount: 1 },
-      { index: 1, name: 'Clareira dos Dados',  enemyCharacterId: 'gabumon',     enemyLevel: 4,  expReward: 60,  enemyCharacterIds: ['demiDevimon', 'agumon', 'pyomon', 'patamon', 'gabumon', 'salamon', 'palmon'], randomEnemyCount: 2 },
-      { index: 2, name: 'Núcleo da Floresta',  enemyCharacterId: 'pyomon',      enemyLevel: 8,  expReward: 100, enemyCharacterIds: ['demiDevimon', 'agumon', 'pyomon', 'patamon', 'gabumon', 'salamon', 'palmon'], randomEnemyCount: 3 },
+      { index: 0, name: 'Entrada da Floresta', enemyCharacterId: 'demiDevimon', enemyLevel: 1,  expReward: 50,  enemyCharacterIds: ['demiDevimon', 'agumon', 'pyomon', 'patamon', 'gabumon', 'salamon', 'palmon'], randomEnemyCount: 1 },
+      { index: 1, name: 'Clareira dos Dados',  enemyCharacterId: 'gabumon',     enemyLevel: 4,  expReward: 90,  enemyCharacterIds: ['demiDevimon', 'agumon', 'pyomon', 'patamon', 'gabumon', 'salamon', 'palmon'], randomEnemyCount: 2 },
+      { index: 2, name: 'Núcleo da Floresta',  enemyCharacterId: 'pyomon',      enemyLevel: 8,  expReward: 160, enemyCharacterIds: ['demiDevimon', 'agumon', 'pyomon', 'patamon', 'gabumon', 'salamon', 'palmon'], randomEnemyCount: 3 },
     ],
   },
   {
@@ -670,9 +670,9 @@ export const GAME_MAPS: GameMap[] = [
     bitsReward: 250,
     tamerExpReward: 10,
     stages: [
-      { index: 0, name: 'Avenida dos Neons',   enemyCharacterId: 'greymon',      enemyLevel: 12,  expReward: 130, enemyCharacterIds: ['greymon', 'garurumon', 'devimon'] },
-      { index: 1, name: 'Setor Industrial',    enemyCharacterId: 'garurumon',    enemyLevel: 16,  expReward: 160, enemyCharacterIds: ['greymon', 'garurumon', 'devimon'] },
-      { index: 2, name: 'Torre Central',       enemyCharacterId: 'devimon',      enemyLevel: 18,  expReward: 220, enemyCharacterIds: ['greymon', 'garurumon', 'devimon'] },
+      { index: 0, name: 'Avenida dos Neons',   enemyCharacterId: 'greymon',      enemyLevel: 12,  expReward: 300, enemyCharacterIds: ['greymon', 'garurumon', 'devimon'] },
+      { index: 1, name: 'Setor Industrial',    enemyCharacterId: 'garurumon',    enemyLevel: 16,  expReward: 500, enemyCharacterIds: ['greymon', 'garurumon', 'devimon'] },
+      { index: 2, name: 'Torre Central',       enemyCharacterId: 'devimon',      enemyLevel: 18,  expReward: 800, enemyCharacterIds: ['greymon', 'garurumon', 'devimon'] },
     ],
   },
   {
@@ -684,9 +684,9 @@ export const GAME_MAPS: GameMap[] = [
     bitsReward: 500,
     tamerExpReward: 15,
     stages: [
-      { index: 0, name: 'Portal das Trevas',   enemyCharacterId: 'metalGreymon',  enemyLevel: 20,  expReward: 280, enemyCharacterIds: ['metalGreymon', 'wereGarurumon', 'myotismon'] },
-      { index: 1, name: 'Abismo Corrompido',   enemyCharacterId: 'wereGarurumon', enemyLevel: 22,  expReward: 340, enemyCharacterIds: ['metalGreymon', 'wereGarurumon', 'myotismon'] },
-      { index: 2, name: 'Trono do Caos',       enemyCharacterId: 'myotismon',     enemyLevel: 24,  expReward: 450, enemyCharacterIds: ['metalGreymon', 'wereGarurumon', 'myotismon'], firstClearReward: 'oculos_escuro_fitado' },
+      { index: 0, name: 'Portal das Trevas',   enemyCharacterId: 'metalGreymon',  enemyLevel: 20,  expReward: 1500, enemyCharacterIds: ['metalGreymon', 'wereGarurumon', 'myotismon'] },
+      { index: 1, name: 'Abismo Corrompido',   enemyCharacterId: 'wereGarurumon', enemyLevel: 22,  expReward: 2500, enemyCharacterIds: ['metalGreymon', 'wereGarurumon', 'myotismon'] },
+      { index: 2, name: 'Trono do Caos',       enemyCharacterId: 'myotismon',     enemyLevel: 24,  expReward: 4000, enemyCharacterIds: ['metalGreymon', 'wereGarurumon', 'myotismon'], firstClearReward: 'oculos_escuro_fitado' },
     ],
   },
   {
@@ -725,7 +725,7 @@ export const GAME_MAPS: GameMap[] = [
         name: 'Boss — GulusGammamon',
         enemyCharacterId: 'gulusGammamon',
         enemyLevel: 25,
-        expReward: 500,
+        expReward: 6000,
         bossMultipliers: { hp: 2, def: 4 / 3 },
         firstClearReward: 'digivice_d2',
         drops: [
