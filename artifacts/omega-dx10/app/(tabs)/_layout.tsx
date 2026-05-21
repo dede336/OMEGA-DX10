@@ -4,6 +4,7 @@ import { Tabs } from "expo-router";
 import { Icon, Label, NativeTabs } from "expo-router/unstable-native-tabs";
 import React from "react";
 import { Platform, StyleSheet, View, Image, useColorScheme } from "react-native";
+import { Feather } from "@expo/vector-icons";
 
 import { useColors } from "@/hooks/useColors";
 import { useGame } from "@/context/GameContext";
@@ -21,6 +22,10 @@ function NativeTabLayout() {
       <NativeTabs.Trigger name="index">
         <Icon sf={{ default: "house", selected: "house.fill" }} />
         <Label>Início</Label>
+      </NativeTabs.Trigger>
+      <NativeTabs.Trigger name="banco">
+        <Icon sf={{ default: "book.pages", selected: "book.pages.fill" }} />
+        <Label>Banco</Label>
       </NativeTabs.Trigger>
       <NativeTabs.Trigger name="collection">
         <Icon sf={{ default: "square.grid.2x2", selected: "square.grid.2x2.fill" }} />
@@ -85,6 +90,15 @@ function ClassicTabLayout() {
           title: "Início",
           tabBarIcon: () => (
             <Image source={HOME_ICON} style={{ width: 26, height: 26 }} resizeMode="contain" />
+          ),
+        }}
+      />
+      <Tabs.Screen
+        name="banco"
+        options={{
+          title: "BD",
+          tabBarIcon: ({ color }) => (
+            <Feather name="book-open" size={22} color={color} />
           ),
         }}
       />
