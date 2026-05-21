@@ -447,6 +447,17 @@ export const CHARACTERS: Record<string, Character> = {
     attackName: 'Espada Cinzenta ✨',
     spiritName: 'Canhão Garuru ❄️',
   },
+  togemon: {
+    id: 'togemon',
+    name: 'Togemon',
+    rarity: 'RARE',
+    attribute: 'DA',
+    element: 'PLANT',
+    baseStats: { hp: 166, mp: 166, atk: 108, def: 96, spt: 67, spd: 71, apt: 35 },
+    description: 'A forma Champion da Palmon, um gigantesco cacto lutador com luvas de boxe. Apesar da aparência dura e espinhosa, tem um coração gentil. Seus socos são capazes de derrubar inimigos muito maiores.',
+    attackName: 'Gatling Punch 💥',
+    spiritName: 'Chikuchiku Bang Bang 🌍',
+  },
   palmon: {
     id: 'palmon',
     name: 'Palmon',
@@ -532,6 +543,7 @@ export const EVOLUTIONS: Record<string, { evolvesTo: string; requiredLevel: numb
   garudamon:      { evolvesTo: 'phoenixmon',   requiredLevel: 48, label: 'Phoenixmon' },
   salamon:        { evolvesTo: 'tailmon',      requiredLevel: 13, label: 'Tailmon' },
   tailmon:        { evolvesTo: 'angewomon',    requiredLevel: 35, label: 'Angewomon' },
+  palmon:         { evolvesTo: 'togemon',       requiredLevel: 19, label: 'Togemon' },
   angewomon:      { evolvesTo: 'magnadramon',  requiredLevel: 60, label: 'Magnadramon' },
   patamon:        { evolvesTo: 'angemon',      requiredLevel: 19, label: 'Angemon' },
   angemon:        { evolvesTo: 'magnaAngemon', requiredLevel: 33, label: 'MagnaAngemon' },
@@ -563,6 +575,7 @@ export const ROOKIE_OF: Record<string, string> = {
   growlmon: 'guilmon',      megaloGrowlmon: 'guilmon',    gallantmon: 'guilmon',
   angemon: 'patamon',       magnaAngemon: 'patamon',      seraphimon: 'patamon',     goldramon: 'patamon',
   tailmon: 'salamon',       angewomon: 'salamon',         ophanimon: 'salamon',     magnadramon: 'salamon',
+  togemon: 'palmon',
   devimon: 'demiDevimon',   myotismon: 'demiDevimon',     vnonMyotismon: 'demiDevimon',
 };
 
@@ -584,7 +597,7 @@ export const ITEM_NAMES: Record<string, string> = {
 export const SCANNABLE_CHARACTERS: string[] = ['agumon', 'gabumon', 'demiDevimon', 'patamon', 'pyomon', 'salamon', 'palmon'];
 
 // Display order in the Codex (grouped by evolution line)
-export const CODEX_ORDER: string[] = ['agumon', 'agumonSaver', 'geoGreymon', 'rizeGreymon', 'shineGreymon', 'greymon', 'metalGreymon', 'warGreymon', 'gabumon', 'garurumon', 'wereGarurumon', 'metalGarurumon', 'omegamon', 'guilmon', 'growlmon', 'megaloGrowlmon', 'gallantmon', 'gallantmonCrimsonMode', 'lucemon', 'lucemonChaosMode', 'patamon', 'angemon', 'magnaAngemon', 'goldramon', 'seraphimon', 'pyomon', 'birdramon', 'garudamon', 'phoenixmon', 'salamon', 'tailmon', 'angewomon', 'magnadramon', 'ophanimon', 'palmon', 'demiDevimon', 'devimon', 'myotismon', 'vnonMyotismon', 'gulusGammamon'];
+export const CODEX_ORDER: string[] = ['agumon', 'agumonSaver', 'geoGreymon', 'rizeGreymon', 'shineGreymon', 'greymon', 'metalGreymon', 'warGreymon', 'gabumon', 'garurumon', 'wereGarurumon', 'metalGarurumon', 'omegamon', 'guilmon', 'growlmon', 'megaloGrowlmon', 'gallantmon', 'gallantmonCrimsonMode', 'lucemon', 'lucemonChaosMode', 'patamon', 'angemon', 'magnaAngemon', 'goldramon', 'seraphimon', 'pyomon', 'birdramon', 'garudamon', 'phoenixmon', 'salamon', 'tailmon', 'angewomon', 'magnadramon', 'ophanimon', 'palmon', 'togemon', 'demiDevimon', 'devimon', 'myotismon', 'vnonMyotismon', 'gulusGammamon'];
 
 // ─── Maps & Stages ─────────────────────────────────────────────────────────────
 export const GAME_MAPS: GameMap[] = [
