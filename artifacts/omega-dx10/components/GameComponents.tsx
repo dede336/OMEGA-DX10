@@ -72,30 +72,62 @@ const avatarStyles = StyleSheet.create({
 export function AttributeBadge({ attr }: { attr: AttributeId }) {
   const data = ATTRIBUTES[attr];
   return (
-    <View style={[badgeStyles.badge, { backgroundColor: data.color + '33', borderColor: data.color }]}>
-      <Text style={[badgeStyles.text, { color: data.color }]}>{data.abbr}</Text>
+    <View style={[attrBadgeStyles.circle, { backgroundColor: data.color, borderColor: data.color + 'aa' }]}>
+      <Text style={attrBadgeStyles.text}>{data.abbr}</Text>
     </View>
   );
 }
+
+const attrBadgeStyles = StyleSheet.create({
+  circle: {
+    width: 34,
+    height: 34,
+    borderRadius: 17,
+    borderWidth: 2,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  text: { fontSize: 11, fontWeight: '800' as const, color: '#fff', letterSpacing: 0.3 },
+});
+
+// ─── Element emoji map ─────────────────────────────────────────────────────────
+const ELEMENT_EMOJI: Record<ElementId, string> = {
+  FIRE:      '🔥',
+  WATER:     '💧',
+  PLANT:     '🍃',
+  EARTH:     '⛰️',
+  ICE:       '❄️',
+  DARK:      '🌑',
+  LIGHT:     '☀️',
+  LIGHTNING: '⚡',
+  WIND:      '🌀',
+  METAL:     '⚙️',
+  NULL:      '⭕',
+};
 
 // ─── ElementBadge ──────────────────────────────────────────────────────────────
 export function ElementBadge({ elem }: { elem: ElementId }) {
   const data = ELEMENTS[elem];
   return (
-    <View style={[badgeStyles.badge, { backgroundColor: data.color + '33', borderColor: data.color }]}>
-      <Text style={[badgeStyles.text, { color: data.color }]}>{data.label}</Text>
+    <View style={[elemBadgeStyles.badge, { backgroundColor: data.color + '22', borderColor: data.color + '88' }]}>
+      <Text style={elemBadgeStyles.emoji}>{ELEMENT_EMOJI[elem]}</Text>
+      <Text style={[elemBadgeStyles.label, { color: data.color }]}>{data.label}</Text>
     </View>
   );
 }
 
-const badgeStyles = StyleSheet.create({
+const elemBadgeStyles = StyleSheet.create({
   badge: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 4,
     paddingHorizontal: 8,
-    paddingVertical: 3,
-    borderRadius: 6,
+    paddingVertical: 4,
+    borderRadius: 20,
     borderWidth: 1,
   },
-  text: { fontSize: 11, fontWeight: '700' as const, letterSpacing: 0.5 },
+  emoji: { fontSize: 14 },
+  label: { fontSize: 11, fontWeight: '700' as const, letterSpacing: 0.3 },
 });
 
 // ─── StatBar ───────────────────────────────────────────────────────────────────
