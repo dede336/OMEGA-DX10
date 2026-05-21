@@ -5,7 +5,9 @@ import {
   EquipSlot, TamerGender, EQUIP_SLOTS_ORDER, DEFAULT_INVENTORY,
   CRAFT_RECIPES, CraftRecipe,
   SACRIFICE_DROPS, ROOKIE_OF, SACRIFICE_SCAN_OVERRIDES, SACRIFICE_SCAN_PCT,
+  TAMERS,
 } from '@/constants/gameData';
+import { setTamerTheme } from '@/hooks/tamerTheme';
 
 export interface SacrificeResult {
   droppedItem: string | null;
@@ -178,7 +180,7 @@ const defaultState: GameState = {
   lastDailyDate: '',
 };
 
-const GameContext = createContext<GameContextValue | null>(null);
+export const GameContext = createContext<GameContextValue | null>(null);
 
 export function GameProvider({ children }: { children: React.ReactNode }) {
   const [state, setState] = useState<GameState>(defaultState);
@@ -222,6 +224,14 @@ export function GameProvider({ children }: { children: React.ReactNode }) {
     if (!loaded) return;
     AsyncStorage.setItem(STORAGE_KEY, JSON.stringify(state));
   }, [state, loaded]);
+
+  useEffect(() => {
+    const tamer = state.tamerId ? TAMERS.find((t) => t.id === state.tamerId) : null;
+    if (tamer) {
+      const LIGHT_COLORS = new Set(['#eab308']);
+      setTamerTheme(tamer.accentColor, LIGHT_COLORS.has(tamer.accentColor) ? '#0f172a' : '#ffffff');
+    }
+  }, [state.tamerId]);
 
   const addToCollection = useCallback((characterId: string) => {
     setState((prev) => {
