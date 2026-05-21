@@ -227,6 +227,17 @@ export const CHARACTERS: Record<string, Character> = {
     attackName: 'Divine Dasher ✨',
     spiritName: 'Chaos Blast 🌑',
   },
+  salamon: {
+    id: 'salamon',
+    name: 'Salamon',
+    rarity: 'COMMON',
+    attribute: 'VC',
+    element: 'LIGHT',
+    baseStats: { hp: 105, mp: 119, atk: 76, def: 59, spt: 64, spd: 61, apt: 20 },
+    description: 'O Digimon Cachorrinho Sagrado. Um Rookie do tipo Vacina pacífico e gentil, dotado de luz divina. Apesar de sua aparência inofensiva, carrega dentro de si um poder celestial capaz de evoluir em poderosas guerreiras da luz.',
+    attackName: 'Petit Bite ○',
+    spiritName: 'Puppy Howl ✨',
+  },
   phoenixmon: {
     id: 'phoenixmon',
     name: 'Phoenixmon',
@@ -494,10 +505,10 @@ export const ITEM_NAMES: Record<string, string> = {
 };
 
 // Characters that can be scanned (encountered as enemies in battle)
-export const SCANNABLE_CHARACTERS: string[] = ['agumon', 'gabumon', 'demiDevimon', 'patamon', 'pyomon'];
+export const SCANNABLE_CHARACTERS: string[] = ['agumon', 'gabumon', 'demiDevimon', 'patamon', 'pyomon', 'salamon'];
 
 // Display order in the Codex (grouped by evolution line)
-export const CODEX_ORDER: string[] = ['agumon', 'agumonSaver', 'geoGreymon', 'rizeGreymon', 'shineGreymon', 'greymon', 'metalGreymon', 'warGreymon', 'gabumon', 'garurumon', 'wereGarurumon', 'metalGarurumon', 'omegamon', 'guilmon', 'growlmon', 'megaloGrowlmon', 'gallantmon', 'gallantmonCrimsonMode', 'lucemon', 'lucemonChaosMode', 'patamon', 'angemon', 'magnaAngemon', 'seraphimon', 'pyomon', 'birdramon', 'garudamon', 'phoenixmon', 'demiDevimon', 'devimon', 'myotismon', 'vnonMyotismon', 'gulusGammamon'];
+export const CODEX_ORDER: string[] = ['agumon', 'agumonSaver', 'geoGreymon', 'rizeGreymon', 'shineGreymon', 'greymon', 'metalGreymon', 'warGreymon', 'gabumon', 'garurumon', 'wereGarurumon', 'metalGarurumon', 'omegamon', 'guilmon', 'growlmon', 'megaloGrowlmon', 'gallantmon', 'gallantmonCrimsonMode', 'lucemon', 'lucemonChaosMode', 'patamon', 'angemon', 'magnaAngemon', 'seraphimon', 'pyomon', 'birdramon', 'garudamon', 'phoenixmon', 'salamon', 'demiDevimon', 'devimon', 'myotismon', 'vnonMyotismon', 'gulusGammamon'];
 
 // ─── Maps & Stages ─────────────────────────────────────────────────────────────
 export const GAME_MAPS: GameMap[] = [
@@ -509,9 +520,9 @@ export const GAME_MAPS: GameMap[] = [
     bitsReward: 100,
     tamerExpReward: 5,
     stages: [
-      { index: 0, name: 'Entrada da Floresta', enemyCharacterId: 'demiDevimon', enemyLevel: 1,  expReward: 40,  enemyCharacterIds: ['demiDevimon', 'agumon', 'pyomon', 'patamon', 'gabumon'], randomEnemyCount: 1 },
-      { index: 1, name: 'Clareira dos Dados',  enemyCharacterId: 'gabumon',     enemyLevel: 4,  expReward: 60,  enemyCharacterIds: ['demiDevimon', 'agumon', 'pyomon', 'patamon', 'gabumon'], randomEnemyCount: 2 },
-      { index: 2, name: 'Núcleo da Floresta',  enemyCharacterId: 'pyomon',      enemyLevel: 8,  expReward: 100, enemyCharacterIds: ['demiDevimon', 'agumon', 'pyomon', 'patamon', 'gabumon'], randomEnemyCount: 3 },
+      { index: 0, name: 'Entrada da Floresta', enemyCharacterId: 'demiDevimon', enemyLevel: 1,  expReward: 40,  enemyCharacterIds: ['demiDevimon', 'agumon', 'pyomon', 'patamon', 'gabumon', 'salamon'], randomEnemyCount: 1 },
+      { index: 1, name: 'Clareira dos Dados',  enemyCharacterId: 'gabumon',     enemyLevel: 4,  expReward: 60,  enemyCharacterIds: ['demiDevimon', 'agumon', 'pyomon', 'patamon', 'gabumon', 'salamon'], randomEnemyCount: 2 },
+      { index: 2, name: 'Núcleo da Floresta',  enemyCharacterId: 'pyomon',      enemyLevel: 8,  expReward: 100, enemyCharacterIds: ['demiDevimon', 'agumon', 'pyomon', 'patamon', 'gabumon', 'salamon'], randomEnemyCount: 3 },
     ],
   },
   {

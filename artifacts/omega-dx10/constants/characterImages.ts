@@ -24,6 +24,7 @@ const CHARACTER_IMAGES: Record<string, any> = {
   gallantmonCrimsonMode:   require('../assets/images/characters/gallantmonCrimsonMode.webp'),
   lucemon:                 require('../assets/images/characters/lucemon.gif'),
   lucemonChaosMode:        require('../assets/images/characters/lucemonChaosMode.gif'),
+  salamon:        require('../assets/images/characters/salamon.gif'),
   pyomon:         require('../assets/images/characters/pyomon.webp'),
   birdramon:      require('../assets/images/characters/birdramon.webp'),
   garudamon:      require('../assets/images/characters/garudamon.webp'),
