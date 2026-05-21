@@ -296,8 +296,8 @@ export const GAME_MAPS: GameMap[] = [
     tamerExpReward: 5,
     stages: [
       { index: 0, name: 'Entrada da Floresta', enemyCharacterId: 'demiDevimon', enemyLevel: 1,  expReward: 40  },
-      { index: 1, name: 'Clareira dos Dados',  enemyCharacterId: 'agumon',      enemyLevel: 4,  expReward: 60  },
-      { index: 2, name: 'Núcleo da Floresta',  enemyCharacterId: 'gabumon',     enemyLevel: 8,  expReward: 100, enemyCharacterIds: ['agumon', 'demiDevimon'] },
+      { index: 1, name: 'Clareira dos Dados',  enemyCharacterId: 'demiDevimon', enemyLevel: 4,  expReward: 60,  enemyCharacterIds: ['demiDevimon', 'agumon'] },
+      { index: 2, name: 'Núcleo da Floresta',  enemyCharacterId: 'gabumon',     enemyLevel: 8,  expReward: 100, enemyCharacterIds: ['gabumon', 'demiDevimon', 'agumon'] },
     ],
   },
   {
