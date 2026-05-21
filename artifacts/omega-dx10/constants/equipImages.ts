@@ -15,6 +15,7 @@ const EQUIP_ITEM_IMAGES: Record<string, any> = {
   piece_agulha:         require('../assets/images/agulha-media.png'),
   piece_tecido:         require('../assets/images/tecido-arco-iris.png'),
   piece_linha:          require('../assets/images/linha-arco-iris.png'),
+  piece_coragem:        require('../assets/images/brasao-coragem.png'),
   blusa_social:     require('../assets/images/blusa_social.png'),
   bermuda_poliester: require('../assets/images/bermuda_poliester.png'),
   tenis_corrida:    require('../assets/images/tenis_corrida.png'),

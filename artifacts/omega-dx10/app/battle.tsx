@@ -28,6 +28,7 @@ import {
 } from '@/constants/gameData';
 import CHARACTER_IMAGES from '@/constants/characterImages';
 import ELEMENT_IMAGES from '@/constants/elementImages';
+import EQUIP_ITEM_IMAGES from '@/constants/equipImages';
 
 import {
   buildFighter,
@@ -66,6 +67,17 @@ function HitEffect({ color }: { color: string }) {
 type Phase = 'select' | 'battle' | 'result';
 type BattleLog = { text: string; color: string };
 type TeamFighter = BattleFighter & { ownedId: string };
+type DroppedItem = { id: string; name: string; amount: number; color: string };
+
+const PIECE_META: Record<string, { name: string; color: string }> = {
+  piece_coragem:      { name: 'Fragmento da Coragem', color: '#ef4444' },
+  piece_gelo:         { name: 'Fragmento de Gelo',    color: '#38bdf8' },
+  piece_caos:         { name: 'Fragmento do Caos',    color: '#a855f7' },
+  piece_tecido:       { name: 'Tecido Colorido',      color: '#ec4899' },
+  piece_agulha:       { name: 'Agulha Média',         color: '#8b5cf6' },
+  piece_linha:        { name: 'Linha Colorida',       color: '#06b6d4' },
+  piece_anel_sagrado: { name: 'Fragmento do Anel',    color: '#f59e0b' },
+};
 
 export default function BattleScreen() {
   const colors = useColors();
@@ -105,6 +117,7 @@ export default function BattleScreen() {
   const [winner, setWinner] = useState<'player' | 'enemy' | null>(null);
   const [busy, setBusy] = useState(false);
   const [log, setLog] = useState<BattleLog[]>([]);
+  const [droppedItems, setDroppedItems] = useState<DroppedItem[]>([]);
   const logRef = useRef<ScrollView>(null);
 
   // ── Team selection ─────────────────────────────────────────────────────────
@@ -309,21 +322,31 @@ export default function BattleScreen() {
       addLog(`⭐ +${tx} XP Tamer!`, '#a78bfa');
     }
 
+    const drops: DroppedItem[] = [];
+    const recordDrop = (id: string, amount: number) => {
+      const meta = PIECE_META[id];
+      if (!meta) return;
+      const existing = drops.find((d) => d.id === id);
+      if (existing) existing.amount += amount;
+      else drops.push({ id, name: meta.name, amount, color: meta.color });
+    };
+
     if (stage?.drops) {
       stage.drops.forEach((d) => {
         if (Math.random() < d.chance) {
           if (d.type === 'bits') { gainBits(d.amount); addLog(`💰 +${d.amount.toLocaleString()} Bits!`, '#facc15'); }
-          else if (d.type === 'piece' && d.id) { gainPiece(d.id, d.amount); addLog('✦ Fragmento obtido!', '#f59e0b'); }
+          else if (d.type === 'piece' && d.id) { gainPiece(d.id, d.amount); recordDrop(d.id, d.amount); addLog('✦ Fragmento obtido!', '#f59e0b'); }
         }
       });
     } else if (Math.random() < 0.30) {
-      if (mapId === 'map_forest') { gainPiece('piece_coragem', 1); addLog('🔴 Fragmento da Coragem!', '#ef4444'); }
-      else if (mapId === 'map_city') { gainPiece('piece_gelo', 1); addLog('🔵 Fragmento de Gelo!', '#38bdf8'); }
-      else if (mapId === 'map_shadow') { gainPiece('piece_caos', 1); addLog('🟣 Fragmento do Caos!', '#a855f7'); }
+      if (mapId === 'map_forest') { gainPiece('piece_coragem', 1); recordDrop('piece_coragem', 1); addLog('🔴 Fragmento da Coragem!', '#ef4444'); }
+      else if (mapId === 'map_city') { gainPiece('piece_gelo', 1); recordDrop('piece_gelo', 1); addLog('🔵 Fragmento de Gelo!', '#38bdf8'); }
+      else if (mapId === 'map_shadow') { gainPiece('piece_caos', 1); recordDrop('piece_caos', 1); addLog('🟣 Fragmento do Caos!', '#a855f7'); }
     }
-    if (Math.random() < 0.20) { gainPiece('piece_tecido', 1); addLog('🎨 Tecido Colorido!', '#ec4899'); }
-    if (Math.random() < 0.20) { gainPiece('piece_agulha', 1); addLog('🪡 Agulha Média!', '#8b5cf6'); }
-    if (Math.random() < 0.20) { gainPiece('piece_linha', 1); addLog('🧵 Linha Colorida!', '#06b6d4'); }
+    if (Math.random() < 0.20) { gainPiece('piece_tecido', 1); recordDrop('piece_tecido', 1); addLog('🎨 Tecido Colorido!', '#ec4899'); }
+    if (Math.random() < 0.20) { gainPiece('piece_agulha', 1); recordDrop('piece_agulha', 1); addLog('🪡 Agulha Média!', '#8b5cf6'); }
+    if (Math.random() < 0.20) { gainPiece('piece_linha', 1); recordDrop('piece_linha', 1); addLog('🧵 Linha Colorida!', '#06b6d4'); }
+    setDroppedItems(drops);
   }
 
   // ── Start battle ───────────────────────────────────────────────────────────
@@ -1094,6 +1117,25 @@ export default function BattleScreen() {
             );
           })()}
 
+          {/* Dropped items */}
+          {won && droppedItems.length > 0 && (
+            <View style={styles.dropsBox}>
+              {droppedItems.map((drop) => {
+                const img = EQUIP_ITEM_IMAGES[drop.id];
+                return (
+                  <View key={drop.id} style={[styles.dropChip, { borderColor: drop.color + '99', backgroundColor: drop.color + '18' }]}>
+                    {img ? (
+                      <Image source={img} style={styles.dropChipImg} resizeMode="contain" />
+                    ) : (
+                      <Feather name="package" size={22} color={drop.color} />
+                    )}
+                    <Text style={[styles.dropChipText, { color: drop.color }]}>+{drop.amount} {drop.name}</Text>
+                  </View>
+                );
+              })}
+            </View>
+          )}
+
           {/* Auto-battle indicators */}
           {autoRunning && (
             <View style={[styles.autoRestartBanner, { backgroundColor: '#22c55e11', borderColor: '#22c55e55' }]}>
@@ -1246,6 +1288,10 @@ const styles = StyleSheet.create({
   autoBtnLabel: { fontSize: 12, fontWeight: '700' as const },
 
   // ── Result ──
+  dropsBox: { width: '100%', gap: 8 },
+  dropChip: { flexDirection: 'row' as const, alignItems: 'center' as const, gap: 10, borderRadius: 12, borderWidth: 1.5, paddingHorizontal: 14, paddingVertical: 8 },
+  dropChipImg: { width: 32, height: 32 },
+  dropChipText: { fontSize: 13, fontWeight: '700' as const, flex: 1 },
   resultCenter: { alignItems: 'center', justifyContent: 'center' },
   resultCard: { width: '80%', borderRadius: 20, borderWidth: 2, padding: 32, alignItems: 'center', gap: 16 },
   resultTitle: { fontSize: 32, fontWeight: '900' as const },
