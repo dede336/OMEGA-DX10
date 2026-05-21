@@ -15,6 +15,7 @@ const FIRE_STATUS_GIF  = require('../../assets/images/fire_status.gif');
 const PLANT_STATUS_GIF = require('../../assets/images/plant_status.gif');
 const WIND_STATUS_GIF  = require('../../assets/images/wind_status.gif');
 const TK_BG_GIF        = require('../../assets/images/tk_bg.gif');
+const TAI_BG           = require('../../assets/images/tai_bg.webp');
 
 const SPECIAL_GIFS: Record<string, any> = {
   omegamon:              require('../../assets/images/omegamon_digivolve.gif'),
@@ -89,6 +90,7 @@ export default function HomeScreen() {
 
   const tamer = tamerId ? TAMERS.find((t) => t.id === tamerId) : null;
   const isTK  = tamerId === 'tamer_tk';
+  const isTai = tamerId === 'tamer_tai';
 
   const botPad = Platform.OS === 'web' ? 20 : insets.bottom + 20;
 
@@ -98,12 +100,19 @@ export default function HomeScreen() {
       contentContainerStyle={{ paddingBottom: botPad }}
       showsVerticalScrollIndicator={false}
     >
-      {/* ── TK top wrapper (hero + stats + actions) ── */}
+      {/* ── tamer top wrapper (hero + stats + actions) ── */}
       <View style={{ overflow: 'hidden' }}>
         {isTK && (
           <Image
             source={TK_BG_GIF}
             style={[StyleSheet.absoluteFillObject, { opacity: 0.35 }]}
+            resizeMode="cover"
+          />
+        )}
+        {isTai && (
+          <Image
+            source={TAI_BG}
+            style={[StyleSheet.absoluteFillObject, { opacity: 0.30 }]}
             resizeMode="cover"
           />
         )}
