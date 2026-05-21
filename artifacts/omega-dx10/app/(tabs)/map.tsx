@@ -10,14 +10,16 @@ import CHARACTER_IMAGES from '@/constants/characterImages';
 
 const STARS_3 = require('../../assets/images/ui/stars3.png');
 
-// Shows 1-3 stars by clipping the stars3 image
+// Shows 1-3 gold stars based on progress
 function StarRating({ count }: { count: number }) {
-  const starW = 24;
-  const starH = 22;
-  const totalW = starW * 3;
   return (
-    <View style={{ width: starW * count, height: starH, overflow: 'hidden' }}>
-      <Image source={STARS_3} style={{ width: totalW, height: starH }} resizeMode="stretch" />
+    <View style={{ flexDirection: 'row', gap: 1 }}>
+      {Array.from({ length: count }).map((_, i) => (
+        <Text
+          key={i}
+          style={{ fontSize: 17, color: '#f59e0b', textShadowColor: '#92400e', textShadowOffset: { width: 0, height: 1 }, textShadowRadius: 2 }}
+        >★</Text>
+      ))}
     </View>
   );
 }
