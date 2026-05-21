@@ -7,6 +7,7 @@ const ELEMENT_IMAGES: Partial<Record<ElementId, ImageSourcePropType>> = {
   WATER: require('../assets/images/elements/agua.png'),
   PLANT: require('../assets/images/elements/planta.png'),
   EARTH: require('../assets/images/elements/terra.png'),
+  DARK:  require('../assets/images/elements/trevas.png'),
 };
 
 export default ELEMENT_IMAGES;
