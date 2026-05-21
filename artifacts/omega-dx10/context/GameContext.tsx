@@ -111,7 +111,7 @@ interface GameContextValue extends GameState {
   loadFromCloud: (apiUrl: string) => Promise<void>;
 }
 
-const STORAGE_KEY = 'omega_dx10_save_v2';
+const STORAGE_KEY = 'omega_dx10_save_v3';
 
 const defaultState: GameState = {
   playerName: '',

@@ -4,7 +4,7 @@ import { useAuth } from '@/context/AuthContext';
 import { useGame } from '@/context/GameContext';
 
 const SYNC_DEBOUNCE = 10_000;
-const SAVE_KEY = 'omega_dx10_save_v2';
+const SAVE_KEY = 'omega_dx10_save_v3';
 
 export function useCloudSync() {
   const { token, getApiUrl } = useAuth();
