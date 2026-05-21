@@ -81,7 +81,7 @@ export default function MapScreen() {
               {isDungeon && !isDaily && (
                 <View style={[styles.dungeonBanner, { backgroundColor: dungeonBorderColor + '33', borderBottomColor: dungeonBorderColor + '55' }]}>
                   <Feather name="alert-triangle" size={12} color={dungeonBorderColor} />
-                  <Text style={[styles.dungeonBannerText, { color: dungeonBorderColor }]}>DUNGEON — Boss Encounter</Text>
+                  <Text style={[styles.dungeonBannerText, { color: dungeonBorderColor }]}>MASMORRA — Boss Encounter</Text>
                 </View>
               )}
               {isDaily && (
