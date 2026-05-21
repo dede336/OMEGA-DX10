@@ -772,18 +772,31 @@ export default function BattleScreen() {
           style={[
             styles.startBattleBtn,
             {
-              backgroundColor: selectedTeam.length > 0 ? '#ef4444' : colors.card,
-              borderColor: selectedTeam.length > 0 ? '#ef4444' : colors.border,
+              backgroundColor: selectedTeam.length > 0 ? 'transparent' : colors.card,
+              borderColor: selectedTeam.length > 0 ? 'transparent' : colors.border,
               marginBottom: botPad + 16,
             },
           ]}
         >
-          <Feather name="crosshair" size={20} color={selectedTeam.length > 0 ? '#fff' : colors.mutedForeground} />
-          <Text style={[styles.startBattleBtnText, { color: selectedTeam.length > 0 ? '#fff' : colors.mutedForeground }]}>
-            {selectedTeam.length > 0
-              ? `Batalhar! (${selectedTeam.length} Digimon)`
-              : 'Selecione ao menos 1 Digimon'}
-          </Text>
+          {selectedTeam.length > 0 ? (
+            <View style={styles.startBattleBtnImgWrap}>
+              <Image
+                source={require('../assets/images/battle-btn.png')}
+                style={styles.startBattleBtnImg}
+                resizeMode="contain"
+              />
+              <Text style={[styles.startBattleBtnCount, { color: '#fff' }]}>
+                {selectedTeam.length} Digimon
+              </Text>
+            </View>
+          ) : (
+            <>
+              <Feather name="crosshair" size={20} color={colors.mutedForeground} />
+              <Text style={[styles.startBattleBtnText, { color: colors.mutedForeground }]}>
+                Selecione ao menos 1 Digimon
+              </Text>
+            </>
+          )}
         </TouchableOpacity>
       </View>
     );
@@ -1107,10 +1120,13 @@ export default function BattleScreen() {
             <View style={styles.resultActions}>
               <TouchableOpacity
                 onPress={() => router.replace(`/battle?mapId=${mapId}&stageIndex=${stageIndex}`)}
-                style={[styles.resultBtn, { backgroundColor: colors.primary }]}
+                style={[styles.resultBtn, { backgroundColor: 'transparent', borderWidth: 0 }]}
               >
-                <Feather name="refresh-cw" size={15} color={colors.primaryForeground} />
-                <Text style={[styles.resultBtnText, { color: colors.primaryForeground }]}>Batalhar Novamente</Text>
+                <Image
+                  source={require('../assets/images/battle-btn.png')}
+                  style={styles.startBattleBtnImg}
+                  resizeMode="contain"
+                />
               </TouchableOpacity>
               {won && hasNextStage && (
                 <TouchableOpacity
@@ -1171,8 +1187,11 @@ const styles = StyleSheet.create({
   teamPosBadgeText: { fontSize: 11, fontWeight: '800' as const, color: '#fff' },
   selectName: { fontSize: 14, fontWeight: '700' as const },
   selectLevel: { fontSize: 12, fontWeight: '600' as const },
-  startBattleBtn: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 10, marginHorizontal: 20, borderRadius: 16, borderWidth: 1.5, paddingVertical: 16 },
+  startBattleBtn: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 10, marginHorizontal: 20, borderRadius: 16, borderWidth: 1.5, paddingVertical: 4 },
   startBattleBtnText: { fontSize: 15, fontWeight: '800' as const },
+  startBattleBtnImgWrap: { alignItems: 'center', gap: 2 },
+  startBattleBtnImg: { width: 220, height: 70 },
+  startBattleBtnCount: { fontSize: 12, fontWeight: '700' as const, marginTop: -8, letterSpacing: 0.5 },
 
   // ── Arena with simultaneous enemies ──
   arena: { width: '100%', height: 220 },
