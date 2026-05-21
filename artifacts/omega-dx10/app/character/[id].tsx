@@ -110,10 +110,20 @@ export default function CharacterDetailScreen() {
   const fuseToChar   = fuseAnim ? CHARACTERS[fuseAnim.toCharId]   : null;
   const fuseFromChar = fuseAnim ? CHARACTERS[fuseAnim.fromCharId] : null;
 
+  const isOmegamon = char.id === 'omegamon';
+
   return (
     <>
+      <View style={[styles.container, { backgroundColor: colors.background }]}>
+        {isOmegamon && (
+          <Image
+            source={OMEGAMON_GIF}
+            style={styles.omegamonBgGif}
+            resizeMode="cover"
+          />
+        )}
       <ScrollView
-        style={[styles.container, { backgroundColor: colors.background }]}
+        style={[styles.scrollView, isOmegamon && styles.scrollTransparent]}
         contentContainerStyle={[styles.content, { paddingTop: topPad + 8, paddingBottom: 60 }]}
         showsVerticalScrollIndicator={false}
       >
@@ -300,6 +310,7 @@ export default function CharacterDetailScreen() {
           </Text>
         </TouchableOpacity>
       </ScrollView>
+      </View>
 
       {/* ── Fusion confirmation modal ────────────────────────────────────── */}
       <Modal
@@ -389,6 +400,14 @@ export default function CharacterDetailScreen() {
 
 const styles = StyleSheet.create({
   container: { flex: 1 },
+  omegamonBgGif: {
+    ...StyleSheet.absoluteFillObject as any,
+    width: '100%', height: '100%',
+    opacity: 0.18,
+    zIndex: 0,
+  },
+  scrollView: { flex: 1 },
+  scrollTransparent: { backgroundColor: 'transparent' },
   content: { paddingHorizontal: 20 },
   backBtn: { marginBottom: 16, alignSelf: 'flex-start', padding: 4 },
   errorText: { textAlign: 'center', fontSize: 16, margin: 40 },
