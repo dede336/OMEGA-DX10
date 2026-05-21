@@ -17,6 +17,7 @@ import {
 import { AttributeBadge, ElementBadge, StatBar, CharacterAvatar } from '@/components/GameComponents';
 
 const DIGIVO_GIF             = require('../../assets/images/digivolution.gif');
+const FUSION_GIF             = require('../../assets/images/fusion_crimson.gif');
 const OMEGAMON_GIF           = require('../../assets/images/omegamon_digivolve.gif');
 const OMEGAMON_FUSION_INTRO  = require('../../assets/images/omegamon_fusion_intro.gif');
 
@@ -118,8 +119,8 @@ export default function CharacterDetailScreen() {
   // GIF to show: intro during 'playing', reveal GIF during 'reveal'/'done'
   const animGif =
     fusePhase === 'playing'
-      ? (fuseAnim?.toCharId === 'omegamon' ? OMEGAMON_FUSION_INTRO : DIGIVO_GIF)
-      : (fuseAnim?.toCharId === 'omegamon' ? OMEGAMON_GIF           : DIGIVO_GIF);
+      ? (fuseAnim?.toCharId === 'omegamon' ? OMEGAMON_FUSION_INTRO : FUSION_GIF)
+      : (fuseAnim?.toCharId === 'omegamon' ? OMEGAMON_GIF           : FUSION_GIF);
   const fuseToChar   = fuseAnim ? CHARACTERS[fuseAnim.toCharId]   : null;
   const fuseFromChar = fuseAnim ? CHARACTERS[fuseAnim.fromCharId] : null;
 
