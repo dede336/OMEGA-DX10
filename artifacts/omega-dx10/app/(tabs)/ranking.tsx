@@ -14,6 +14,7 @@ const TK_CARD    = require('../../assets/images/tk_card.png');
 const TAI_CARD   = require('../../assets/images/tai_card.png');
 const SORA_CARD  = require('../../assets/images/sora_card.png');
 const MIMI_CARD  = require('../../assets/images/mimi_card.png');
+const KARI_CARD  = require('../../assets/images/kari_card.png');
 
 interface LeaderboardEntry {
   rank: number;
@@ -67,6 +68,7 @@ export default function RankingScreen() {
     const isTai  = item.tamerId === 'tamer_tai';
     const isSora = item.tamerId === 'tamer_sora';
     const isMimi = item.tamerId === 'tamer_mimi';
+    const isKari = item.tamerId === 'tamer_kari';
     return (
       <View style={[
         styles.entry,
@@ -100,6 +102,13 @@ export default function RankingScreen() {
         {isMimi && (
           <Image
             source={MIMI_CARD}
+            style={[StyleSheet.absoluteFillObject, { opacity: 0.55, borderRadius: 12 }]}
+            resizeMode="cover"
+          />
+        )}
+        {isKari && (
+          <Image
+            source={KARI_CARD}
             style={[StyleSheet.absoluteFillObject, { opacity: 0.55, borderRadius: 12 }]}
             resizeMode="cover"
           />
