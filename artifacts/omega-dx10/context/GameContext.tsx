@@ -323,7 +323,26 @@ export function GameProvider({ children }: { children: React.ReactNode }) {
   }, []);
 
   const completeOnboarding = useCallback((name: string, gender: TamerGender, tamerId: string) => {
-    setState((prev) => ({ ...prev, playerName: name, gender, tamerId, isOnboarded: true }));
+    const TAMER_STARTERS: Record<string, string> = {
+      tamer_tai:  'agumonSaver',
+      tamer_tk:   'patamon',
+      tamer_matt: 'gabumon',
+      tamer_kari: 'salamon',
+      tamer_sora: 'pyomon',
+      tamer_mimi: 'palmon',
+    };
+    const starterId = TAMER_STARTERS[tamerId] ?? 'agumonSaver';
+    const ownedId   = `owned_${starterId}_0`;
+    const starter   = { ownedId, characterId: starterId, level: 1, exp: 0 };
+    setState((prev) => ({
+      ...prev,
+      playerName: name,
+      gender,
+      tamerId,
+      isOnboarded: true,
+      collection: [starter],
+      selectedOwnedId: ownedId,
+    }));
   }, []);
 
   const gainBits = useCallback((amount: number) => {
