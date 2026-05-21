@@ -23,8 +23,10 @@ import {
   EQUIPMENT_ITEMS,
   EQUIP_SLOTS_ORDER,
   getScaledStats,
+  ElementId,
 } from '@/constants/gameData';
 import CHARACTER_IMAGES from '@/constants/characterImages';
+import ELEMENT_IMAGES from '@/constants/elementImages';
 import {
   buildFighter,
   enemyChooseAction,
@@ -131,6 +133,19 @@ export default function BattleScreen() {
       Animated.timing(anim, { toValue: 0, duration: 50, useNativeDriver: true }),
     ]).start();
   }, []);
+
+  // ── Element hit flash ───────────────────────────────────────────────────────
+  const hitFlashAnim = useRef(new Animated.Value(0)).current;
+  const [hitFlash, setHitFlash] = useState<{ element: ElementId; idx: number } | null>(null);
+  const flashElementHit = useCallback((element: ElementId, idx: number) => {
+    if (!ELEMENT_IMAGES[element]) return;
+    setHitFlash({ element, idx });
+    hitFlashAnim.setValue(0);
+    Animated.sequence([
+      Animated.timing(hitFlashAnim, { toValue: 1, duration: 140, useNativeDriver: true }),
+      Animated.timing(hitFlashAnim, { toValue: 0, duration: 380, useNativeDriver: true }),
+    ]).start(() => setHitFlash(null));
+  }, [hitFlashAnim]);
 
   // ── Auto-battle tick ───────────────────────────────────────────────────────
   useEffect(() => {
@@ -452,6 +467,7 @@ export default function BattleScreen() {
         ? '#22c55e' : colors.foreground;
       addLog(result.defenderResult.log, lc);
       shake(getEnemyShake(tIdx));
+      flashElementHit(attacker.element, tIdx);
 
       const newEnemies = enemiesRef.current.map((e, i) =>
         i === tIdx ? { ...e, currentHP: newHP } : e
@@ -516,6 +532,7 @@ export default function BattleScreen() {
           ? '#22c55e' : colors.foreground;
         addLog(res.defenderResult.log, lc);
         shake(getEnemyShake(idx));
+        flashElementHit(currentPF.element, idx);
         if (newHP <= 0) {
           addLog(`${enemy.name} foi derrotado!`, '#22c55e');
           Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
@@ -562,6 +579,7 @@ export default function BattleScreen() {
       ? '#22c55e' : colors.foreground;
     addLog(pResult.defenderResult.log, lc);
     shake(getEnemyShake(targetIdxRef.current));
+    flashElementHit(currentPF.element, targetIdxRef.current);
 
     // Update attacked enemy
     const updatedEnemies = currentEnemies.map((e, i) =>
@@ -812,6 +830,13 @@ export default function BattleScreen() {
                         ) : (
                           <CharacterAvatar characterId={charId} size={enemies.length === 1 ? 90 : 64} />
                         )}
+                        {hitFlash?.idx === i && ELEMENT_IMAGES[hitFlash.element] && (
+                          <Animated.Image
+                            source={ELEMENT_IMAGES[hitFlash.element]!}
+                            style={[styles.elementFlashImg, { opacity: hitFlashAnim }]}
+                            resizeMode="contain"
+                          />
+                        )}
                       </Animated.View>
                       <View style={[styles.arenaEnemyInfo, { backgroundColor: 'rgba(0,0,0,0.6)' }]}>
                         <Text style={styles.arenaEnemyName} numberOfLines={1}>{enemy.name}</Text>
@@ -858,6 +883,13 @@ export default function BattleScreen() {
                     )}
                     <Animated.View style={{ transform: [{ translateX: getEnemyShake(i) }] }}>
                       <CharacterAvatar characterId={charId} size={enemies.length === 1 ? 90 : 64} />
+                      {hitFlash?.idx === i && ELEMENT_IMAGES[hitFlash.element] && (
+                        <Animated.Image
+                          source={ELEMENT_IMAGES[hitFlash.element]!}
+                          style={[styles.elementFlashImg, { opacity: hitFlashAnim }]}
+                          resizeMode="contain"
+                        />
+                      )}
                     </Animated.View>
                     <View style={[styles.arenaEnemyInfo, { backgroundColor: colors.card }]}>
                       <Text style={[styles.arenaEnemyName, { color: colors.foreground }]} numberOfLines={1}>{enemy.name}</Text>
@@ -1101,6 +1133,7 @@ const styles = StyleSheet.create({
   arenaEnemySlot: { alignItems: 'center', gap: 4, position: 'relative' as const, minWidth: 80 },
   arenaEnemyDead: { opacity: 0.4 },
   targetRing: { position: 'absolute', top: -4, left: -4, right: -4, bottom: 20, borderRadius: 12, borderWidth: 2.5, zIndex: 1 },
+  elementFlashImg: { position: 'absolute', width: 72, height: 72, zIndex: 20, pointerEvents: 'none' as const },
   arenaEnemySprite: { width: 72, height: 72 },
   arenaSingleSprite: { width: 110, height: 110 },
   arenaEnemyInfo: { borderRadius: 8, paddingHorizontal: 6, paddingVertical: 3, alignItems: 'center', gap: 2, minWidth: 72 },
