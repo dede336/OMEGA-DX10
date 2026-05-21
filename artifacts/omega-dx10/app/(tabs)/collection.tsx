@@ -140,20 +140,8 @@ export default function CollectionScreen() {
             );
           }
 
-          // Locked evolution-only entry
-          const rarity = CHARACTERS[charId]?.rarity;
-          const rarityLabel = rarity === 'EPIC' ? 'Ultimate' : rarity === 'RARE' ? 'Champion' : 'Evolução';
-          const hint = evolvesFrom
-            ? `Evolua ${evolvesFrom.fromName} para o Nível ${evolvesFrom.requiredLevel}`
-            : 'Desbloqueie por evolução';
-
-          return (
-            <LockedCard
-              key={charId}
-              label={`Evolução ${rarityLabel}`}
-              hint={hint}
-            />
-          );
+          // Evolution-only entries are hidden — accessible via character detail screen
+          return null;
         })}
 
         <View style={[styles.infoBanner, { backgroundColor: colors.card, borderColor: colors.border }]}>
