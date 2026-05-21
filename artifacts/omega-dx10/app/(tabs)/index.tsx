@@ -14,6 +14,7 @@ const DARK_STATUS_GIF  = require('../../assets/images/dark_status.gif');
 const FIRE_STATUS_GIF  = require('../../assets/images/fire_status.gif');
 const PLANT_STATUS_GIF = require('../../assets/images/plant_status.gif');
 const WIND_STATUS_GIF  = require('../../assets/images/wind_status.gif');
+const TK_BG_GIF        = require('../../assets/images/tk_bg.gif');
 
 const SPECIAL_GIFS: Record<string, any> = {
   omegamon:              require('../../assets/images/omegamon_digivolve.gif'),
@@ -87,6 +88,7 @@ export default function HomeScreen() {
   const attrData = char ? ATTRIBUTES[char.attribute] : null;
 
   const tamer = tamerId ? TAMERS.find((t) => t.id === tamerId) : null;
+  const isTK  = tamerId === 'tamer_tk';
 
   const botPad = Platform.OS === 'web' ? 20 : insets.bottom + 20;
 
@@ -98,6 +100,13 @@ export default function HomeScreen() {
     >
       {/* ── Hero banner ── */}
       <View style={[styles.heroBanner, { backgroundColor: colors.primary + '18' }]}>
+        {isTK && (
+          <Image
+            source={TK_BG_GIF}
+            style={[StyleSheet.absoluteFillObject, { opacity: 0.35, borderRadius: 16 }]}
+            resizeMode="cover"
+          />
+        )}
         {/* Tamer portrait */}
         <View style={[styles.tamerPortrait, { borderColor: colors.primary + '88' }]}>
           {tamer ? (
