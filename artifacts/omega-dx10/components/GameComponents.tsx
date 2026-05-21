@@ -24,6 +24,7 @@ interface AvatarProps {
 // Characters that need a bigger image scale inside the avatar circle
 const AVATAR_SCALE: Record<string, number> = {
   omegamon: 1.0,
+  salamon:  1.3,
 };
 
 export function CharacterAvatar({ characterId, size = 72, borderColor, bgColor, dimmed, plain }: AvatarProps) {
