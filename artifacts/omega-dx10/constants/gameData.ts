@@ -868,8 +868,8 @@ export interface TamerOption {
   accentColor: string;
   image: number;
   forGender: 'M' | 'F' | 'N';
-  avatarOffset: number;  // vertical: negative = clip from top (show lower), positive = show from very top
-  avatarOffsetX?: number; // horizontal: negative = shift left, positive = shift right
+  avatarOffset: number;  // vertical px: negative = clip from top, positive = show from very top
+  avatarOffsetX: number; // horizontal px: negative = shift left, positive = shift right (0 = centered)
 }
 
 export const TAMERS: TamerOption[] = [
@@ -883,6 +883,7 @@ export const TAMERS: TamerOption[] = [
     image: require('../assets/tamers/mimi_bg.png'),
     forGender: 'F',
     avatarOffset: -8,
+    avatarOffsetX: 0,
   },
   {
     id: 'tamer_sora',
@@ -893,6 +894,7 @@ export const TAMERS: TamerOption[] = [
     image: require('../assets/tamers/sora_bg.png'),
     forGender: 'F',
     avatarOffset: -8,
+    avatarOffsetX: 0,
   },
   {
     id: 'tamer_kari',
@@ -915,6 +917,7 @@ export const TAMERS: TamerOption[] = [
     image: require('../assets/tamers/matt.png'),
     forGender: 'M',
     avatarOffset: -8,
+    avatarOffsetX: 0,
   },
   {
     id: 'tamer_tai',
@@ -925,6 +928,7 @@ export const TAMERS: TamerOption[] = [
     image: require('../assets/tamers/tai_bg.png'),
     forGender: 'M',
     avatarOffset: -8,
+    avatarOffsetX: 0,
   },
   {
     id: 'tamer_tk',
@@ -935,6 +939,7 @@ export const TAMERS: TamerOption[] = [
     image: require('../assets/tamers/tk.png'),
     forGender: 'M',
     avatarOffset: -23,
+    avatarOffsetX: 0,
   },
 ];
 

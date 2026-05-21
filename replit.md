@@ -34,7 +34,7 @@ _Describe the high-level user-facing capabilities of this app once they exist._
 
 ## User preferences
 
-_Populate as you build — explicit user instructions worth remembering across sessions._
+- **Tamer avatar offsets**: Cada tamer em `constants/gameData.ts` deve ter **sempre** ambos os campos declarados explicitamente: `avatarOffset` (deslocamento vertical em px, negativo = corta do topo) e `avatarOffsetX` (deslocamento horizontal em px, negativo = esquerda). Nunca omitir nem usar `??` como fallback no dado — o valor padrão é `0` e deve constar no objeto. Esses valores controlam o recorte circular do avatar em ranking e index.
 
 ## Gotchas
 
