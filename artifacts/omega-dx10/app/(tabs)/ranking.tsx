@@ -12,6 +12,7 @@ import { TAMERS } from '@/constants/gameData';
 
 const TK_CARD    = require('../../assets/images/tk_card.png');
 const TAI_CARD   = require('../../assets/images/tai_card.png');
+const SORA_CARD  = require('../../assets/images/sora_card.png');
 
 interface LeaderboardEntry {
   rank: number;
@@ -61,8 +62,9 @@ export default function RankingScreen() {
     const isMe = user?.username === item.username;
     const topRank = item.rank <= 3;
     const tamer = item.tamerId ? TAMERS.find((t) => t.id === item.tamerId) : null;
-    const isTK  = item.tamerId === 'tamer_tk';
-    const isTai = item.tamerId === 'tamer_tai';
+    const isTK   = item.tamerId === 'tamer_tk';
+    const isTai  = item.tamerId === 'tamer_tai';
+    const isSora = item.tamerId === 'tamer_sora';
     return (
       <View style={[
         styles.entry,
@@ -82,6 +84,13 @@ export default function RankingScreen() {
         {isTai && (
           <Image
             source={TAI_CARD}
+            style={[StyleSheet.absoluteFillObject, { opacity: 0.55, borderRadius: 12 }]}
+            resizeMode="cover"
+          />
+        )}
+        {isSora && (
+          <Image
+            source={SORA_CARD}
             style={[StyleSheet.absoluteFillObject, { opacity: 0.55, borderRadius: 12 }]}
             resizeMode="cover"
           />
