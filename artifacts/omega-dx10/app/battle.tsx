@@ -413,6 +413,78 @@ export default function BattleScreen() {
     return false;
   }
 
+  // ── Bench fighters attack sequentially, then enemies counter ───────────────
+  function doBenchThenCounter(bench: BattleFighter[], idx: number) {
+    const allEnemiesDead = enemiesRef.current.every((e) => e.currentHP <= 0);
+    if (allEnemiesDead) return;
+
+    if (idx >= bench.length) {
+      // All bench done → enemies counter-attack
+      setTimeout(() => {
+        const pf = teamFightersRef.current[activeTeamIdxRef.current];
+        if (!pf || pf.currentHP <= 0) { setBusy(false); return; }
+        doEnemiesCounterAttack(pf, enemiesRef.current);
+      }, 400);
+      return;
+    }
+
+    setTimeout(() => {
+      if (enemiesRef.current.every((e) => e.currentHP <= 0)) return;
+
+      const attacker = bench[idx];
+      if (attacker.currentHP <= 0) { doBenchThenCounter(bench, idx + 1); return; }
+
+      // Find living target
+      let tIdx = targetIdxRef.current;
+      if ((enemiesRef.current[tIdx]?.currentHP ?? 0) <= 0) {
+        tIdx = enemiesRef.current.findIndex((e) => e.currentHP > 0);
+        if (tIdx < 0) return;
+        targetIdxRef.current = tIdx;
+        setTargetIdx(tIdx);
+      }
+
+      const tgt = enemiesRef.current[tIdx];
+      if (!tgt || tgt.currentHP <= 0) { doBenchThenCounter(bench, idx + 1); return; }
+
+      const result = executeTurn(attacker, tgt, 'ATTACK');
+      const newHP = result.defenderResult.newHP;
+      const lc = result.defenderResult.attrMult > 1 || result.defenderResult.elemMult > 1
+        ? '#22c55e' : colors.foreground;
+      addLog(result.defenderResult.log, lc);
+      shake(getEnemyShake(tIdx));
+
+      const newEnemies = enemiesRef.current.map((e, i) =>
+        i === tIdx ? { ...e, currentHP: newHP } : e
+      );
+      setEnemies(newEnemies);
+      enemiesRef.current = newEnemies;
+
+      if (newHP <= 0) {
+        addLog(`${tgt.name} foi derrotado!`, '#22c55e');
+        Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+
+        const livingAfter = newEnemies.filter((e) => e.currentHP > 0);
+        if (livingAfter.length === 0) {
+          setTimeout(() => {
+            addLog('Todos os inimigos derrotados! Vitória!', '#22c55e');
+            const activeId = teamFightersRef.current[activeTeamIdxRef.current]?.ownedId;
+            if (activeId) grantRewards(activeId);
+            setWinner('player');
+            setPhase('result');
+            setBusy(false);
+          }, 400);
+          return;
+        }
+        const nextIdx = newEnemies.findIndex((e) => e.currentHP > 0);
+        targetIdxRef.current = nextIdx;
+        setTargetIdx(nextIdx);
+        addLog(`Alvo mudou para ${newEnemies[nextIdx].name}!`, '#f59e0b');
+      }
+
+      doBenchThenCounter(bench, idx + 1);
+    }, 400);
+  }
+
   // ── Player action ──────────────────────────────────────────────────────────
   function handleAction(action: ActionType) {
     const currentEnemies = enemiesRef.current;
@@ -532,12 +604,11 @@ export default function BattleScreen() {
       addLog(`Alvo mudou para ${updatedEnemies[nextTargetIdx].name}!`, '#f59e0b');
     }
 
-    // All living enemies counter-attack
-    setTimeout(() => {
-      const updatedPF = teamFightersRef.current[activeTeamIdxRef.current];
-      if (!updatedPF || updatedPF.currentHP <= 0) { setBusy(false); return; }
-      doEnemiesCounterAttack(updatedPF, enemiesRef.current);
-    }, 600);
+    // Bench fighters attack, then enemies counter-attack
+    const bench = teamFightersRef.current.filter(
+      (t, i) => i !== activeTeamIdxRef.current && t.currentHP > 0
+    );
+    setTimeout(() => doBenchThenCounter(bench, 0), 400);
   }
 
   // ── Guard ──────────────────────────────────────────────────────────────────
