@@ -248,11 +248,12 @@ export interface FusionRecipe {
   partner: string;
   resultId: string;
   resultName: string;
+  requiredLevel: number;
 }
 
 export const FUSIONS: Record<string, FusionRecipe> = {
-  warGreymon:    { partner: 'metalGarurumon', resultId: 'omegamon', resultName: 'Omegamon' },
-  metalGarurumon:{ partner: 'warGreymon',     resultId: 'omegamon', resultName: 'Omegamon' },
+  warGreymon:    { partner: 'metalGarurumon', resultId: 'omegamon', resultName: 'Omegamon', requiredLevel: 60 },
+  metalGarurumon:{ partner: 'warGreymon',     resultId: 'omegamon', resultName: 'Omegamon', requiredLevel: 60 },
 };
 
 // ─── Evolution paths ──────────────────────────────────────────────────────────

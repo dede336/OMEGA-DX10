@@ -249,6 +249,7 @@ export function GameProvider({ children }: { children: React.ReactNode }) {
       if (!keep || !sacrifice) return prev;
       const fusion = FUSIONS[keep.characterId];
       if (!fusion || fusion.partner !== sacrifice.characterId) return prev;
+      if (keep.level < fusion.requiredLevel) return prev;
       success = true;
       const newSelected = prev.selectedOwnedId === sacrificeOwnedId ? keepOwnedId : prev.selectedOwnedId;
       return {

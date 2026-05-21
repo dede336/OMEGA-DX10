@@ -85,7 +85,8 @@ export default function CharacterDetailScreen() {
   const partnerOwned  = fusionRecipe ? collection.find((c) => c.characterId === fusionRecipe.partner) ?? null : null;
   const resultChar    = fusionRecipe ? CHARACTERS[fusionRecipe.resultId]  : null;
   const partnerChar   = fusionRecipe ? CHARACTERS[fusionRecipe.partner]   : null;
-  const canFuse       = !!(fusionRecipe && partnerOwned);
+  const meetsLevel    = !!(fusionRecipe && owned.level >= fusionRecipe.requiredLevel);
+  const canFuse       = !!(fusionRecipe && partnerOwned && meetsLevel);
 
   function handleFusePress() {
     if (!partnerOwned) return;
@@ -227,6 +228,14 @@ export default function CharacterDetailScreen() {
                 <Feather name="git-merge" size={18} color="#fff" />
                 <Text style={styles.fuseBtnText}>Fundir em {resultChar.name}</Text>
               </TouchableOpacity>
+            ) : !meetsLevel ? (
+              <View style={[styles.fuseLocked, { backgroundColor: colors.background, borderColor: '#f59e0b66' }]}>
+                <Feather name="trending-up" size={14} color="#f59e0b" />
+                <Text style={[styles.fuseLockedText, { color: '#f59e0b' }]}>
+                  Alcance o Nível {fusionRecipe.requiredLevel} com este Digimon para fundir
+                  {' '}(faltam {fusionRecipe.requiredLevel - owned.level} níveis)
+                </Text>
+              </View>
             ) : (
               <View style={[styles.fuseLocked, { backgroundColor: colors.background, borderColor: colors.border }]}>
                 <Feather name="lock" size={14} color={colors.mutedForeground} />
