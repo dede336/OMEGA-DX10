@@ -9,6 +9,13 @@ import { useAuth } from '@/context/AuthContext';
 import { CHARACTERS, ATTRIBUTES, GAME_MAPS, getScaledStats, TAMERS } from '@/constants/gameData';
 import { AttributeBadge, ElementBadge, HPBar, CharacterAvatar } from '@/components/GameComponents';
 
+const SPECIAL_GIFS: Record<string, any> = {
+  omegamon:              require('../../assets/images/characters/omegamon_digivolve.gif'),
+  shineGreymonBurstMode: require('../../assets/images/characters/shinegreymonbm_special.gif'),
+  rosemonBurstMode:      require('../../assets/images/characters/rosemonBurstMode_status.gif'),
+  imperialDramonPM:      require('../../assets/images/characters/imperialDramonPM_status.gif'),
+};
+
 export default function HomeScreen() {
   const colors = useColors();
   const insets = useSafeAreaInsets();
@@ -139,7 +146,10 @@ export default function HomeScreen() {
             style={[styles.activeCard, { backgroundColor: colors.card, borderColor: attrData.color + '55' }]}
           >
             {/* top colored strip */}
-            <View style={[styles.activeStrip, { backgroundColor: attrData.color + '22' }]}>
+            <View style={[styles.activeStrip, { backgroundColor: attrData.color + '22', overflow: 'hidden' }]}>
+              {SPECIAL_GIFS[char.id] ? (
+                <Image source={SPECIAL_GIFS[char.id]} style={styles.activeStripGif} resizeMode="cover" />
+              ) : null}
               <View style={[styles.activeAvatarRing, { borderColor: attrData.color + '88' }]}>
                 <CharacterAvatar characterId={char.id} size={72} />
               </View>
@@ -232,6 +242,7 @@ const styles = StyleSheet.create({
   // Active card
   activeCard: { borderRadius: 16, borderWidth: 1.5, overflow: 'hidden' as const, marginBottom: 20 },
   activeStrip: { flexDirection: 'row', alignItems: 'center', padding: 14, gap: 14 },
+  activeStripGif: { ...StyleSheet.absoluteFillObject, width: '100%', height: '100%', opacity: 0.55 },
   activeAvatarRing: { borderRadius: 40, borderWidth: 2, padding: 2 },
   activeInfo: { flex: 1 },
   activeName: { fontSize: 20, fontWeight: '800' as const, marginBottom: 5 },
