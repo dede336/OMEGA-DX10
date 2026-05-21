@@ -1,5 +1,4 @@
 import { BlurView } from "expo-blur";
-import { Feather } from "@expo/vector-icons";
 import { isLiquidGlassAvailable } from "expo-glass-effect";
 import { Tabs } from "expo-router";
 import { Icon, Label, NativeTabs } from "expo-router/unstable-native-tabs";
@@ -14,6 +13,7 @@ const DIGIBANK_ICON = require('../../assets/images/digibank-icon.png');
 const CRAFT_ICON    = require('../../assets/images/craft-icon.png');
 const MAP_ICON      = require('../../assets/images/map-icon.png');
 const MAIL_ICON     = require('../../assets/images/mailbox-icon.png');
+const TROPHY_ICON   = require('../../assets/images/trophy-icon.png');
 
 function NativeTabLayout() {
   return (
@@ -133,8 +133,8 @@ function ClassicTabLayout() {
         name="ranking"
         options={{
           title: "Ranking",
-          tabBarIcon: ({ color }: { color: string }) => (
-            <Feather name="award" size={26} color={color} />
+          tabBarIcon: () => (
+            <Image source={TROPHY_ICON} style={{ width: 28, height: 28 }} resizeMode="contain" />
           ),
         }}
       />
