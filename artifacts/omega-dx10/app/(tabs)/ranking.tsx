@@ -70,13 +70,6 @@ export default function RankingScreen() {
           borderWidth: isMe || topRank ? 1.5 : 1,
         },
       ]}>
-        {isTK && (
-          <Image
-            source={TK_BG_GIF}
-            style={[StyleSheet.absoluteFillObject, { opacity: 0.30, borderRadius: 12 }]}
-            resizeMode="cover"
-          />
-        )}
         <View style={styles.rankCol}>
           {topRank ? (
             <Text style={styles.rankEmoji}>{RANK_ICONS[item.rank - 1]}</Text>
@@ -87,7 +80,13 @@ export default function RankingScreen() {
 
         {/* Tamer avatar */}
         <View style={[styles.avatarWrap, { borderColor: tamer ? tamer.accentColor : colors.border }]}>
-          {tamer ? (
+          {isTK ? (
+            <Image
+              source={TK_BG_GIF}
+              style={styles.avatarImg}
+              resizeMode="cover"
+            />
+          ) : tamer ? (
             <Image
               source={tamer.image}
               style={[styles.avatarImg, { marginTop: tamer.avatarOffset, marginLeft: tamer.avatarOffsetX ?? 0 }]}
