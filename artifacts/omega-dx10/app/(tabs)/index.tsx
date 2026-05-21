@@ -40,8 +40,8 @@ export default function HomeScreen() {
           {tamer ? (
             <Image
               source={tamer.image}
-              style={[styles.tamerPortraitImg, { marginTop: tamer.avatarOffset }]}
-              resizeMode="cover"
+              style={[styles.tamerPortraitImg, { top: tamer.avatarOffset }]}
+              resizeMode="contain"
             />
           ) : (
             <Feather name="user" size={36} color={colors.primary} />
@@ -198,8 +198,8 @@ const styles = StyleSheet.create({
 
   // Hero
   heroBanner: { flexDirection: 'row', alignItems: 'center', paddingHorizontal: 16, paddingTop: 16, paddingBottom: 14, gap: 12 },
-  tamerPortrait: { width: 64, height: 64, borderRadius: 32, borderWidth: 2, overflow: 'hidden' as const, backgroundColor: '#0f1629' },
-  tamerPortraitImg: { width: 64, height: 110 },
+  tamerPortrait: { width: 64, height: 64, borderRadius: 32, borderWidth: 2, overflow: 'hidden' as const, backgroundColor: '#0f1629', position: 'relative' as const },
+  tamerPortraitImg: { position: 'absolute' as const, left: 0, width: 64, height: 144 },
   heroText: { flex: 1 },
   heroGreeting: { fontSize: 11, fontWeight: '600' as const, letterSpacing: 0.5 },
   heroName: { fontSize: 20, fontWeight: '900' as const, marginTop: 1 },
