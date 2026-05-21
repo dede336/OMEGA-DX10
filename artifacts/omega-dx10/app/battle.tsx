@@ -544,8 +544,8 @@ export default function BattleScreen() {
             </View>
           )}
 
-          {/* Toggle auto button — only available after first clear */}
-          {alreadyCleared && (
+          {/* Toggle auto button — available after first clear, or always in dungeons */}
+          {(alreadyCleared || map?.isDungeon) && (
             <TouchableOpacity
               activeOpacity={0.8}
               onPress={() => {
