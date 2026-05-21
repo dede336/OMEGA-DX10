@@ -14,8 +14,9 @@ import {
 } from '@/constants/gameData';
 import { CharacterCard, ScanCard, LockedCard, CharacterAvatar, AttributeBadge, ElementBadge } from '@/components/GameComponents';
 
-const DIGIVO_GIF = require('../../assets/images/digivolution.gif');
-const OMEGAMON_GIF = require('../../assets/images/omegamon_digivolve.gif');
+const DIGIVO_GIF       = require('../../assets/images/digivolution.gif');
+const DIGIVO_INTRO_GIF = require('../../assets/images/digivolution_intro.gif');
+const OMEGAMON_GIF     = require('../../assets/images/omegamon_digivolve.gif');
 
 // Reverse map: evolvesTo → { fromName, requiredLevel }
 const EVOLVES_FROM: Record<string, { fromName: string; requiredLevel: number }> = {};
@@ -42,6 +43,7 @@ export default function CollectionScreen() {
   // Evolution animation state
   const [evoAnim, setEvoAnim] = useState<{ fromCharId: string; toCharId: string } | null>(null);
   const [evoPhase, setEvoPhase] = useState<EvoPhase>('playing');
+  const fromOpacity   = useRef(new Animated.Value(1)).current;
   const newFormOpacity = useRef(new Animated.Value(0)).current;
   const titleScale = useRef(new Animated.Value(0.7)).current;
 
@@ -56,6 +58,7 @@ export default function CollectionScreen() {
 
   const handleEvolve = useCallback((ownedId: string, fromCharId: string, toCharId: string) => {
     closeModal();
+    fromOpacity.setValue(1);
     newFormOpacity.setValue(0);
     titleScale.setValue(0.7);
     setEvoPhase('playing');
@@ -68,15 +71,16 @@ export default function CollectionScreen() {
     if (!evoAnim) return;
 
     if (evoPhase === 'playing') {
-      // GIF plays alone for 1 500ms, then reveal the new form
-      const t = setTimeout(() => setEvoPhase('reveal'), 1500);
+      // Intro GIF is 5.20s — wait for it to finish, then crossfade forms
+      const t = setTimeout(() => setEvoPhase('reveal'), 5200);
       return () => clearTimeout(t);
     }
 
     if (evoPhase === 'reveal') {
       Animated.parallel([
-        Animated.timing(newFormOpacity, { toValue: 1, duration: 500, useNativeDriver: true }),
-        Animated.spring(titleScale, { toValue: 1, useNativeDriver: true, friction: 6 }),
+        Animated.timing(fromOpacity,    { toValue: 0, duration: 700, useNativeDriver: true }),
+        Animated.timing(newFormOpacity, { toValue: 1, duration: 700, useNativeDriver: true }),
+        Animated.spring(titleScale,     { toValue: 1, useNativeDriver: true, friction: 6 }),
       ]).start(() => setEvoPhase('done'));
     }
   }, [evoAnim, evoPhase]);
@@ -277,9 +281,13 @@ export default function CollectionScreen() {
           style={styles.evoOverlay}
           onPress={() => { if (evoPhase === 'done') setEvoAnim(null); }}
         >
-          {/* GIF background */}
+          {/* GIF background — intro during 'playing', reveal GIF after */}
           <Image
-            source={evoAnim?.toCharId === 'omegamon' ? OMEGAMON_GIF : DIGIVO_GIF}
+            source={
+              evoPhase === 'playing'
+                ? (evoAnim?.toCharId === 'omegamon' ? OMEGAMON_GIF : DIGIVO_INTRO_GIF)
+                : (evoAnim?.toCharId === 'omegamon' ? OMEGAMON_GIF : DIGIVO_GIF)
+            }
             style={styles.evoGifBg}
             resizeMode="cover"
           />
@@ -296,9 +304,15 @@ export default function CollectionScreen() {
                 <Animated.Text style={[styles.evoTopLabel, { transform: [{ scale: titleScale }] }]}>
                   DIGIVOLUÇÃO COMPLETA!
                 </Animated.Text>
-                <Animated.View style={[styles.evoAvatarWrap, { opacity: newFormOpacity }]}>
-                  <CharacterAvatar characterId={evoAnim.toCharId} size={140} />
-                </Animated.View>
+                {/* Crossfade: old form fades out, new form fades in */}
+                <View style={styles.evoAvatarWrap}>
+                  <Animated.View style={[StyleSheet.absoluteFill, { opacity: fromOpacity, alignItems: 'center', justifyContent: 'center' }]}>
+                    <CharacterAvatar characterId={evoAnim.fromCharId} size={140} />
+                  </Animated.View>
+                  <Animated.View style={{ opacity: newFormOpacity }}>
+                    <CharacterAvatar characterId={evoAnim.toCharId} size={140} />
+                  </Animated.View>
+                </View>
                 <Animated.Text style={[styles.evoToName, { opacity: newFormOpacity }]}>
                   {toChar?.name ?? ''}
                 </Animated.Text>
