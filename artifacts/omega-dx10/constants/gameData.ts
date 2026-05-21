@@ -302,9 +302,9 @@ export const GAME_MAPS: GameMap[] = [
     bitsReward: 250,
     tamerExpReward: 10,
     stages: [
-      { index: 0, name: 'Avenida dos Neons',   enemyCharacterId: 'gabumon',     enemyLevel: 16,  expReward: 130 },
-      { index: 1, name: 'Setor Industrial',    enemyCharacterId: 'agumon',      enemyLevel: 32,  expReward: 160 },
-      { index: 2, name: 'Torre Central',       enemyCharacterId: 'demiDevimon', enemyLevel: 64,  expReward: 220 },
+      { index: 0, name: 'Avenida dos Neons',   enemyCharacterId: 'gabumon',     enemyLevel: 12,  expReward: 130 },
+      { index: 1, name: 'Setor Industrial',    enemyCharacterId: 'agumon',      enemyLevel: 16,  expReward: 160 },
+      { index: 2, name: 'Torre Central',       enemyCharacterId: 'demiDevimon', enemyLevel: 18,  expReward: 220 },
     ],
   },
   {
@@ -316,9 +316,9 @@ export const GAME_MAPS: GameMap[] = [
     bitsReward: 500,
     tamerExpReward: 15,
     stages: [
-      { index: 0, name: 'Portal das Trevas',   enemyCharacterId: 'demiDevimon', enemyLevel: 128, expReward: 280 },
-      { index: 1, name: 'Abismo Corrompido',   enemyCharacterId: 'agumon',      enemyLevel: 256, expReward: 340 },
-      { index: 2, name: 'Trono do Caos',       enemyCharacterId: 'devimon',     enemyLevel: 512, expReward: 450, firstClearReward: 'oculos_escuro_fitado' },
+      { index: 0, name: 'Portal das Trevas',   enemyCharacterId: 'demiDevimon', enemyLevel: 20,  expReward: 280 },
+      { index: 1, name: 'Abismo Corrompido',   enemyCharacterId: 'agumon',      enemyLevel: 22,  expReward: 340 },
+      { index: 2, name: 'Trono do Caos',       enemyCharacterId: 'devimon',     enemyLevel: 24,  expReward: 450, firstClearReward: 'oculos_escuro_fitado' },
     ],
   },
   {
