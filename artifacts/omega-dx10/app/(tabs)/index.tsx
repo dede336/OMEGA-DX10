@@ -40,7 +40,7 @@ export default function HomeScreen() {
           {tamer ? (
             <Image
               source={tamer.image}
-              style={[styles.tamerPortraitImg, { marginTop: tamer.avatarOffset }]}
+              style={[styles.tamerPortraitImg, { marginTop: tamer.avatarOffset, marginLeft: tamer.avatarOffsetX ?? 0 }]}
               resizeMode="cover"
             />
           ) : (

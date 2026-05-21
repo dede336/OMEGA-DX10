@@ -868,7 +868,8 @@ export interface TamerOption {
   accentColor: string;
   image: number;
   forGender: 'M' | 'F' | 'N';
-  avatarOffset: number; // negative = skip top pixels (show lower face), positive = show from very top
+  avatarOffset: number;  // vertical: negative = clip from top (show lower), positive = show from very top
+  avatarOffsetX?: number; // horizontal: negative = shift left, positive = shift right
 }
 
 export const TAMERS: TamerOption[] = [
@@ -902,6 +903,7 @@ export const TAMERS: TamerOption[] = [
     image: require('../assets/tamers/kari_bg.png'),
     forGender: 'F',
     avatarOffset: -8,
+    avatarOffsetX: -2,
   },
   // Male tamers
   {
@@ -932,7 +934,7 @@ export const TAMERS: TamerOption[] = [
     accentColor: '#eab308',
     image: require('../assets/tamers/tk.png'),
     forGender: 'M',
-    avatarOffset: -38,
+    avatarOffset: -23,
   },
 ];
 

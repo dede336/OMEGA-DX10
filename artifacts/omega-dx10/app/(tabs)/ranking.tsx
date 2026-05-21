@@ -80,7 +80,7 @@ export default function RankingScreen() {
           {tamer ? (
             <Image
               source={tamer.image}
-              style={[styles.avatarImg, { marginTop: tamer.avatarOffset }]}
+              style={[styles.avatarImg, { marginTop: tamer.avatarOffset, marginLeft: tamer.avatarOffsetX ?? 0 }]}
               resizeMode="cover"
             />
           ) : (
