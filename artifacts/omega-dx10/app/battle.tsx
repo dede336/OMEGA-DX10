@@ -200,8 +200,10 @@ export default function BattleScreen() {
 
   // ── Grant rewards ──────────────────────────────────────────────────────────
   function grantRewards(activeOwnedId: string) {
-    const xp = stage?.expReward ?? 0;
+    const enemyCount = (stage?.enemyCharacterIds ?? [stage?.enemyCharacterId]).filter(Boolean).length;
+    const xp = (stage?.expReward ?? 0) * enemyCount;
     gainExp(activeOwnedId, xp);
+    if (enemyCount > 1) addLog(`⚔️ Bônus de ${enemyCount}x inimigos: +${xp} EXP!`, '#22c55e');
 
     const dv = equippedItems.digivice
       ? EQUIPMENT_ITEMS.find((i) => i.id === equippedItems.digivice)
@@ -851,12 +853,18 @@ export default function BattleScreen() {
           <Text style={[styles.resultTitle, { color: won ? '#22c55e' : '#ef4444' }]}>
             {won ? 'Vitória!' : 'Derrota'}
           </Text>
-          {won && stage && (
-            <View style={[styles.rewardBox, { backgroundColor: colors.primary + '22', borderColor: colors.primary }]}>
-              <Feather name="award" size={16} color={colors.primary} />
-              <Text style={[styles.rewardText, { color: colors.primary }]}>+{stage.expReward} EXP ganhos!</Text>
-            </View>
-          )}
+          {won && stage && (() => {
+            const ec = (stage.enemyCharacterIds ?? [stage.enemyCharacterId]).filter(Boolean).length;
+            const totalXp = stage.expReward * ec;
+            return (
+              <View style={[styles.rewardBox, { backgroundColor: colors.primary + '22', borderColor: colors.primary }]}>
+                <Feather name="award" size={16} color={colors.primary} />
+                <Text style={[styles.rewardText, { color: colors.primary }]}>
+                  +{totalXp} EXP ganhos{ec > 1 ? ` (${ec}× inimigos)` : ''}!
+                </Text>
+              </View>
+            );
+          })()}
           {autoRunning && (
             <View style={[styles.autoRestartBanner, { backgroundColor: '#22c55e11', borderColor: '#22c55e55' }]}>
               <Feather name="zap" size={14} color="#22c55e" />
