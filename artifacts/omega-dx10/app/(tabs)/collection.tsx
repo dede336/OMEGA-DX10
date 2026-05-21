@@ -94,9 +94,14 @@ export default function CollectionScreen() {
   const modalCanEvolve = !!(modalOwned && modalEvo && modalOwned.level >= modalEvo.requiredLevel && hasReqItem);
   const modalEvoChar   = modalEvo ? CHARACTERS[modalEvo.evolvesTo] : undefined;
 
-  const modalAltEvo       = modalOwned ? ALTERNATE_EVOLUTIONS[modalOwned.characterId] : undefined;
-  const hasAltReqItem     = !modalAltEvo?.requiredItem || (pieces[modalAltEvo.requiredItem] ?? 0) > 0;
-  const modalCanAltEvolve = !!(modalOwned && modalAltEvo && modalOwned.level >= modalAltEvo.requiredLevel && hasAltReqItem);
+  const modalAltEvo            = modalOwned ? ALTERNATE_EVOLUTIONS[modalOwned.characterId] : undefined;
+  const hasAltReqItem          = !modalAltEvo?.requiredItem || (pieces[modalAltEvo.requiredItem] ?? 0) > 0;
+  const altSacrificeCharId     = modalAltEvo?.requiredSacrificeCharacter;
+  const altSacrificeChar       = altSacrificeCharId ? CHARACTERS[altSacrificeCharId] : undefined;
+  const hasAltSacrifice        = !altSacrificeCharId || collection.some(
+    (c) => c.ownedId !== modalOwned?.ownedId && c.characterId === altSacrificeCharId
+  );
+  const modalCanAltEvolve = !!(modalOwned && modalAltEvo && modalOwned.level >= modalAltEvo.requiredLevel && hasAltReqItem && hasAltSacrifice);
   const modalAltEvoChar   = modalAltEvo ? CHARACTERS[modalAltEvo.evolvesTo] : undefined;
 
   // Sacrifice info for current modal character
@@ -291,6 +296,12 @@ export default function CollectionScreen() {
                               ({pieces[modalAltEvo.requiredItem] ?? 0} possuído{(pieces[modalAltEvo.requiredItem] ?? 0) !== 1 ? 's' : ''})
                             </Text>
                           )}
+                          {altSacrificeChar && (
+                            <Text style={[styles.evoReqText, { color: hasAltSacrifice ? '#f59e0b' : '#ef4444', fontSize: 10, marginTop: 2, textAlign: 'center' }]}>
+                              {'⚔️ Sacrificar\n'}{altSacrificeChar.name}{'\n'}
+                              {hasAltSacrifice ? '✓ Disponível' : '✗ Não possui'}
+                            </Text>
+                          )}
                         </View>
                         <View style={styles.evoSide}>
                           <CharacterAvatar characterId={modalAltEvo.evolvesTo} size={56} />
@@ -318,6 +329,13 @@ export default function CollectionScreen() {
                           <Feather name="package" size={16} color="#ef4444" />
                           <Text style={[styles.evolveLockedText, { color: '#ef4444' }]}>
                             Requer {ITEM_NAMES[modalAltEvo.requiredItem!] ?? modalAltEvo.requiredItem} para evoluir
+                          </Text>
+                        </View>
+                      ) : !hasAltSacrifice ? (
+                        <View style={[styles.evolveLocked, { backgroundColor: colors.background, borderColor: '#ef444466' }]}>
+                          <Feather name="alert-triangle" size={16} color="#ef4444" />
+                          <Text style={[styles.evolveLockedText, { color: '#ef4444' }]}>
+                            Requer {altSacrificeChar?.name ?? altSacrificeCharId} na coleção para sacrificar
                           </Text>
                         </View>
                       ) : (

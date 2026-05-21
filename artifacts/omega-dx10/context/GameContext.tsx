@@ -265,18 +265,44 @@ export function GameProvider({ children }: { children: React.ReactNode }) {
     setState((prev) => {
       const target = prev.collection.find((c) => c.ownedId === ownedId);
       if (!target) return prev;
-      const evo = alternate
-        ? ALTERNATE_EVOLUTIONS[target.characterId]
-        : EVOLUTIONS[target.characterId];
-      if (!evo || target.level < evo.requiredLevel) return prev;
-      if (evo.requiredItem && (prev.pieces[evo.requiredItem] ?? 0) <= 0) return prev;
-      const newCollection = prev.collection.map((c) =>
-        c.ownedId === ownedId ? { ...c, characterId: evo.evolvesTo, level: 1, exp: 0 } : c
-      );
-      const newPieces = evo.requiredItem
-        ? { ...prev.pieces, [evo.requiredItem]: (prev.pieces[evo.requiredItem] ?? 0) - 1 }
-        : prev.pieces;
-      return { ...prev, collection: newCollection, pieces: newPieces };
+      if (alternate) {
+        const evo = ALTERNATE_EVOLUTIONS[target.characterId];
+        if (!evo || target.level < evo.requiredLevel) return prev;
+        if (evo.requiredItem && (prev.pieces[evo.requiredItem] ?? 0) <= 0) return prev;
+        const sacrificeCharId = evo.requiredSacrificeCharacter;
+        if (sacrificeCharId) {
+          const sacrificeOwned = prev.collection.find(
+            (c) => c.ownedId !== ownedId && c.characterId === sacrificeCharId
+          );
+          if (!sacrificeOwned) return prev;
+        }
+        let newCollection = prev.collection.map((c) =>
+          c.ownedId === ownedId ? { ...c, characterId: evo.evolvesTo, level: 1, exp: 0 } : c
+        );
+        if (sacrificeCharId) {
+          const sacrificeOwned = newCollection.find(
+            (c) => c.ownedId !== ownedId && c.characterId === sacrificeCharId
+          );
+          if (sacrificeOwned) {
+            newCollection = newCollection.filter((c) => c.ownedId !== sacrificeOwned.ownedId);
+          }
+        }
+        const newPieces = evo.requiredItem
+          ? { ...prev.pieces, [evo.requiredItem]: (prev.pieces[evo.requiredItem] ?? 0) - 1 }
+          : prev.pieces;
+        return { ...prev, collection: newCollection, pieces: newPieces };
+      } else {
+        const evo = EVOLUTIONS[target.characterId];
+        if (!evo || target.level < evo.requiredLevel) return prev;
+        if (evo.requiredItem && (prev.pieces[evo.requiredItem] ?? 0) <= 0) return prev;
+        const newCollection = prev.collection.map((c) =>
+          c.ownedId === ownedId ? { ...c, characterId: evo.evolvesTo, level: 1, exp: 0 } : c
+        );
+        const newPieces = evo.requiredItem
+          ? { ...prev.pieces, [evo.requiredItem]: (prev.pieces[evo.requiredItem] ?? 0) - 1 }
+          : prev.pieces;
+        return { ...prev, collection: newCollection, pieces: newPieces };
+      }
     });
   }, []);
 
