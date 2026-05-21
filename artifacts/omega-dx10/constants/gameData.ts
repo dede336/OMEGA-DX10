@@ -52,6 +52,7 @@ export interface GameMap {
   requiredMapCleared?: string;
   requiredTamerLevel?: number;
   isDungeon?: boolean;
+  isDaily?: boolean;
   backgroundImage?: number;
   bitsReward?: number;
   tamerExpReward?: number;
@@ -615,6 +616,27 @@ export const GAME_MAPS: GameMap[] = [
       { index: 0, name: 'Portal das Trevas',   enemyCharacterId: 'metalGreymon',  enemyLevel: 20,  expReward: 280, enemyCharacterIds: ['metalGreymon', 'wereGarurumon', 'myotismon'] },
       { index: 1, name: 'Abismo Corrompido',   enemyCharacterId: 'wereGarurumon', enemyLevel: 22,  expReward: 340, enemyCharacterIds: ['metalGreymon', 'wereGarurumon', 'myotismon'] },
       { index: 2, name: 'Trono do Caos',       enemyCharacterId: 'myotismon',     enemyLevel: 24,  expReward: 450, enemyCharacterIds: ['metalGreymon', 'wereGarurumon', 'myotismon'], firstClearReward: 'oculos_escuro_fitado' },
+    ],
+  },
+  {
+    id: 'dungeon_daily_xp',
+    name: 'Treinamento Diário',
+    description: 'Enfrente Lucemon Chaos Mode para ganhar EXP massiva. Reseta todo dia à meia-noite. Apenas 1x por dia.',
+    isDungeon: true,
+    isDaily: true,
+    bitsReward: 500,
+    stages: [
+      {
+        index: 0,
+        name: 'Boss — Lucemon Chaos Mode',
+        enemyCharacterId: 'lucemonChaosMode',
+        enemyLevel: 10,
+        expReward: 1200,
+        bossMultipliers: { hp: 1.5, def: 1.2 },
+        drops: [
+          { type: 'bits', amount: 500, chance: 1.00 },
+        ],
+      },
     ],
   },
   {

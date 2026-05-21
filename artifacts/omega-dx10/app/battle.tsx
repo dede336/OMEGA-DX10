@@ -60,6 +60,7 @@ export default function BattleScreen() {
     addToInventory,
     team,
     setTeam,
+    claimDailyDungeon,
   } = useGame();
 
   const mapId = params.mapId ?? '';
@@ -229,7 +230,12 @@ export default function BattleScreen() {
     }
 
     const wasCleared = isStageCleared(mapId, stageIndex);
-    clearStage(mapId, stageIndex);
+    if (map?.isDaily) {
+      claimDailyDungeon();
+      addLog('📅 Treinamento diário concluído! Volta amanhã às 00:00.', '#f59e0b');
+    } else {
+      clearStage(mapId, stageIndex);
+    }
     if (!wasCleared && stage?.firstClearReward) {
       addToInventory(stage.firstClearReward);
       const ri = EQUIPMENT_ITEMS.find((i) => i.id === stage!.firstClearReward);

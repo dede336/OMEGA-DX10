@@ -66,6 +66,11 @@ const DEFAULT_MESSAGES: MailMessage[] = [
   },
 ];
 
+function getTodayDateString(): string {
+  const now = new Date();
+  return `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`;
+}
+
 interface GameState {
   playerName: string;
   gender: TamerGender;
@@ -83,6 +88,7 @@ interface GameState {
   tamerExp: number;
   tamerLevel: number;
   messages: MailMessage[];
+  lastDailyDate: string;
 }
 
 interface GameContextValue extends GameState {
@@ -116,6 +122,8 @@ interface GameContextValue extends GameState {
   claimReward: (id: string) => void;
   setTeam: (ownedIds: string[]) => void;
   loadFromCloud: (apiUrl: string) => Promise<void>;
+  isDailyDungeonAvailable: boolean;
+  claimDailyDungeon: () => void;
 }
 
 const STORAGE_KEY = 'omega_dx10_save_v3';
@@ -137,6 +145,7 @@ const defaultState: GameState = {
   tamerExp: 0,
   tamerLevel: 1,
   messages: DEFAULT_MESSAGES,
+  lastDailyDate: '',
 };
 
 const GameContext = createContext<GameContextValue | null>(null);
@@ -474,6 +483,12 @@ export function GameProvider({ children }: { children: React.ReactNode }) {
     return result;
   }, []);
 
+  const claimDailyDungeon = useCallback(() => {
+    setState((prev) => ({ ...prev, lastDailyDate: getTodayDateString() }));
+  }, []);
+
+  const isDailyDungeonAvailable = state.lastDailyDate !== getTodayDateString();
+
   const isStageCleared = useCallback(
     (mapId: string, stageIndex: number) => {
       return !!state.clearedStages[`${mapId}-${stageIndex}`];
@@ -551,6 +566,7 @@ export function GameProvider({ children }: { children: React.ReactNode }) {
         isOnboarded: parsed.isOnboarded ?? hadPreviousSave,
         team: parsed.team ?? [],
         messages: merged,
+        lastDailyDate: parsed.lastDailyDate ?? '',
       };
       setState(newState);
       await AsyncStorage.setItem(STORAGE_KEY, JSON.stringify(newState));
@@ -591,6 +607,8 @@ export function GameProvider({ children }: { children: React.ReactNode }) {
         claimReward,
         setTeam,
         loadFromCloud,
+        isDailyDungeonAvailable,
+        claimDailyDungeon,
       }}
     >
       {children}

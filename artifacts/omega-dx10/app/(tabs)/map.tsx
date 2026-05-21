@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Platform, Image, ImageBackground } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Feather } from '@expo/vector-icons';
@@ -8,17 +8,39 @@ import { useGame } from '@/context/GameContext';
 import { GAME_MAPS, CHARACTERS, ATTRIBUTES, ELEMENTS } from '@/constants/gameData';
 import CHARACTER_IMAGES from '@/constants/characterImages';
 
+function getMsToMidnight(): number {
+  const now = new Date();
+  const midnight = new Date(now);
+  midnight.setHours(24, 0, 0, 0);
+  return midnight.getTime() - now.getTime();
+}
+
+function formatCountdown(ms: number): string {
+  const s = Math.max(0, Math.floor(ms / 1000));
+  const h = Math.floor(s / 3600);
+  const m = Math.floor((s % 3600) / 60);
+  const sec = s % 60;
+  return `${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}:${String(sec).padStart(2, '0')}`;
+}
+
 export default function MapScreen() {
   const colors = useColors();
   const insets = useSafeAreaInsets();
-  const { isStageCleared, isMapUnlocked, selectedCharacter, collection, totalPlayerLevel } = useGame();
+  const { isStageCleared, isMapUnlocked, selectedCharacter, collection, totalPlayerLevel, isDailyDungeonAvailable } = useGame();
   const [expandedMap, setExpandedMap] = useState<string>('map_forest');
+  const [countdown, setCountdown] = useState(() => formatCountdown(getMsToMidnight()));
+
+  useEffect(() => {
+    const tick = setInterval(() => setCountdown(formatCountdown(getMsToMidnight())), 1000);
+    return () => clearInterval(tick);
+  }, []);
 
   const topPad = 0;
   const bottomPad = Platform.OS === 'web' ? 34 : insets.bottom;
 
-  function handleStagePress(mapId: string, stageIndex: number) {
+  function handleStagePress(mapId: string, stageIndex: number, isDaily?: boolean) {
     if (!selectedCharacter) return;
+    if (isDaily && !isDailyDungeonAvailable) return;
     router.push(`/battle?mapId=${mapId}&stageIndex=${stageIndex}`);
   }
 
@@ -44,7 +66,9 @@ export default function MapScreen() {
           const clearedInMap = map.stages.filter((s) => isStageCleared(map.id, s.index)).length;
           const allCleared = clearedInMap === map.stages.length;
           const isDungeon = map.isDungeon === true;
-          const dungeonBorderColor = '#8b5cf6';
+          const isDaily  = map.isDaily === true;
+          const dailyDone = isDaily && !isDailyDungeonAvailable;
+          const dungeonBorderColor = isDaily ? (isDailyDungeonAvailable ? '#f59e0b' : '#6b7280') : '#8b5cf6';
           const borderColor = isDungeon
             ? dungeonBorderColor
             : unlocked ? (allCleared ? '#22c55e' : colors.border) : colors.border + '44';
@@ -54,10 +78,18 @@ export default function MapScreen() {
               styles.mapCard,
               { borderColor, backgroundColor: isDungeon ? '#1a0f2e' : colors.card },
             ]}>
-              {isDungeon && (
+              {isDungeon && !isDaily && (
                 <View style={[styles.dungeonBanner, { backgroundColor: dungeonBorderColor + '33', borderBottomColor: dungeonBorderColor + '55' }]}>
                   <Feather name="alert-triangle" size={12} color={dungeonBorderColor} />
                   <Text style={[styles.dungeonBannerText, { color: dungeonBorderColor }]}>DUNGEON — Boss Encounter</Text>
+                </View>
+              )}
+              {isDaily && (
+                <View style={[styles.dungeonBanner, { backgroundColor: (isDailyDungeonAvailable ? '#f59e0b' : '#6b728066') + '33', borderBottomColor: (isDailyDungeonAvailable ? '#f59e0b' : '#6b7280') + '55' }]}>
+                  <Feather name={isDailyDungeonAvailable ? 'sun' : 'clock'} size={12} color={isDailyDungeonAvailable ? '#f59e0b' : '#9ca3af'} />
+                  <Text style={[styles.dungeonBannerText, { color: isDailyDungeonAvailable ? '#f59e0b' : '#9ca3af' }]}>
+                    {isDailyDungeonAvailable ? 'DIÁRIO — Disponível Hoje!' : `DIÁRIO — Reseta em ${countdown}`}
+                  </Text>
                 </View>
               )}
 
@@ -167,17 +199,19 @@ export default function MapScreen() {
                     const enemyAttr = enemyChar ? ATTRIBUTES[enemyChar.attribute] : null;
                     const enemyElem = enemyChar ? ELEMENTS[enemyChar.element] : null;
                     const enemyImg = CHARACTER_IMAGES[stage.enemyCharacterId];
-                    const canPlay = !!selectedCharacter;
+                    const stageDailyLocked = isDaily && !isDailyDungeonAvailable;
+                    const canPlay = !!selectedCharacter && !stageDailyLocked;
 
                     return (
                       <TouchableOpacity
                         key={stage.index}
                         activeOpacity={canPlay ? 0.8 : 1}
-                        onPress={() => canPlay && handleStagePress(map.id, stage.index)}
+                        onPress={() => canPlay && handleStagePress(map.id, stage.index, isDaily)}
                         style={[
                           styles.stageRow,
                           { borderBottomColor: colors.border, backgroundColor: isDungeon ? '#2a0f4e22' : 'transparent' },
-                          cleared && { backgroundColor: '#22c55e11' },
+                          cleared && !isDaily && { backgroundColor: '#22c55e11' },
+                          stageDailyLocked && { opacity: 0.55 },
                         ]}
                       >
                         {/* Info */}
