@@ -37,6 +37,7 @@ export interface MapStage {
   name: string;
   enemyCharacterId: string;
   enemyCharacterIds?: string[];
+  randomEnemyCount?: number;
   enemyLevel: number;
   expReward: number;
   drops?: StageDrop[];
@@ -508,9 +509,9 @@ export const GAME_MAPS: GameMap[] = [
     bitsReward: 100,
     tamerExpReward: 5,
     stages: [
-      { index: 0, name: 'Entrada da Floresta', enemyCharacterId: 'demiDevimon', enemyLevel: 1,  expReward: 40,  enemyCharacterIds: ['demiDevimon', 'agumon'] },
-      { index: 1, name: 'Clareira dos Dados',  enemyCharacterId: 'gabumon',     enemyLevel: 4,  expReward: 60,  enemyCharacterIds: ['gabumon', 'pyomon', 'patamon'] },
-      { index: 2, name: 'Núcleo da Floresta',  enemyCharacterId: 'pyomon',      enemyLevel: 8,  expReward: 100, enemyCharacterIds: ['agumon', 'pyomon', 'demiDevimon', 'patamon', 'gabumon'] },
+      { index: 0, name: 'Entrada da Floresta', enemyCharacterId: 'demiDevimon', enemyLevel: 1,  expReward: 40,  enemyCharacterIds: ['demiDevimon', 'agumon', 'pyomon', 'patamon', 'gabumon'], randomEnemyCount: 1 },
+      { index: 1, name: 'Clareira dos Dados',  enemyCharacterId: 'gabumon',     enemyLevel: 4,  expReward: 60,  enemyCharacterIds: ['demiDevimon', 'agumon', 'pyomon', 'patamon', 'gabumon'], randomEnemyCount: 2 },
+      { index: 2, name: 'Núcleo da Floresta',  enemyCharacterId: 'pyomon',      enemyLevel: 8,  expReward: 100, enemyCharacterIds: ['demiDevimon', 'agumon', 'pyomon', 'patamon', 'gabumon'], randomEnemyCount: 3 },
     ],
   },
   {

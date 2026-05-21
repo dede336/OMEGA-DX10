@@ -288,8 +288,15 @@ export default function BattleScreen() {
     }
     if (fighters.length === 0) return;
 
-    // Build ALL enemies simultaneously
-    const charIds = stage.enemyCharacterIds ?? [stage.enemyCharacterId];
+    // Build enemies — random subset if randomEnemyCount is set
+    const pool = stage.enemyCharacterIds ?? [stage.enemyCharacterId];
+    let charIds: string[];
+    if (stage.randomEnemyCount && stage.randomEnemyCount < pool.length) {
+      const shuffled = [...pool].sort(() => Math.random() - 0.5);
+      charIds = shuffled.slice(0, stage.randomEnemyCount);
+    } else {
+      charIds = pool;
+    }
     const allEnemies = charIds.map((id) => buildEnemy(id));
 
     teamFightersRef.current = fighters;
