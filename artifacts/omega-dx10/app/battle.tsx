@@ -1139,10 +1139,13 @@ export default function BattleScreen() {
               )}
               <TouchableOpacity
                 onPress={() => router.replace('/(tabs)/map')}
-                style={[styles.resultBtnOutline, { borderColor: colors.border }]}
+                style={[styles.resultBtn, { backgroundColor: 'transparent', borderWidth: 0 }]}
               >
-                <Feather name="map" size={15} color={colors.mutedForeground} />
-                <Text style={[styles.resultBtnText, { color: colors.mutedForeground }]}>Voltar ao Mapa</Text>
+                <Image
+                  source={require('../assets/images/back-map-btn.png')}
+                  style={styles.startBattleBtnImg}
+                  resizeMode="contain"
+                />
               </TouchableOpacity>
             </View>
           )}
