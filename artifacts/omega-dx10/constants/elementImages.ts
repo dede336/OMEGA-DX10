@@ -10,6 +10,7 @@ const ELEMENT_IMAGES: Partial<Record<ElementId, ImageSourcePropType>> = {
   DARK:      require('../assets/images/elements/trevas.png'),
   LIGHTNING: require('../assets/images/elements/raio.png'),
   WIND:      require('../assets/images/elements/vento.png'),
+  METAL:     require('../assets/images/elements/metal.png'),
 };
 
 export default ELEMENT_IMAGES;
