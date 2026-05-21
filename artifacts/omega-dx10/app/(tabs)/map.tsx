@@ -122,19 +122,11 @@ export default function MapScreen() {
                     imageStyle={styles.mapBannerImage}
                   >
                     <View style={styles.mapBannerOverlay}>
-                      <View style={[styles.mapBannerIcon, { backgroundColor: unlocked ? (allCleared ? '#22c55e' : '#ffffff33') : '#00000066' }]}>
-                        {unlocked ? (
-                          allCleared ? (
-                            <Feather name="check-circle" size={22} color="#22c55e" />
-                          ) : (
-                            <Feather name="map" size={22} color="#ffffff" />
-                          )
-                        ) : (
-                          <Feather name="lock" size={22} color="#ffffffaa" />
-                        )}
-                      </View>
                       <View style={styles.mapBannerInfo}>
-                        <Text style={styles.mapBannerName}>{map.name}</Text>
+                        <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6 }}>
+                          {!unlocked && <Feather name="lock" size={14} color="#ffffffaa" />}
+                          <Text style={styles.mapBannerName}>{map.name}</Text>
+                        </View>
                         <Text style={styles.mapBannerDesc} numberOfLines={1}>{map.description}</Text>
                         {!unlocked && !isDungeon && (
                           <Text style={styles.mapBannerLock}>Complete o mapa anterior para desbloquear</Text>
@@ -166,21 +158,12 @@ export default function MapScreen() {
                 ) : (
                   /* Plain header for maps without a background */
                   <View style={styles.mapHeader}>
-                    <View style={[styles.mapIcon, { backgroundColor: isDungeon ? dungeonBorderColor + '33' : (unlocked ? (allCleared ? '#22c55e22' : colors.secondary) : '#ffffff11') }]}>
-                      {isDungeon ? (
-                        <Feather name="shield-off" size={24} color={dungeonBorderColor} />
-                      ) : unlocked ? (
-                        allCleared ? (
-                          <Feather name="check-circle" size={24} color="#22c55e" />
-                        ) : (
-                          <Feather name="map" size={24} color={colors.primary} />
-                        )
-                      ) : (
-                        <Feather name="lock" size={24} color={colors.mutedForeground} />
-                      )}
-                    </View>
                     <View style={styles.mapInfo}>
-                      <Text style={[styles.mapName, { color: isDungeon ? '#c4b5fd' : (unlocked ? colors.foreground : colors.mutedForeground) }]}>{map.name}</Text>
+                      <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6 }}>
+                        {!unlocked && <Feather name="lock" size={14} color={colors.mutedForeground} />}
+                        {isDungeon && unlocked && <Feather name="shield-off" size={14} color={dungeonBorderColor} />}
+                        <Text style={[styles.mapName, { color: isDungeon ? '#c4b5fd' : (unlocked ? colors.foreground : colors.mutedForeground) }]}>{map.name}</Text>
+                      </View>
                       <Text style={[styles.mapDesc, { color: colors.mutedForeground }]} numberOfLines={2}>{map.description}</Text>
                       {!unlocked && !isDungeon && (
                         <Text style={[styles.lockHint, { color: colors.mutedForeground }]}>
