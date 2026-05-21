@@ -151,6 +151,10 @@ export default function BattleScreen() {
   // ── Active player fighter (derived) ───────────────────────────────────────
   const playerFighter = teamFighters[activeTeamIdx] ?? null;
 
+  // ── Equipped items ref (always fresh inside setTimeout closures) ───────────
+  const equippedItemsRef = useRef(equippedItems);
+  useEffect(() => { equippedItemsRef.current = equippedItems; }, [equippedItems]);
+
   // ── Auto battle ────────────────────────────────────────────────────────────
   const [autoMode, setAutoMode] = useState(paramAutoMode);
   const [autoRunCount, setAutoRunCount] = useState(paramAutoCount);
@@ -274,9 +278,10 @@ export default function BattleScreen() {
     const enemyCount = battleCharIds.length > 0 ? battleCharIds.length : 1;
     const xp = (stage?.expReward ?? 0) * enemyCount;
 
-    // Digivice bonuses
-    const dv = equippedItems.digivice
-      ? EQUIPMENT_ITEMS.find((i) => i.id === equippedItems.digivice)
+    // Digivice bonuses (use ref to avoid stale closure inside setTimeout)
+    const ei = equippedItemsRef.current;
+    const dv = ei.digivice
+      ? EQUIPMENT_ITEMS.find((i) => i.id === ei.digivice)
       : null;
 
     // Active fighter XP (+ Digivice bonus)
