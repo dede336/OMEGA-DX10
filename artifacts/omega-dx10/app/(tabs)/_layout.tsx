@@ -4,12 +4,12 @@ import { Tabs } from "expo-router";
 import { Icon, Label, NativeTabs } from "expo-router/unstable-native-tabs";
 import React from "react";
 import { Platform, StyleSheet, View, Image, useColorScheme } from "react-native";
-import { Feather } from "@expo/vector-icons";
 
 import { useColors } from "@/hooks/useColors";
 import { useGame } from "@/context/GameContext";
 
 const HOME_ICON     = require('../../assets/images/home-icon.png');
+const BANCO_ICON    = require('../../assets/images/banco-icon.png');
 const DIGIBANK_ICON = require('../../assets/images/digibank-icon.png');
 const CRAFT_ICON    = require('../../assets/images/craft-icon.png');
 const MAP_ICON      = require('../../assets/images/map-icon.png');
@@ -96,9 +96,9 @@ function ClassicTabLayout() {
       <Tabs.Screen
         name="banco"
         options={{
-          title: "BD",
-          tabBarIcon: ({ color }) => (
-            <Feather name="book-open" size={22} color={color} />
+          title: "Banco",
+          tabBarIcon: () => (
+            <Image source={BANCO_ICON} style={{ width: 26, height: 26 }} resizeMode="contain" />
           ),
         }}
       />
