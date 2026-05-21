@@ -6,6 +6,21 @@ import {
   CRAFT_RECIPES, CraftRecipe,
 } from '@/constants/gameData';
 
+export interface MailReward {
+  bits?: number;
+  items?: string[];
+}
+
+export interface MailMessage {
+  id: string;
+  title: string;
+  body: string;
+  reward?: MailReward;
+  rewardClaimed: boolean;
+  isRead: boolean;
+  createdAt: number;
+}
+
 export interface OwnedCharacter {
   ownedId: string;
   characterId: string;
@@ -19,6 +34,18 @@ const defaultEquipped: EquippedItems = {
   blusa: null, calca: null, sapato: null,
   brasao: null, digivice: null, pulseira: null, oculos: null,
 };
+
+const DEFAULT_MESSAGES: MailMessage[] = [
+  {
+    id: 'welcome_v1',
+    title: 'Bem-vindo ao OMEGA DX10!',
+    body: 'Olá, Tamer! Sua jornada pelo Mundo Digital começa agora. Aqui você receberá recompensas especiais do administrador. Boa sorte em suas batalhas!',
+    reward: { bits: 500 },
+    rewardClaimed: false,
+    isRead: false,
+    createdAt: 1716000000000,
+  },
+];
 
 interface GameState {
   playerName: string;
@@ -35,6 +62,7 @@ interface GameState {
   bits: number;
   tamerExp: number;
   tamerLevel: number;
+  messages: MailMessage[];
 }
 
 interface GameContextValue extends GameState {
@@ -61,6 +89,9 @@ interface GameContextValue extends GameState {
   gainBits: (amount: number) => void;
   gainTamerExp: (amount: number) => void;
   addToInventory: (itemId: string) => void;
+  unreadMailCount: number;
+  readMessage: (id: string) => void;
+  claimReward: (id: string) => void;
 }
 
 const STORAGE_KEY = 'omega_dx10_save_v2';
@@ -80,6 +111,7 @@ const defaultState: GameState = {
   bits: 0,
   tamerExp: 0,
   tamerLevel: 1,
+  messages: DEFAULT_MESSAGES,
 };
 
 const GameContext = createContext<GameContextValue | null>(null);
@@ -94,6 +126,12 @@ export function GameProvider({ children }: { children: React.ReactNode }) {
         try {
           const parsed = JSON.parse(raw) as Partial<GameState & { playerName?: string }>;
           const hadPreviousSave = !!parsed.playerName && parsed.playerName !== '';
+          const savedMessages: MailMessage[] = parsed.messages ?? [];
+          const savedIds = new Set(savedMessages.map((m) => m.id));
+          const merged = [
+            ...DEFAULT_MESSAGES.filter((m) => !savedIds.has(m.id)),
+            ...savedMessages,
+          ].sort((a, b) => b.createdAt - a.createdAt);
           setState({
             ...defaultState,
             ...parsed,
@@ -107,6 +145,7 @@ export function GameProvider({ children }: { children: React.ReactNode }) {
             tamerLevel: parsed.tamerLevel ?? 1,
             tamerId: parsed.tamerId ?? null,
             isOnboarded: parsed.isOnboarded ?? hadPreviousSave,
+            messages: merged,
           });
         } catch {}
       }
@@ -242,6 +281,36 @@ export function GameProvider({ children }: { children: React.ReactNode }) {
     });
   }, []);
 
+  const readMessage = useCallback((id: string) => {
+    setState((prev) => ({
+      ...prev,
+      messages: prev.messages.map((m) => m.id === id ? { ...m, isRead: true } : m),
+    }));
+  }, []);
+
+  const claimReward = useCallback((id: string) => {
+    setState((prev) => {
+      const msg = prev.messages.find((m) => m.id === id);
+      if (!msg || msg.rewardClaimed) return prev;
+      let newBits = prev.bits;
+      let newInventory = [...prev.inventory];
+      if (msg.reward?.bits) newBits += msg.reward.bits;
+      if (msg.reward?.items) {
+        for (const itemId of msg.reward.items) {
+          if (!newInventory.includes(itemId)) newInventory.push(itemId);
+        }
+      }
+      return {
+        ...prev,
+        bits: newBits,
+        inventory: newInventory,
+        messages: prev.messages.map((m) =>
+          m.id === id ? { ...m, isRead: true, rewardClaimed: true } : m
+        ),
+      };
+    });
+  }, []);
+
   const gainPiece = useCallback((pieceId: string, amount = 1) => {
     setState((prev) => ({
       ...prev,
@@ -319,6 +388,7 @@ export function GameProvider({ children }: { children: React.ReactNode }) {
   }, [state.equippedItems]);
 
   const totalPlayerLevel = state.tamerLevel;
+  const unreadMailCount = state.messages.filter((m) => !m.isRead).length;
 
   const selectedCharacter = state.collection.find((c) => c.ownedId === state.selectedOwnedId) ?? null;
 
@@ -349,6 +419,9 @@ export function GameProvider({ children }: { children: React.ReactNode }) {
         addToInventory,
         isLoaded: loaded,
         completeOnboarding,
+        unreadMailCount,
+        readMessage,
+        claimReward,
       }}
     >
       {children}

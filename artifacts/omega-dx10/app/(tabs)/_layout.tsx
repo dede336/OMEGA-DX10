@@ -9,6 +9,7 @@ import { Platform, StyleSheet, View, Image, useColorScheme } from "react-native"
 import { Image as ExpoImage } from "expo-image";
 
 import { useColors } from "@/hooks/useColors";
+import { useGame } from "@/context/GameContext";
 
 function NativeTabLayout() {
   return (
@@ -21,10 +22,6 @@ function NativeTabLayout() {
         <Icon sf={{ default: "square.grid.2x2", selected: "square.grid.2x2.fill" }} />
         <Label>Digibank</Label>
       </NativeTabs.Trigger>
-      <NativeTabs.Trigger name="mochila">
-        <Icon sf={{ default: "backpack", selected: "backpack.fill" }} />
-        <Label>Mochila</Label>
-      </NativeTabs.Trigger>
       <NativeTabs.Trigger name="craft">
         <Icon sf={{ default: "hammer", selected: "hammer.fill" }} />
         <Label>Craft</Label>
@@ -32,6 +29,10 @@ function NativeTabLayout() {
       <NativeTabs.Trigger name="map">
         <Icon sf={{ default: "map", selected: "map.fill" }} />
         <Label>Mundo</Label>
+      </NativeTabs.Trigger>
+      <NativeTabs.Trigger name="correios">
+        <Icon sf={{ default: "envelope", selected: "envelope.fill" }} />
+        <Label>Correios</Label>
       </NativeTabs.Trigger>
     </NativeTabs>
   );
@@ -43,6 +44,7 @@ function ClassicTabLayout() {
   const isDark = colorScheme === "dark";
   const isIOS = Platform.OS === "ios";
   const isWeb = Platform.OS === "web";
+  const { unreadMailCount } = useGame();
 
   return (
     <Tabs
@@ -105,17 +107,7 @@ function ClassicTabLayout() {
       />
       <Tabs.Screen
         name="mochila"
-        options={{
-          title: "Mochila",
-          tabBarIcon: ({ color }) => (
-            <Image
-              source={require('../../assets/images/mochila-icon.png')}
-              style={{ width: 26, height: 26 }}
-              tintColor={color}
-              resizeMode="contain"
-            />
-          ),
-        }}
+        options={{ href: null }}
       />
       <Tabs.Screen
         name="craft"
@@ -147,6 +139,20 @@ function ClassicTabLayout() {
                 resizeMode="contain"
               />
             ),
+        }}
+      />
+      <Tabs.Screen
+        name="correios"
+        options={{
+          title: "Correios",
+          tabBarBadge: unreadMailCount > 0 ? unreadMailCount : undefined,
+          tabBarIcon: ({ color }) => (
+            <Image
+              source={require('../../assets/images/mailbox-icon.png')}
+              style={{ width: 28, height: 28 }}
+              resizeMode="contain"
+            />
+          ),
         }}
       />
     </Tabs>
