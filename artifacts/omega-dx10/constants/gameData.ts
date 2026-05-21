@@ -487,7 +487,7 @@ export const CHARACTERS: Record<string, Character> = {
   imperialDramonPM: {
     id: 'imperialDramonPM',
     name: 'Imperialdramon PM',
-    rarity: 'LEGENDARY',
+    rarity: 'ULTRA',
     attribute: 'VC',
     element: 'LIGHT',
     baseStats: { hp: 341, mp: 366, atk: 188, def: 150, spt: 166, spd: 145, apt: 95 },
