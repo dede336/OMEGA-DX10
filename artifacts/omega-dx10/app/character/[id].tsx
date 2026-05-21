@@ -19,7 +19,7 @@ import { AttributeBadge, ElementBadge, StatBar, CharacterAvatar } from '@/compon
 const DIGIVO_GIF    = require('../../assets/images/digivolution.gif');
 const OMEGAMON_GIF  = require('../../assets/images/omegamon_digivolve.gif');
 
-type FusePhase = 'flashing' | 'reveal' | 'done';
+type FusePhase = 'playing' | 'reveal' | 'done';
 
 export default function CharacterDetailScreen() {
   const colors = useColors();
@@ -32,21 +32,17 @@ export default function CharacterDetailScreen() {
 
   // ── Fusion animation ────────────────────────────────────────────────────────
   const [fuseAnim, setFuseAnim] = useState<{ fromCharId: string; toCharId: string } | null>(null);
-  const [fusePhase, setFusePhase] = useState<FusePhase>('flashing');
+  const [fusePhase, setFusePhase] = useState<FusePhase>('playing');
   const flashOpacity  = useRef(new Animated.Value(1)).current;
   const newFormOpacity = useRef(new Animated.Value(0)).current;
   const titleScale    = useRef(new Animated.Value(0.7)).current;
 
   useEffect(() => {
     if (!fuseAnim) return;
-    if (fusePhase === 'flashing') {
-      const flashes = Array.from({ length: 6 }, () =>
-        Animated.sequence([
-          Animated.timing(flashOpacity,  { toValue: 0, duration: 160, useNativeDriver: true }),
-          Animated.timing(flashOpacity,  { toValue: 1, duration: 160, useNativeDriver: true }),
-        ])
-      );
-      Animated.sequence(flashes).start(() => setFusePhase('reveal'));
+    if (fusePhase === 'playing') {
+      // GIF plays alone for 2 000ms, then reveal the new form
+      const t = setTimeout(() => setFusePhase('reveal'), 2000);
+      return () => clearTimeout(t);
     }
     if (fusePhase === 'reveal') {
       Animated.parallel([
@@ -99,10 +95,9 @@ export default function CharacterDetailScreen() {
     setConfirmFuseVisible(false);
     fuseDigimon(owned.ownedId, fuseSacrificeId);
     // Start animation
-    flashOpacity.setValue(1);
     newFormOpacity.setValue(0);
     titleScale.setValue(0.7);
-    setFusePhase('flashing');
+    setFusePhase('playing');
     setFuseAnim({ fromCharId: owned.characterId, toCharId: fusionRecipe.resultId });
   }
 
@@ -355,19 +350,8 @@ export default function CharacterDetailScreen() {
           <View style={styles.evoOverlayDim} />
 
           <View style={styles.evoContent} pointerEvents="none">
-            {fusePhase === 'flashing' && fuseAnim && (
-              <>
-                <Text style={styles.evoTopLabel}>FUSÃO!</Text>
-                <View style={styles.evoAvatarWrap}>
-                  <Animated.View style={{ opacity: flashOpacity }}>
-                    <CharacterAvatar characterId={fuseAnim.fromCharId} size={140} />
-                  </Animated.View>
-                  <Animated.View
-                    style={[styles.evoSilhouette, { opacity: Animated.subtract(1, flashOpacity) }]}
-                  />
-                </View>
-                <Text style={styles.evoFromName}>{fuseFromChar?.name ?? ''}</Text>
-              </>
+            {fusePhase === 'playing' && (
+              <Text style={[styles.evoTopLabel, styles.evoTopLabelFusion]}>FUSÃO!</Text>
             )}
 
             {(fusePhase === 'reveal' || fusePhase === 'done') && fuseAnim && (

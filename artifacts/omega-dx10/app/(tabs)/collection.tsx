@@ -24,7 +24,7 @@ Object.entries(EVOLUTIONS).forEach(([fromId, evo]) => {
   EVOLVES_FROM[evo.evolvesTo] = { fromName: fromChar?.name ?? fromId, requiredLevel: evo.requiredLevel };
 });
 
-type EvoPhase = 'flashing' | 'reveal' | 'done';
+type EvoPhase = 'playing' | 'reveal' | 'done';
 
 export default function CollectionScreen() {
   const colors = useColors();
@@ -41,8 +41,7 @@ export default function CollectionScreen() {
 
   // Evolution animation state
   const [evoAnim, setEvoAnim] = useState<{ fromCharId: string; toCharId: string } | null>(null);
-  const [evoPhase, setEvoPhase] = useState<EvoPhase>('flashing');
-  const flashOpacity = useRef(new Animated.Value(1)).current;
+  const [evoPhase, setEvoPhase] = useState<EvoPhase>('playing');
   const newFormOpacity = useRef(new Animated.Value(0)).current;
   const titleScale = useRef(new Animated.Value(0.7)).current;
 
@@ -57,10 +56,9 @@ export default function CollectionScreen() {
 
   const handleEvolve = useCallback((ownedId: string, fromCharId: string, toCharId: string) => {
     closeModal();
-    flashOpacity.setValue(1);
     newFormOpacity.setValue(0);
     titleScale.setValue(0.7);
-    setEvoPhase('flashing');
+    setEvoPhase('playing');
     setEvoAnim({ fromCharId, toCharId });
     evolveDigimon(ownedId);
   }, [evolveDigimon]);
@@ -69,20 +67,15 @@ export default function CollectionScreen() {
   useEffect(() => {
     if (!evoAnim) return;
 
-    if (evoPhase === 'flashing') {
-      // Flash old form black ↔ visible × 3 (~900ms total), then reveal
-      const flashes = Array.from({ length: 3 }, () =>
-        Animated.sequence([
-          Animated.timing(flashOpacity, { toValue: 0, duration: 150, useNativeDriver: true }),
-          Animated.timing(flashOpacity, { toValue: 1, duration: 150, useNativeDriver: true }),
-        ])
-      );
-      Animated.sequence(flashes).start(() => setEvoPhase('reveal'));
+    if (evoPhase === 'playing') {
+      // GIF plays alone for 1 500ms, then reveal the new form
+      const t = setTimeout(() => setEvoPhase('reveal'), 1500);
+      return () => clearTimeout(t);
     }
 
     if (evoPhase === 'reveal') {
       Animated.parallel([
-        Animated.timing(newFormOpacity, { toValue: 1, duration: 400, useNativeDriver: true }),
+        Animated.timing(newFormOpacity, { toValue: 1, duration: 500, useNativeDriver: true }),
         Animated.spring(titleScale, { toValue: 1, useNativeDriver: true, friction: 6 }),
       ]).start(() => setEvoPhase('done'));
     }
@@ -294,24 +287,8 @@ export default function CollectionScreen() {
 
           {/* Content */}
           <View style={styles.evoContent} pointerEvents="none">
-            {evoPhase === 'flashing' && evoAnim && (
-              <>
-                <Text style={styles.evoTopLabel}>DIGIVOLUÇÃO!</Text>
-                {/* Old form with black flash */}
-                <View style={styles.evoAvatarWrap}>
-                  <Animated.View style={{ opacity: flashOpacity }}>
-                    <CharacterAvatar characterId={evoAnim.fromCharId} size={140} />
-                  </Animated.View>
-                  {/* Black silhouette overlay — visible when opacity flips to 0 */}
-                  <Animated.View
-                    style={[
-                      styles.evoSilhouette,
-                      { opacity: Animated.subtract(1, flashOpacity) },
-                    ]}
-                  />
-                </View>
-                <Text style={styles.evoFromName}>{fromChar?.name ?? ''}</Text>
-              </>
+            {evoPhase === 'playing' && (
+              <Text style={styles.evoTopLabel}>DIGIVOLUÇÃO!</Text>
             )}
 
             {(evoPhase === 'reveal' || evoPhase === 'done') && evoAnim && (
