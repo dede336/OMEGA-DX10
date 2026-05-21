@@ -415,7 +415,7 @@ const styles = StyleSheet.create({
   // Active card
   activeCard: { borderRadius: 16, borderWidth: 1.5, overflow: 'hidden' as const, marginBottom: 20 },
   activeStrip: { flexDirection: 'row', alignItems: 'center', padding: 14, gap: 14 },
-  activeStripGif: { ...StyleSheet.absoluteFillObject, width: '100%', height: '100%', opacity: 0.55 },
+  activeStripGif: { ...StyleSheet.absoluteFillObject, opacity: 0.55 },
   activeAvatarRing: { borderRadius: 40, borderWidth: 2, padding: 2 },
   activeInfo: { flex: 1 },
   activeName: { fontSize: 20, fontWeight: '800' as const, marginBottom: 5 },

@@ -81,46 +81,22 @@ export default function RankingScreen() {
         },
       ]}>
         {isTK && (
-          <Image
-            source={TK_CARD}
-            style={[StyleSheet.absoluteFillObject, { opacity: 0.55, borderRadius: 12 }]}
-            resizeMode="cover"
-          />
+          <Image source={TK_CARD} style={styles.cardBg} resizeMode="cover" />
         )}
         {isTai && (
-          <Image
-            source={TAI_CARD}
-            style={[StyleSheet.absoluteFillObject, { opacity: 0.55, borderRadius: 12 }]}
-            resizeMode="cover"
-          />
+          <Image source={TAI_CARD} style={styles.cardBg} resizeMode="cover" />
         )}
         {isSora && (
-          <Image
-            source={SORA_CARD}
-            style={[StyleSheet.absoluteFillObject, { opacity: 0.55, borderRadius: 12 }]}
-            resizeMode="cover"
-          />
+          <Image source={SORA_CARD} style={styles.cardBg} resizeMode="cover" />
         )}
         {isMimi && (
-          <Image
-            source={MIMI_CARD}
-            style={[StyleSheet.absoluteFillObject, { opacity: 0.55, borderRadius: 12 }]}
-            resizeMode="cover"
-          />
+          <Image source={MIMI_CARD} style={styles.cardBg} resizeMode="cover" />
         )}
         {isKari && (
-          <Image
-            source={KARI_CARD}
-            style={[StyleSheet.absoluteFillObject, { opacity: 0.55, borderRadius: 12 }]}
-            resizeMode="cover"
-          />
+          <Image source={KARI_CARD} style={styles.cardBg} resizeMode="cover" />
         )}
         {isMatt && (
-          <Image
-            source={MATT_CARD}
-            style={[StyleSheet.absoluteFillObject, { opacity: 0.55, borderRadius: 12 }]}
-            resizeMode="cover"
-          />
+          <Image source={MATT_CARD} style={styles.cardBg} resizeMode="cover" />
         )}
         <View style={styles.rankCol}>
           {topRank ? (
@@ -235,6 +211,7 @@ const styles = StyleSheet.create({
   emptyText: { fontSize: 15, textAlign: 'center', lineHeight: 24 },
   list: { padding: 16, gap: 10 },
   entry: { flexDirection: 'row', alignItems: 'center', borderRadius: 14, padding: 14, gap: 10, overflow: 'hidden' as const },
+  cardBg: { position: 'absolute' as const, top: 0, left: 0, right: 0, height: 180, opacity: 0.60 },
   rankCol: { width: 32, alignItems: 'center' },
   avatarWrap: { width: 44, height: 44, borderRadius: 22, borderWidth: 2, overflow: 'hidden' as const, backgroundColor: '#0f1629' },
   avatarImg: { width: 44, height: 100 },
