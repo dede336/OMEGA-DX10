@@ -264,7 +264,9 @@ export default function HomeScreen() {
             {/* top colored strip */}
             <View style={[styles.activeStrip, { backgroundColor: attrData.color + '22', overflow: 'hidden' }]}>
               {SPECIAL_GIFS[char.id] ? (
-                <Image source={SPECIAL_GIFS[char.id]} style={styles.activeStripGif} resizeMode="cover" />
+                <View style={StyleSheet.absoluteFill}>
+                  <Image source={SPECIAL_GIFS[char.id]} style={styles.activeStripGif} resizeMode="cover" />
+                </View>
               ) : null}
               <View style={[styles.activeAvatarRing, { borderColor: attrData.color + '88' }]}>
                 <CharacterAvatar characterId={char.id} size={72} />
