@@ -1,7 +1,7 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import React, { createContext, useCallback, useContext, useEffect, useState } from 'react';
 import {
-  CHARACTERS, EVOLUTIONS, ALTERNATE_EVOLUTIONS, FORM_CHANGES, FUSIONS, GAME_MAPS, expToNextLevel, tamerExpToNextLevel,
+  CHARACTERS, EVOLUTIONS, ALTERNATE_EVOLUTIONS, FORM_CHANGES, FUSIONS, GAME_MAPS, expToNextLevel, tamerExpToNextLevel, CODEX_ORDER,
   EquipSlot, TamerGender, EQUIP_SLOTS_ORDER, DEFAULT_INVENTORY,
   CRAFT_RECIPES, CraftRecipe,
   SACRIFICE_DROPS, ROOKIE_OF, SACRIFICE_SCAN_OVERRIDES, SACRIFICE_SCAN_PCT,
@@ -634,7 +634,8 @@ export function GameProvider({ children }: { children: React.ReactNode }) {
         headers: { Authorization: `Bearer ${token}` },
       });
       if (!res.ok) return;
-      const { saveData } = await res.json() as { saveData: Partial<GameState & { playerName?: string }> };
+      const payload = await res.json() as { saveData: Partial<GameState & { playerName?: string }>; isAdmin?: boolean };
+      const { saveData, isAdmin } = payload;
       if (!saveData) return;
       const parsed = saveData;
       const hadPreviousSave = !!parsed.playerName && parsed.playerName !== '';
@@ -644,9 +645,22 @@ export function GameProvider({ children }: { children: React.ReactNode }) {
         ...DEFAULT_MESSAGES.filter((m) => !savedIds.has(m.id)),
         ...savedMessages,
       ].sort((a, b) => b.createdAt - a.createdAt);
+      let collection: OwnedCharacter[] = parsed.collection ?? [];
+      if (isAdmin) {
+        const ownedIds = new Set(collection.map((c) => c.characterId));
+        const missing = CODEX_ORDER.filter((id) => CHARACTERS[id] && !ownedIds.has(id));
+        const injected: OwnedCharacter[] = missing.map((charId) => ({
+          ownedId: `admin_${charId}`,
+          characterId: charId,
+          level: 100,
+          exp: 0,
+        }));
+        collection = [...collection, ...injected];
+      }
       const newState: GameState = {
         ...defaultState,
         ...parsed,
+        collection,
         scanProgress: parsed.scanProgress ?? {},
         gender: parsed.gender ?? 'M',
         inventory: parsed.inventory ?? DEFAULT_INVENTORY,

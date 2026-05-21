@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { db, gameSavesTable } from "@workspace/db";
+import { db, gameSavesTable, usersTable } from "@workspace/db";
 import { eq, sql } from "drizzle-orm";
 import { requireAuth } from "../middlewares/requireAuth.js";
 
@@ -12,7 +12,8 @@ router.get("/", requireAuth, async (req, res) => {
     res.status(404).json({ error: "Nenhum save encontrado" });
     return;
   }
-  res.json({ saveData: save.saveData, updatedAt: save.updatedAt });
+  const [user] = await db.select({ isAdmin: usersTable.isAdmin }).from(usersTable).where(eq(usersTable.id, req.auth!.userId)).limit(1);
+  res.json({ saveData: save.saveData, updatedAt: save.updatedAt, isAdmin: user?.isAdmin ?? false });
 });
 
 // PUT /saves
