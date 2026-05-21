@@ -1123,7 +1123,7 @@ export default function BattleScreen() {
                 style={[styles.resultBtn, { backgroundColor: 'transparent', borderWidth: 0 }]}
               >
                 <Image
-                  source={require('../assets/images/battle-btn.png')}
+                  source={require('../assets/images/battle-again-btn.png')}
                   style={styles.startBattleBtnImg}
                   resizeMode="contain"
                 />
