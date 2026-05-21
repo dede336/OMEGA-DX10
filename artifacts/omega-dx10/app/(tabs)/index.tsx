@@ -98,15 +98,18 @@ export default function HomeScreen() {
       contentContainerStyle={{ paddingBottom: botPad }}
       showsVerticalScrollIndicator={false}
     >
-      {/* ── Hero banner ── */}
-      <View style={[styles.heroBanner, { backgroundColor: colors.primary + '18' }]}>
+      {/* ── TK top wrapper (hero + stats + actions) ── */}
+      <View style={{ overflow: 'hidden' }}>
         {isTK && (
           <Image
             source={TK_BG_GIF}
-            style={[StyleSheet.absoluteFillObject, { opacity: 0.35, borderRadius: 16 }]}
+            style={[StyleSheet.absoluteFillObject, { opacity: 0.35 }]}
             resizeMode="cover"
           />
         )}
+
+        {/* ── Hero banner ── */}
+        <View style={[styles.heroBanner, { backgroundColor: colors.primary + '18' }]}>
         {/* Tamer portrait */}
         <View style={[styles.tamerPortrait, { borderColor: colors.primary + '88' }]}>
           {tamer ? (
@@ -201,7 +204,10 @@ export default function HomeScreen() {
             <Text style={[styles.actionLabel, { color: '#f59e0b' }]}>Mochila</Text>
           </TouchableOpacity>
         </View>
+      </View>
+      </View>
 
+      <View style={styles.body}>
         {/* ── Active Digimon ── */}
         <Text style={[styles.sectionTitle, { color: colors.foreground }]}>Digimon Ativo</Text>
         {char && scaled && selectedCharacter && attrData ? (
@@ -329,7 +335,7 @@ const styles = StyleSheet.create({
   container: { flex: 1 },
 
   // Hero
-  heroBanner: { flexDirection: 'row', alignItems: 'center', paddingHorizontal: 16, paddingTop: 16, paddingBottom: 14, gap: 12, overflow: 'hidden' as const },
+  heroBanner: { flexDirection: 'row', alignItems: 'center', paddingHorizontal: 16, paddingTop: 16, paddingBottom: 14, gap: 12 },
   tamerPortrait: { width: 64, height: 64, borderRadius: 32, borderWidth: 2, overflow: 'hidden' as const, backgroundColor: '#0f1629' },
   tamerPortraitImg: { width: 64, height: 144 },
   heroText: { flex: 1 },
