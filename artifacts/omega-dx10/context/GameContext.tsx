@@ -74,6 +74,26 @@ const DEFAULT_MESSAGES: MailMessage[] = [
     createdAt: 1716000002000,
     unlocksAtTamerLevel: 10,
   },
+  {
+    id: 'angel_batch_gift_v1',
+    title: 'Reforço Angelical — Pacote Especial!',
+    body: 'Um pacote de reforço foi enviado para o seu Digivice! Você recebeu 10x MagnaAngemon, 10x Angewomon, 10x Devimon e 10x Angemon. Use-os para formar um time poderoso, evoluir suas linhas ou sacrificar para ganhar fragmentos. Boa sorte, Tamer!',
+    reward: {
+      digimon: [
+        'magnaAngemon','magnaAngemon','magnaAngemon','magnaAngemon','magnaAngemon',
+        'magnaAngemon','magnaAngemon','magnaAngemon','magnaAngemon','magnaAngemon',
+        'angewomon','angewomon','angewomon','angewomon','angewomon',
+        'angewomon','angewomon','angewomon','angewomon','angewomon',
+        'devimon','devimon','devimon','devimon','devimon',
+        'devimon','devimon','devimon','devimon','devimon',
+        'angemon','angemon','angemon','angemon','angemon',
+        'angemon','angemon','angemon','angemon','angemon',
+      ],
+    },
+    rewardClaimed: false,
+    isRead: false,
+    createdAt: 1748000000000,
+  },
 ];
 
 function getTodayDateString(): string {
@@ -425,22 +445,22 @@ export function GameProvider({ children }: { children: React.ReactNode }) {
         }
       }
       if (msg.reward?.digimon) {
-        for (const characterId of msg.reward.digimon) {
-          const alreadyOwned = newCollection.some((c) => c.characterId === characterId);
-          if (!alreadyOwned && newCollection.length < 100) {
-            const ownedId = `owned_${characterId}_${Date.now()}`;
+        const base = Date.now();
+        msg.reward.digimon.forEach((characterId, i) => {
+          if (newCollection.length < 100) {
+            const ownedId = `owned_${characterId}_${base}_${i}`;
             newCollection.push({ ownedId, characterId, level: 1, exp: 0 });
           }
-        }
+        });
       }
       if (msg.reward?.digimonWithLevel) {
-        for (const { characterId, level } of msg.reward.digimonWithLevel) {
-          const alreadyOwned = newCollection.some((c) => c.characterId === characterId);
-          if (!alreadyOwned && newCollection.length < 100) {
-            const ownedId = `owned_${characterId}_${Date.now()}`;
+        const base = Date.now();
+        msg.reward.digimonWithLevel.forEach(({ characterId, level }, i) => {
+          if (newCollection.length < 100) {
+            const ownedId = `owned_${characterId}_${base}_${i}`;
             newCollection.push({ ownedId, characterId, level, exp: 0 });
           }
-        }
+        });
       }
       return {
         ...prev,

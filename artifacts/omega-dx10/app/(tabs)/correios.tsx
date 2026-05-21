@@ -142,20 +142,24 @@ export default function CorreiosScreen() {
                         <Text style={[styles.rewardChipText, { color: '#8b5cf6' }]}>{itemId}</Text>
                       </View>
                     ))}
-                    {msg.reward.digimon?.map((charId) => {
-                      const char = CHARACTERS[charId];
-                      const img = CHARACTER_IMAGES[charId];
-                      return (
-                        <View key={charId} style={[styles.digiRewardChip, { backgroundColor: '#22c55e22', borderColor: '#22c55e55' }]}>
-                          {img && (
-                            <Image source={img} style={styles.digiRewardImg} resizeMode="contain" />
-                          )}
-                          <Text style={[styles.rewardChipText, { color: '#22c55e' }]}>
-                            {char?.name ?? charId}
-                          </Text>
-                        </View>
-                      );
-                    })}
+                    {msg.reward.digimon && (() => {
+                      const counts: Record<string, number> = {};
+                      for (const id of msg.reward.digimon) counts[id] = (counts[id] ?? 0) + 1;
+                      return Object.entries(counts).map(([charId, count]) => {
+                        const char = CHARACTERS[charId];
+                        const img = CHARACTER_IMAGES[charId];
+                        return (
+                          <View key={charId} style={[styles.digiRewardChip, { backgroundColor: '#22c55e22', borderColor: '#22c55e55' }]}>
+                            {img && (
+                              <Image source={img} style={styles.digiRewardImg} resizeMode="contain" />
+                            )}
+                            <Text style={[styles.rewardChipText, { color: '#22c55e' }]}>
+                              {count > 1 ? `${count}x ` : ''}{char?.name ?? charId}
+                            </Text>
+                          </View>
+                        );
+                      });
+                    })()}
                   </View>
                   {!msg.rewardClaimed ? (
                     <TouchableOpacity
