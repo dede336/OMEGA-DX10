@@ -11,6 +11,7 @@ import { AttributeBadge, ElementBadge, HPBar, CharacterAvatar } from '@/componen
 
 const LIGHT_STATUS_GIF = require('../../assets/images/light_status.gif');
 const DARK_STATUS_GIF  = require('../../assets/images/dark_status.gif');
+const WATER_STATUS_GIF = require('../../assets/images/water_status.gif');
 const FIRE_STATUS_GIF  = require('../../assets/images/fire_status.gif');
 const PLANT_STATUS_GIF = require('../../assets/images/plant_status.gif');
 const WIND_STATUS_GIF  = require('../../assets/images/wind_status.gif');
@@ -38,6 +39,11 @@ const SPECIAL_GIFS: Record<string, any> = {
   magnaAngemon:          LIGHT_STATUS_GIF,
   goldramon:             LIGHT_STATUS_GIF,
   seraphimon:            LIGHT_STATUS_GIF,
+  // Water / Ice element
+  gabumon:               WATER_STATUS_GIF,
+  garurumon:             WATER_STATUS_GIF,
+  wereGarurumon:         WATER_STATUS_GIF,
+  metalGarurumon:        WATER_STATUS_GIF,
   // Dark element — no dedicated GIF
   demiDevimon:           DARK_STATUS_GIF,
   lucemonChaosMode:      DARK_STATUS_GIF,
