@@ -686,20 +686,12 @@ export default function BattleScreen() {
           <View style={{ width: 32 }} />
         </View>
 
-        {/* Enemy preview — background only, enemies are a surprise */}
+        {/* Enemy preview — background only, enemies listed below */}
         <View style={[styles.enemyPreviewCard, { borderColor: firstEnemyAttr ? firstEnemyAttr.color + '88' : colors.border }]}>
           {map.backgroundImage ? (
-            <ImageBackground source={map.backgroundImage} style={styles.previewBg} imageStyle={{ resizeMode: 'cover' }}>
-              <View style={styles.previewBgOverlay}>
-                <Feather name="help-circle" size={36} color="rgba(255,255,255,0.6)" />
-                <Text style={[styles.previewLabel, { marginTop: 6 }]}>INIMIGOS DESCONHECIDOS</Text>
-              </View>
-            </ImageBackground>
+            <ImageBackground source={map.backgroundImage} style={styles.previewBg} imageStyle={{ resizeMode: 'cover' }} />
           ) : (
-            <View style={[styles.previewBgOverlay, { backgroundColor: colors.card, minHeight: 140 }]}>
-              <Feather name="help-circle" size={36} color={colors.mutedForeground} />
-              <Text style={[styles.previewLabel, { color: colors.mutedForeground, marginTop: 6 }]}>INIMIGOS DESCONHECIDOS</Text>
-            </View>
+            <View style={[styles.previewBgOverlay, { backgroundColor: colors.card, minHeight: 140 }]} />
           )}
           <View style={[styles.previewInfo, { backgroundColor: colors.card }]}>
             <Text style={[styles.enemyLevel, { color: colors.primary }]}>Nível {stage.enemyLevel}</Text>
@@ -707,6 +699,9 @@ export default function BattleScreen() {
               <Feather name="award" size={12} color={colors.primary} />
               <Text style={[styles.expBadgeText, { color: colors.primary }]}>+{stage.expReward} EXP</Text>
             </View>
+            <Text style={[styles.possibleLabel, { color: colors.mutedForeground }]}>
+              Possíveis aparições: {stageCharIds.map((id) => CHARACTERS[id]?.name ?? id).join(', ')}
+            </Text>
           </View>
         </View>
 
@@ -1140,6 +1135,7 @@ const styles = StyleSheet.create({
   enemyLevel: { fontSize: 13, fontWeight: '700' as const },
   expBadge: { flexDirection: 'row', alignItems: 'center', gap: 6, borderWidth: 1, borderRadius: 10, paddingHorizontal: 12, paddingVertical: 4 },
   expBadgeText: { fontSize: 13, fontWeight: '700' as const },
+  possibleLabel: { fontSize: 11, fontWeight: '500' as const, textAlign: 'center', marginTop: 6 },
   chooseLabel: { fontSize: 11, fontWeight: '700' as const, letterSpacing: 1, paddingHorizontal: 20, marginBottom: 10 },
   selectList: { paddingHorizontal: 20, paddingBottom: 20, gap: 12 },
   selectCard: { width: 120, borderRadius: 14, borderWidth: 1.5, padding: 14, alignItems: 'center', gap: 8, position: 'relative' as const },
