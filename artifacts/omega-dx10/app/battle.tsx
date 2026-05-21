@@ -61,7 +61,12 @@ export default function BattleScreen() {
   const [winner, setWinner] = useState<'player' | 'enemy' | null>(null);
   const [busy, setBusy] = useState(false);
   const [autoMode, setAutoMode] = useState(false);
+  const [autoRunCount, setAutoRunCount] = useState(0);
   const autoModeRef = useRef(false);
+  const autoRunCountRef = useRef(0);
+  const selectedOwnedIdRef = useRef<string | null>(null);
+
+  const AUTO_RUN_MAX = 10;
 
   const playerShake = useRef(new Animated.Value(0)).current;
   const enemyShake = useRef(new Animated.Value(0)).current;
@@ -79,8 +84,9 @@ export default function BattleScreen() {
     ]).start();
   }, []);
 
-  // Keep ref in sync so the auto-battle effect always reads the latest value
+  // Keep refs in sync
   useEffect(() => { autoModeRef.current = autoMode; }, [autoMode]);
+  useEffect(() => { autoRunCountRef.current = autoRunCount; }, [autoRunCount]);
 
   // Auto-battle: whenever busy becomes false in battle phase, fire next ATTACK
   useEffect(() => {
@@ -92,6 +98,24 @@ export default function BattleScreen() {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [autoMode, busy, phase, winner]);
 
+  // Auto-restart: after winning in auto mode, wait 3s then restart (up to AUTO_RUN_MAX times)
+  useEffect(() => {
+    if (!autoMode || winner !== 'player') return;
+    if (autoRunCountRef.current >= AUTO_RUN_MAX) {
+      setAutoMode(false);
+      return;
+    }
+    const timer = setTimeout(() => {
+      if (!autoModeRef.current) return;
+      const ownedId = selectedOwnedIdRef.current;
+      if (!ownedId) return;
+      setAutoRunCount((prev) => prev + 1);
+      startBattle(ownedId);
+    }, 3000);
+    return () => clearTimeout(timer);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [autoMode, winner]);
+
   function addLog(text: string, color: string = colors.foreground) {
     setLog((prev) => [...prev, { text, color }]);
     setTimeout(() => logRef.current?.scrollToEnd({ animated: true }), 100);
@@ -101,6 +125,7 @@ export default function BattleScreen() {
     const owned = collection.find((c) => c.ownedId === ownedId);
     if (!owned || !stage) return;
     setSelectedCharacter(ownedId);
+    selectedOwnedIdRef.current = ownedId;
 
     const pChar = CHARACTERS[owned.characterId];
     const eChar = CHARACTERS[stage.enemyCharacterId];
@@ -519,23 +544,31 @@ export default function BattleScreen() {
             </View>
           )}
 
-          {/* Toggle auto button */}
-          <TouchableOpacity
-            activeOpacity={0.8}
-            onPress={() => setAutoMode((prev) => !prev)}
-            style={[
-              styles.autoBtn,
-              {
-                backgroundColor: autoMode ? '#22c55e22' : colors.card,
-                borderColor: autoMode ? '#22c55e' : colors.border,
-              },
-            ]}
-          >
-            <Feather name={autoMode ? 'pause' : 'play'} size={16} color={autoMode ? '#22c55e' : colors.mutedForeground} />
-            <Text style={[styles.autoBtnLabel, { color: autoMode ? '#22c55e' : colors.mutedForeground }]}>
-              {autoMode ? 'Pausar Auto' : 'Auto'}
-            </Text>
-          </TouchableOpacity>
+          {/* Toggle auto button — only available after first clear */}
+          {alreadyCleared && (
+            <TouchableOpacity
+              activeOpacity={0.8}
+              onPress={() => {
+                setAutoMode((prev) => {
+                  const next = !prev;
+                  if (next) setAutoRunCount(0);
+                  return next;
+                });
+              }}
+              style={[
+                styles.autoBtn,
+                {
+                  backgroundColor: autoMode ? '#22c55e22' : colors.card,
+                  borderColor: autoMode ? '#22c55e' : colors.border,
+                },
+              ]}
+            >
+              <Feather name={autoMode ? 'pause' : 'play'} size={16} color={autoMode ? '#22c55e' : colors.mutedForeground} />
+              <Text style={[styles.autoBtnLabel, { color: autoMode ? '#22c55e' : colors.mutedForeground }]}>
+                {autoMode ? 'Pausar Auto' : 'Auto'}
+              </Text>
+            </TouchableOpacity>
+          )}
         </View>
       </View>
     );
@@ -544,6 +577,9 @@ export default function BattleScreen() {
   // ── Result Phase ──────────────────────────────────────────────────────────────
   if (phase === 'result') {
     const won = winner === 'player';
+    const autoRunning = autoMode && won && autoRunCount < AUTO_RUN_MAX;
+    const runsLeft = AUTO_RUN_MAX - autoRunCount;
+
     return (
       <View style={[styles.container, styles.resultCenter, { backgroundColor: colors.background }]}>
         <View style={[styles.resultCard, { backgroundColor: colors.card, borderColor: won ? '#22c55e' : '#ef4444' }]}>
@@ -565,12 +601,46 @@ export default function BattleScreen() {
               </Text>
             </View>
           )}
-          <TouchableOpacity
-            onPress={() => router.replace('/(tabs)/map')}
-            style={[styles.resultBtn, { backgroundColor: colors.primary }]}
-          >
-            <Text style={[styles.resultBtnText, { color: colors.primaryForeground }]}>Voltar ao Mapa</Text>
-          </TouchableOpacity>
+
+          {/* Auto-restart banner */}
+          {autoRunning && (
+            <View style={[styles.autoRestartBanner, { backgroundColor: '#22c55e11', borderColor: '#22c55e55' }]}>
+              <Feather name="zap" size={14} color="#22c55e" />
+              <Text style={[styles.autoRestartText, { color: '#22c55e' }]}>
+                Reiniciando em 3s… ({autoRunCount}/{AUTO_RUN_MAX})
+              </Text>
+              <Text style={[styles.autoRestartSub, { color: '#22c55e99' }]}>
+                {runsLeft} rodada{runsLeft !== 1 ? 's' : ''} restante{runsLeft !== 1 ? 's' : ''}
+              </Text>
+            </View>
+          )}
+          {autoMode && won && autoRunCount >= AUTO_RUN_MAX && (
+            <View style={[styles.autoRestartBanner, { backgroundColor: '#f59e0b11', borderColor: '#f59e0b55' }]}>
+              <Feather name="check-circle" size={14} color="#f59e0b" />
+              <Text style={[styles.autoRestartText, { color: '#f59e0b' }]}>
+                Auto concluído! ({AUTO_RUN_MAX}/{AUTO_RUN_MAX})
+              </Text>
+            </View>
+          )}
+
+          {/* Cancel auto */}
+          {autoMode && won && (
+            <TouchableOpacity
+              onPress={() => { setAutoMode(false); setAutoRunCount(0); }}
+              style={[styles.resultBtnOutline, { borderColor: '#ef4444' }]}
+            >
+              <Text style={[styles.resultBtnText, { color: '#ef4444' }]}>Cancelar Auto</Text>
+            </TouchableOpacity>
+          )}
+
+          {!autoMode && (
+            <TouchableOpacity
+              onPress={() => router.replace('/(tabs)/map')}
+              style={[styles.resultBtn, { backgroundColor: colors.primary }]}
+            >
+              <Text style={[styles.resultBtnText, { color: colors.primaryForeground }]}>Voltar ao Mapa</Text>
+            </TouchableOpacity>
+          )}
           {!won && (
             <TouchableOpacity
               onPress={() => { setPhase('select'); setLog([]); setWinner(null); }}
@@ -714,6 +784,16 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
   },
   autoBtnLabel: { fontSize: 12, fontWeight: '700' as const },
+  autoRestartBanner: {
+    width: '100%',
+    borderRadius: 12,
+    borderWidth: 1,
+    padding: 12,
+    alignItems: 'center',
+    gap: 4,
+  },
+  autoRestartText: { fontSize: 13, fontWeight: '700' as const },
+  autoRestartSub: { fontSize: 11 },
   // Result
   resultCenter: { alignItems: 'center', justifyContent: 'center' },
   resultCard: {
