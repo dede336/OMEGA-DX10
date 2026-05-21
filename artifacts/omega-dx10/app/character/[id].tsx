@@ -407,14 +407,9 @@ export default function CharacterDetailScreen() {
           <View style={styles.evoOverlayDim} />
 
           <View style={styles.evoContent} pointerEvents="none">
-            {fusePhase === 'playing' && (
-              <Text style={[styles.evoTopLabel, styles.evoTopLabelFusion]}>FUSÃO!</Text>
-            )}
-
             {(fusePhase === 'reveal' || fusePhase === 'done') && fuseAnim && (
               <>
                 <Animated.Text style={[styles.evoTopLabel, styles.evoTopLabelFusion, { transform: [{ scale: titleScale }] }]}>
-                  FUSÃO COMPLETA!
                 </Animated.Text>
                 <Animated.View style={[styles.evoAvatarWrap, { opacity: newFormOpacity }]}>
                   <CharacterAvatar characterId={fuseAnim.toCharId} size={140} />

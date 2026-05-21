@@ -470,15 +470,8 @@ export default function CollectionScreen() {
 
           {/* Content */}
           <View style={styles.evoContent} pointerEvents="none">
-            {evoPhase === 'playing' && (
-              <Text style={styles.evoTopLabel}>DIGIVOLUÇÃO!</Text>
-            )}
-
             {(evoPhase === 'reveal' || evoPhase === 'done') && evoAnim && (
               <>
-                <Animated.Text style={[styles.evoTopLabel, { transform: [{ scale: titleScale }] }]}>
-                  DIGIVOLUÇÃO COMPLETA!
-                </Animated.Text>
                 {/* Crossfade: old form fades out, new form fades in */}
                 <View style={styles.evoAvatarWrap}>
                   <Animated.View style={[StyleSheet.absoluteFill, { opacity: fromOpacity, alignItems: 'center', justifyContent: 'center' }]}>
