@@ -529,6 +529,8 @@ export const CHARACTERS: Record<string, Character> = {
     attribute: 'VC',
     element: 'FIRE',
     baseStats: { hp: 170, mp: 165, atk: 115, def: 92, spt: 72, spd: 80, apt: 35 },
+    attackName: 'Horn Thrust ○',
+    spiritName: 'Mega Flame 🔥',
     description: 'A poderosa evolução do Agumon. Um Digimon de nível Champion do tipo Vacina com força de fogo devastadora.',
   },
   metalGreymon: {
