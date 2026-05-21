@@ -47,10 +47,10 @@ export function CharacterAvatar({ characterId, size = 72, borderColor, bgColor, 
             frameHeight={sprite.frameHeight}
             frameCount={sprite.frameCount}
             fps={sprite.fps}
-            displaySize={size}
+            displaySize={size * imgScale}
           />
         ) : img ? (
-          <Image source={img} style={{ width: size, height: size }} resizeMode="contain" />
+          <Image source={img} style={{ width: size * imgScale, height: size * imgScale }} resizeMode="contain" />
         ) : (
           <Feather name="zap" size={size * 0.5} color={bc} />
         )}
