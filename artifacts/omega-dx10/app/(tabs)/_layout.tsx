@@ -1,5 +1,7 @@
 import { BlurView } from "expo-blur";
+import { isLiquidGlassAvailable } from "expo-glass-effect";
 import { Tabs } from "expo-router";
+import { Icon, Label, NativeTabs } from "expo-router/unstable-native-tabs";
 import React from "react";
 import { Platform, StyleSheet, View, Image, useColorScheme } from "react-native";
 
@@ -12,10 +14,36 @@ const CRAFT_ICON    = require('../../assets/images/craft-icon.png');
 const MAP_ICON      = require('../../assets/images/map-icon.png');
 const MAIL_ICON     = require('../../assets/images/mailbox-icon.png');
 
+function NativeTabLayout() {
+  return (
+    <NativeTabs>
+      <NativeTabs.Trigger name="index">
+        <Icon sf={{ default: "house", selected: "house.fill" }} />
+        <Label>Início</Label>
+      </NativeTabs.Trigger>
+      <NativeTabs.Trigger name="collection">
+        <Icon sf={{ default: "square.grid.2x2", selected: "square.grid.2x2.fill" }} />
+        <Label>Digibank</Label>
+      </NativeTabs.Trigger>
+      <NativeTabs.Trigger name="craft">
+        <Icon sf={{ default: "hammer", selected: "hammer.fill" }} />
+        <Label>Craft</Label>
+      </NativeTabs.Trigger>
+      <NativeTabs.Trigger name="map">
+        <Icon sf={{ default: "map", selected: "map.fill" }} />
+        <Label>Mundo</Label>
+      </NativeTabs.Trigger>
+      <NativeTabs.Trigger name="correios">
+        <Icon sf={{ default: "envelope", selected: "envelope.fill" }} />
+        <Label>Correios</Label>
+      </NativeTabs.Trigger>
+    </NativeTabs>
+  );
+}
+
 function ClassicTabLayout() {
   const colors = useColors();
   const colorScheme = useColorScheme();
-  const isDark = colorScheme === "dark";
   const isIOS = Platform.OS === "ios";
   const isWeb = Platform.OS === "web";
   const { unreadMailCount } = useGame();
@@ -40,11 +68,7 @@ function ClassicTabLayout() {
         },
         tabBarBackground: () =>
           isIOS ? (
-            <BlurView
-              intensity={90}
-              tint="dark"
-              style={StyleSheet.absoluteFill}
-            />
+            <BlurView intensity={90} tint="dark" style={StyleSheet.absoluteFill} />
           ) : (
             <View style={[StyleSheet.absoluteFill, { backgroundColor: colors.card }]} />
           ),
@@ -105,5 +129,8 @@ function ClassicTabLayout() {
 }
 
 export default function TabLayout() {
+  if (isLiquidGlassAvailable()) {
+    return <NativeTabLayout />;
+  }
   return <ClassicTabLayout />;
 }
