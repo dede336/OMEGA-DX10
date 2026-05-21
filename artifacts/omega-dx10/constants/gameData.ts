@@ -204,6 +204,17 @@ export const CHARACTERS: Record<string, Character> = {
     spiritName: 'Shining Laser ✨',
     spiritHitsAll: true,
   },
+  lucemonChaosMode: {
+    id: 'lucemonChaosMode',
+    name: 'Lucemon Chaos Mode',
+    rarity: 'LEGENDARY',
+    attribute: 'VR',
+    element: 'DARK',
+    baseStats: { hp: 243, mp: 265, atk: 142, def: 113, spt: 119, spd: 118, apt: 70 },
+    description: 'A forma corrompida do Anjo Caído. Nascido da fusão da luz e das trevas, Lucemon Chaos Mode é um ser de poder absoluto e destruição implacável, equilibrando o divino e o demoníaco em perfeita harmonia sombria.',
+    attackName: 'Divine Dasher ✨',
+    spiritName: 'Chaos Blast 🌑',
+  },
   patamon: {
     id: 'patamon',
     name: 'Patamon',
@@ -363,6 +374,8 @@ export const FUSIONS: Record<string, FusionRecipe> = {
   warGreymon:    { partner: 'metalGarurumon', resultId: 'omegamon',              resultName: 'Omegamon',              requiredLevel: 60 },
   metalGarurumon:{ partner: 'warGreymon',     resultId: 'omegamon',              resultName: 'Omegamon',              requiredLevel: 60 },
   gallantmon:    { partner: 'seraphimon',     resultId: 'gallantmonCrimsonMode', resultName: 'Gallantmon Crimson Mode', requiredLevel: 60 },
+  angemon:       { partner: 'devimon',        resultId: 'lucemonChaosMode',      resultName: 'Lucemon Chaos Mode',      requiredLevel: 60 },
+  devimon:       { partner: 'angemon',        resultId: 'lucemonChaosMode',      resultName: 'Lucemon Chaos Mode',      requiredLevel: 60 },
 };
 
 // ─── Evolution paths ──────────────────────────────────────────────────────────
@@ -379,6 +392,7 @@ export const EVOLUTIONS: Record<string, { evolvesTo: string; requiredLevel: numb
   guilmon:      { evolvesTo: 'growlmon',      requiredLevel: 16, label: 'Growlmon' },
   growlmon:       { evolvesTo: 'megaloGrowlmon', requiredLevel: 40, label: 'MegaloGrowlmon' },
   megaloGrowlmon: { evolvesTo: 'gallantmon',   requiredLevel: 60, label: 'Gallantmon' },
+  lucemon:        { evolvesTo: 'lucemonChaosMode', requiredLevel: 40, label: 'Lucemon Chaos Mode' },
   patamon:        { evolvesTo: 'angemon',      requiredLevel: 19, label: 'Angemon' },
   angemon:        { evolvesTo: 'magnaAngemon', requiredLevel: 33, label: 'MagnaAngemon' },
   magnaAngemon:   { evolvesTo: 'seraphimon',   requiredLevel: 60, label: 'Seraphimon' },
@@ -391,7 +405,7 @@ export const EVOLUTIONS: Record<string, { evolvesTo: string; requiredLevel: numb
 export const SCANNABLE_CHARACTERS: string[] = ['agumon', 'gabumon', 'demiDevimon'];
 
 // Display order in the Codex (grouped by evolution line)
-export const CODEX_ORDER: string[] = ['agumon', 'agumonSaver', 'geoGreymon', 'rizeGreymon', 'shineGreymon', 'greymon', 'metalGreymon', 'warGreymon', 'gabumon', 'garurumon', 'wereGarurumon', 'metalGarurumon', 'omegamon', 'guilmon', 'growlmon', 'megaloGrowlmon', 'gallantmon', 'gallantmonCrimsonMode', 'patamon', 'angemon', 'magnaAngemon', 'seraphimon', 'demiDevimon', 'devimon', 'myotismon', 'vnonMyotismon', 'gulusGammamon'];
+export const CODEX_ORDER: string[] = ['agumon', 'agumonSaver', 'geoGreymon', 'rizeGreymon', 'shineGreymon', 'greymon', 'metalGreymon', 'warGreymon', 'gabumon', 'garurumon', 'wereGarurumon', 'metalGarurumon', 'omegamon', 'guilmon', 'growlmon', 'megaloGrowlmon', 'gallantmon', 'gallantmonCrimsonMode', 'lucemonChaosMode', 'patamon', 'angemon', 'magnaAngemon', 'seraphimon', 'demiDevimon', 'devimon', 'myotismon', 'vnonMyotismon', 'gulusGammamon'];
 
 // ─── Maps & Stages ─────────────────────────────────────────────────────────────
 export const GAME_MAPS: GameMap[] = [
