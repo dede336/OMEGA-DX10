@@ -9,12 +9,31 @@ import { SafeAreaProvider } from "react-native-safe-area-context";
 import { ErrorBoundary } from "@/components/ErrorBoundary";
 import { GameProvider, useGame } from "@/context/GameContext";
 import { AuthProvider, useAuth } from "@/context/AuthContext";
+import { TamerThemeProvider, useTamerTheme } from "@/context/TamerThemeContext";
 import { useCloudSync } from "@/hooks/useCloudSync";
+import { TAMERS } from "@/constants/gameData";
 
 SplashScreen.preventAutoHideAsync();
 SplashScreen.hideAsync();
 
 const queryClient = new QueryClient();
+
+const LIGHT_TAMER_COLORS = new Set(['#eab308']);
+
+function TamerThemeSyncer() {
+  const { tamerId } = useGame();
+  const { setTheme } = useTamerTheme();
+  useEffect(() => {
+    const tamer = tamerId ? TAMERS.find((t) => t.id === tamerId) : null;
+    if (tamer) {
+      setTheme({
+        primary: tamer.accentColor,
+        primaryForeground: LIGHT_TAMER_COLORS.has(tamer.accentColor) ? '#0f172a' : '#ffffff',
+      });
+    }
+  }, [tamerId, setTheme]);
+  return null;
+}
 
 function NavigationGuard() {
   const { isLoaded } = useGame();
@@ -40,6 +59,7 @@ function CloudSyncManager() {
 function RootLayoutNav() {
   return (
     <>
+      <TamerThemeSyncer />
       <NavigationGuard />
       <CloudSyncManager />
       <Stack screenOptions={{ headerShown: false }}>
@@ -57,19 +77,21 @@ function RootLayoutNav() {
 export default function RootLayout() {
   return (
     <SafeAreaProvider>
-      <ErrorBoundary>
-        <QueryClientProvider client={queryClient}>
-          <AuthProvider>
-            <GameProvider>
-              <GestureHandlerRootView style={{ flex: 1 }}>
-                <KeyboardProvider>
-                  <RootLayoutNav />
-                </KeyboardProvider>
-              </GestureHandlerRootView>
-            </GameProvider>
-          </AuthProvider>
-        </QueryClientProvider>
-      </ErrorBoundary>
+      <TamerThemeProvider>
+        <ErrorBoundary>
+          <QueryClientProvider client={queryClient}>
+            <AuthProvider>
+              <GameProvider>
+                <GestureHandlerRootView style={{ flex: 1 }}>
+                  <KeyboardProvider>
+                    <RootLayoutNav />
+                  </KeyboardProvider>
+                </GestureHandlerRootView>
+              </GameProvider>
+            </AuthProvider>
+          </QueryClientProvider>
+        </ErrorBoundary>
+      </TamerThemeProvider>
     </SafeAreaProvider>
   );
 }
