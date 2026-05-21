@@ -18,6 +18,7 @@ interface AvatarProps {
   borderColor?: string;
   bgColor?: string;
   dimmed?: boolean;
+  plain?: boolean;
 }
 
 // Characters that need a bigger image scale inside the avatar circle
@@ -25,7 +26,7 @@ const AVATAR_SCALE: Record<string, number> = {
   omegamon: 1.0,
 };
 
-export function CharacterAvatar({ characterId, size = 72, borderColor, bgColor, dimmed }: AvatarProps) {
+export function CharacterAvatar({ characterId, size = 72, borderColor, bgColor, dimmed, plain }: AvatarProps) {
   const img = CHARACTER_IMAGES[characterId];
   const sprite = CHARACTER_SPRITE_SHEETS[characterId];
   const char = CHARACTERS[characterId];
@@ -33,6 +34,28 @@ export function CharacterAvatar({ characterId, size = 72, borderColor, bgColor, 
   const bc = borderColor ?? elemData?.color ?? '#00d4ff';
   const bg = bgColor ?? (elemData?.color ?? '#00d4ff') + '22';
   const imgScale = AVATAR_SCALE[characterId] ?? 0.8;
+
+  // plain mode: render sprite/image directly without circular container
+  if (plain) {
+    return (
+      <View style={{ width: size, height: size, alignItems: 'center', justifyContent: 'center', opacity: dimmed ? 0.45 : 1 }}>
+        {sprite ? (
+          <SpriteSheet
+            source={sprite.source}
+            totalWidth={sprite.totalWidth}
+            frameHeight={sprite.frameHeight}
+            frameCount={sprite.frameCount}
+            fps={sprite.fps}
+            displaySize={size}
+          />
+        ) : img ? (
+          <Image source={img} style={{ width: size, height: size }} resizeMode="contain" />
+        ) : (
+          <Feather name="zap" size={size * 0.5} color={bc} />
+        )}
+      </View>
+    );
+  }
 
   return (
     <View

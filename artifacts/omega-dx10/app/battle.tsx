@@ -702,7 +702,7 @@ export default function BattleScreen() {
                 {stageCharIds.length > 1 ? `${stageCharIds.length} INIMIGOS` : 'INIMIGO'}
               </Text>
               <View style={styles.previewEnemyRow}>
-                {stageCharIds.map((cid) => <CharacterAvatar key={cid} characterId={cid} size={stageCharIds.length > 1 ? 60 : 90} borderColor="transparent" bgColor="transparent" />)}
+                {stageCharIds.map((cid) => <CharacterAvatar key={cid} characterId={cid} size={stageCharIds.length > 1 ? 60 : 90} plain />)}
               </View>
             </View>
           )}
@@ -828,7 +828,7 @@ export default function BattleScreen() {
                             resizeMode="contain"
                           />
                         ) : (
-                          <CharacterAvatar characterId={charId} size={enemies.length === 1 ? 90 : 64} borderColor="transparent" bgColor="transparent" />
+                          <CharacterAvatar characterId={charId} size={enemies.length === 1 ? 90 : 64} plain />
                         )}
                         {hitFlash?.idx === i && ELEMENT_IMAGES[hitFlash.element] && (
                           <Animated.Image
