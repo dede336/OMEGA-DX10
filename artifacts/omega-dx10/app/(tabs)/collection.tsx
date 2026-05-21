@@ -70,11 +70,11 @@ export default function CollectionScreen() {
     if (!evoAnim) return;
 
     if (evoPhase === 'flashing') {
-      // Flash old form black ↔ visible × 5, then move to reveal
-      const flashes = Array.from({ length: 5 }, () =>
+      // Flash old form black ↔ visible × 3 (~900ms total), then reveal
+      const flashes = Array.from({ length: 3 }, () =>
         Animated.sequence([
-          Animated.timing(flashOpacity, { toValue: 0, duration: 180, useNativeDriver: true }),
-          Animated.timing(flashOpacity, { toValue: 1, duration: 180, useNativeDriver: true }),
+          Animated.timing(flashOpacity, { toValue: 0, duration: 150, useNativeDriver: true }),
+          Animated.timing(flashOpacity, { toValue: 1, duration: 150, useNativeDriver: true }),
         ])
       );
       Animated.sequence(flashes).start(() => setEvoPhase('reveal'));
@@ -82,8 +82,8 @@ export default function CollectionScreen() {
 
     if (evoPhase === 'reveal') {
       Animated.parallel([
-        Animated.timing(newFormOpacity, { toValue: 1, duration: 500, useNativeDriver: true }),
-        Animated.spring(titleScale, { toValue: 1, useNativeDriver: true, friction: 5 }),
+        Animated.timing(newFormOpacity, { toValue: 1, duration: 400, useNativeDriver: true }),
+        Animated.spring(titleScale, { toValue: 1, useNativeDriver: true, friction: 6 }),
       ]).start(() => setEvoPhase('done'));
     }
   }, [evoAnim, evoPhase]);
