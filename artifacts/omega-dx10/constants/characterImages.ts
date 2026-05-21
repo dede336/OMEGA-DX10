@@ -36,6 +36,7 @@ const CHARACTER_IMAGES: Record<string, any> = {
   patamon:                 require('../assets/images/characters/patamon.gif'),
   angemon:                 require('../assets/images/characters/angemon.gif'),
   magnaAngemon:            require('../assets/images/characters/magnaangemon.gif'),
+  goldramon:      require('../assets/images/characters/goldramon.gif'),
   seraphimon:              require('../assets/images/characters/seraphimon.gif'),
 };
 
