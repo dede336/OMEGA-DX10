@@ -271,7 +271,7 @@ export default function BattleScreen() {
 
   // ── Grant rewards ──────────────────────────────────────────────────────────
   function grantRewards(activeOwnedId: string) {
-    const enemyCount = (stage?.enemyCharacterIds ?? [stage?.enemyCharacterId]).filter(Boolean).length;
+    const enemyCount = battleCharIds.length > 0 ? battleCharIds.length : 1;
     const xp = (stage?.expReward ?? 0) * enemyCount;
     gainExp(activeOwnedId, xp);
     if (enemyCount > 1) addLog(`⚔️ Bônus de ${enemyCount}x inimigos: +${xp} EXP!`, '#22c55e');
@@ -1110,7 +1110,7 @@ export default function BattleScreen() {
             {won ? 'Vitória!' : 'Derrota'}
           </Text>
           {won && stage && (() => {
-            const ec = (stage.enemyCharacterIds ?? [stage.enemyCharacterId]).filter(Boolean).length;
+            const ec = battleCharIds.length > 0 ? battleCharIds.length : 1;
             const totalXp = stage.expReward * ec;
             return (
               <View style={[styles.rewardBox, { backgroundColor: colors.primary + '22', borderColor: colors.primary }]}>
