@@ -1,11 +1,13 @@
-import React from 'react';
+import React, { useCallback } from 'react';
 import {
   View, Text, StyleSheet, ScrollView, TouchableOpacity, Image,
 } from 'react-native';
+import { useFocusEffect } from 'expo-router';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Feather } from '@expo/vector-icons';
 import { useColors } from '@/hooks/useColors';
 import { useGame, MailMessage } from '@/context/GameContext';
+import { useAuth } from '@/context/AuthContext';
 import { CHARACTERS } from '@/constants/gameData';
 import CHARACTER_IMAGES from '@/constants/characterImages';
 
@@ -17,7 +19,12 @@ function formatDate(ts: number): string {
 export default function CorreiosScreen() {
   const colors = useColors();
   const insets = useSafeAreaInsets();
-  const { messages, tamerLevel, readMessage, claimReward } = useGame();
+  const { messages, tamerLevel, readMessage, claimReward, loadFromCloud } = useGame();
+  const { getApiUrl } = useAuth();
+
+  useFocusEffect(useCallback(() => {
+    loadFromCloud(getApiUrl());
+  }, [loadFromCloud, getApiUrl]));
 
   const sorted = [...messages].sort((a, b) => b.createdAt - a.createdAt);
 
