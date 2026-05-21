@@ -152,6 +152,9 @@ export default function MochilaScreen() {
               {tamerExp}/{tamerExpToNextLevel(tamerLevel)}
             </Text>
           </View>
+          <Text style={[styles.tamerXpMissing, { color: colors.mutedForeground }]}>
+            Falta {tamerExpToNextLevel(tamerLevel) - tamerExp} EXP para o Lv {tamerLevel + 1}
+          </Text>
         </View>
       </View>
 
@@ -513,6 +516,7 @@ const styles = StyleSheet.create({
   tamerXpBarBg: { flex: 1, height: 6, borderRadius: 3, overflow: 'hidden' as const },
   tamerXpBarFill: { height: 6, borderRadius: 3 },
   tamerXpNum: { fontSize: 10, minWidth: 36, textAlign: 'right' as const },
+  tamerXpMissing: { fontSize: 10, marginTop: 2, textAlign: 'center' as const, opacity: 0.7 },
   nameEditRow: { flexDirection: 'row', alignItems: 'center', gap: 8 },
   nameInput: {
     flex: 1, fontSize: 20, fontWeight: '700' as const,
