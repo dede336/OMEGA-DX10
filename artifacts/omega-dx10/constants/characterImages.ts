@@ -18,6 +18,7 @@ const CHARACTER_IMAGES: Record<string, any> = {
   gulusGammamon:  require('../assets/images/characters/gulusGammamon.gif'),
   omegamon:       require('../assets/images/characters/omegamon.gif'),
   guilmon:        require('../assets/images/characters/guilmon.webp'),
+  growlmon:       require('../assets/images/characters/growlmon.webp'),
 };
 
 export default CHARACTER_IMAGES;
