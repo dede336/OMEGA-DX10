@@ -9,11 +9,25 @@ import { useAuth } from '@/context/AuthContext';
 import { CHARACTERS, ATTRIBUTES, GAME_MAPS, getScaledStats, TAMERS } from '@/constants/gameData';
 import { AttributeBadge, ElementBadge, HPBar, CharacterAvatar } from '@/components/GameComponents';
 
+const LIGHT_STATUS_GIF = require('../../assets/images/light_status.gif');
+
 const SPECIAL_GIFS: Record<string, any> = {
   omegamon:              require('../../assets/images/omegamon_digivolve.gif'),
   shineGreymonBurstMode: require('../../assets/images/characters/shinegreymonbm_special.gif'),
   rosemonBurstMode:      require('../../assets/images/characters/rosemonBurstMode_status.gif'),
   imperialDramonPM:      require('../../assets/images/characters/imperialDramonPM_status.gif'),
+  // Light element — no dedicated GIF
+  gallantmon:            LIGHT_STATUS_GIF,
+  gallantmonCrimsonMode: LIGHT_STATUS_GIF,
+  lucemon:               LIGHT_STATUS_GIF,
+  ophanimon:             LIGHT_STATUS_GIF,
+  angewomon:             LIGHT_STATUS_GIF,
+  tailmon:               LIGHT_STATUS_GIF,
+  salamon:               LIGHT_STATUS_GIF,
+  angemon:               LIGHT_STATUS_GIF,
+  magnaAngemon:          LIGHT_STATUS_GIF,
+  goldramon:             LIGHT_STATUS_GIF,
+  seraphimon:            LIGHT_STATUS_GIF,
 };
 
 export default function HomeScreen() {
