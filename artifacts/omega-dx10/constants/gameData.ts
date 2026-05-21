@@ -386,7 +386,6 @@ export const EQUIP_SLOT_ICONS: Record<EquipSlot, string> = {
 
 export const EQUIPMENT_ITEMS: EquipItem[] = [
   { id: 'blusa_tamer',    name: 'Camiseta de Tamer',  slot: 'blusa',    rarity: 'COMMON',    description: 'Camiseta padrão dos Tamers. Aumenta o ataque do parceiro.',          bonuses: { atk: 5 } },
-  { id: 'blusa_jaqueta',  name: 'Jaqueta Tática',     slot: 'blusa',    rarity: 'RARE',      description: 'Jaqueta reforçada com chip de dados embutido.',                     bonuses: { atk: 10, def: 5 } },
   { id: 'calca_treino',   name: 'Calça de Treino',    slot: 'calca',    rarity: 'COMMON',    description: 'Calça confortável para treinamento. Aumenta a defesa.',              bonuses: { def: 5 } },
   { id: 'sapato_tenis',   name: 'Tênis de Corrida',   slot: 'sapato',   rarity: 'COMMON',    description: 'Leve e rápido. Aumenta a velocidade do parceiro.',                  bonuses: { spd: 6 } },
   { id: 'brasao_digital',  name: 'Brasão Digital',      slot: 'brasao',   rarity: 'COMMON',    description: 'Símbolo de um Tamer legítimo. Aumenta o HP do parceiro.',                           bonuses: { hp: 15 } },
@@ -400,7 +399,6 @@ export const EQUIPMENT_ITEMS: EquipItem[] = [
   { id: 'brasao_conhecimento',  name: 'Brasão do Conhecimento',  slot: 'brasao', rarity: 'LEGENDARY', description: 'O Brasão do Conhecimento. Aumenta em 15% todos os status de Digimon do tipo Trovão e Planta.', bonuses: {}, elementBonus: { elements: ['LIGHTNING', 'PLANT'], percent: 0.15 } },
   { id: 'digivice_d2',    name: 'Digivice D-2',       slot: 'digivice', rarity: 'EPIC',      description: 'Recompensa por derrotar GulusGammamon. Compartilha 25% do XP de batalha com Digimon reserva e aumenta 20% o XP Tamer.', bonuses: {}, xpSharePercent: 0.25, tamerXpBonusPercent: 0.20 },
   { id: 'digivice_d3',    name: 'Digivice D-3',       slot: 'digivice', rarity: 'COMMON',    description: 'Digivice padrão. Potencializa o espírito do parceiro.',             bonuses: { spt: 6 } },
-  { id: 'digivice_x',    name: 'Digivice X',          slot: 'digivice', rarity: 'LEGENDARY', description: 'Versão X do Digivice. Poder muito além dos limites conhecidos.',    bonuses: { spt: 20, atk: 12, mp: 25 } },
   { id: 'pulseira_forca', name: 'Pulseira de Força',  slot: 'pulseira', rarity: 'COMMON',    description: 'Amplifica a força bruta do Digimon parceiro.',                      bonuses: { atk: 7 } },
   { id: 'pulseira_ouro',  name: 'Pulseira Dourada',   slot: 'pulseira', rarity: 'RARE',      description: 'Pulseira lendária que amplifica múltiplos atributos de batalha.',   bonuses: { atk: 10, spt: 8 } },
   { id: 'oculos_escuro_fitado', name: 'Óculos Escuro Fitado', slot: 'oculos', rarity: 'RARE', description: 'Recompensa do Trono do Caos. Aumenta em 1% a DEF do Digimon e +10% ao XP Tamer.', bonuses: {}, percentBonuses: { def: 0.01 }, tamerXpBonusPercent: 0.10 },
@@ -520,30 +518,6 @@ export const TAMERS: TamerOption[] = [
 
 export const CRAFT_RECIPES: CraftRecipe[] = [
   // ── Chip Forest drops: piece_coragem ──────────────────────────────────────
-  {
-    pieceId: 'piece_coragem',
-    pieceName: 'Fragmento da Coragem',
-    pieceDescription: 'Drop do Chip Forest. Usado para forjar itens de ataque.',
-    pieceIcon: 'zap',
-    pieceColor: '#ef4444',
-    requiredCount: 5,
-    bitsCost: 300,
-    resultItemId: 'blusa_jaqueta',
-    resultItemName: 'Jaqueta Tática',
-    resultRarity: 'RARE',
-  },
-  {
-    pieceId: 'piece_coragem',
-    pieceName: 'Fragmento da Coragem',
-    pieceDescription: 'Drop do Chip Forest. Usado para forjar itens de ataque.',
-    pieceIcon: 'zap',
-    pieceColor: '#ef4444',
-    requiredCount: 10,
-    bitsCost: 2000,
-    resultItemId: 'digivice_x',
-    resultItemName: 'Digivice X',
-    resultRarity: 'LEGENDARY',
-  },
   // ── Dungeon Gulus drop: piece_brasao_coragem ─────────────────────────────
   {
     pieceId: 'piece_brasao_coragem',
