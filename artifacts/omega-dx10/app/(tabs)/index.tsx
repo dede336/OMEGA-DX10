@@ -10,7 +10,7 @@ import { CHARACTERS, ATTRIBUTES, GAME_MAPS, getScaledStats, TAMERS } from '@/con
 import { AttributeBadge, ElementBadge, HPBar, CharacterAvatar } from '@/components/GameComponents';
 
 const SPECIAL_GIFS: Record<string, any> = {
-  omegamon:              require('../../assets/images/characters/omegamon_digivolve.gif'),
+  omegamon:              require('../../assets/images/omegamon_digivolve.gif'),
   shineGreymonBurstMode: require('../../assets/images/characters/shinegreymonbm_special.gif'),
   rosemonBurstMode:      require('../../assets/images/characters/rosemonBurstMode_status.gif'),
   imperialDramonPM:      require('../../assets/images/characters/imperialDramonPM_status.gif'),
