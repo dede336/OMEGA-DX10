@@ -10,7 +10,8 @@ import { useColors } from '@/hooks/useColors';
 import { useAuth } from '@/context/AuthContext';
 import { TAMERS } from '@/constants/gameData';
 
-const TK_BG_GIF = require('../../assets/images/tk_bg.gif');
+const TK_BG_GIF  = require('../../assets/images/tk_bg.gif');
+const TAI_CARD   = require('../../assets/images/tai_card.png');
 
 interface LeaderboardEntry {
   rank: number;
@@ -61,6 +62,7 @@ export default function RankingScreen() {
     const topRank = item.rank <= 3;
     const tamer = item.tamerId ? TAMERS.find((t) => t.id === item.tamerId) : null;
     const isTK  = item.tamerId === 'tamer_tk';
+    const isTai = item.tamerId === 'tamer_tai';
     return (
       <View style={[
         styles.entry,
@@ -75,6 +77,13 @@ export default function RankingScreen() {
             source={TK_BG_GIF}
             style={[StyleSheet.absoluteFillObject, { opacity: 0.40, borderRadius: 12 }]}
             resizeMode="contain"
+          />
+        )}
+        {isTai && (
+          <Image
+            source={TAI_CARD}
+            style={[StyleSheet.absoluteFillObject, { opacity: 0.55, borderRadius: 12 }]}
+            resizeMode="cover"
           />
         )}
         <View style={styles.rankCol}>
