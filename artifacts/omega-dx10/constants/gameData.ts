@@ -659,7 +659,7 @@ export const GAME_MAPS: GameMap[] = [
     description: 'Uma floresta de dados ancestrais onde Digimons selvagens habitam entre raízes digitais.',
     backgroundImage: require('../assets/images/maps/chip_forest.png'),
     bitsReward: 100,
-    tamerExpReward: 5,
+    tamerExpReward: 10,
     stages: [
       { index: 0, name: 'Entrada da Floresta', enemyCharacterId: 'demiDevimon', enemyLevel: 1,  expReward: 50,  enemyCharacterIds: ['demiDevimon', 'agumon', 'pyomon', 'patamon', 'gabumon', 'salamon', 'palmon'], randomEnemyCount: 1 },
       { index: 1, name: 'Clareira dos Dados',  enemyCharacterId: 'gabumon',     enemyLevel: 4,  expReward: 90,  enemyCharacterIds: ['demiDevimon', 'agumon', 'pyomon', 'patamon', 'gabumon', 'salamon', 'palmon'], randomEnemyCount: 2 },
@@ -673,7 +673,7 @@ export const GAME_MAPS: GameMap[] = [
     backgroundImage: require('../assets/images/maps/acess_glacier.png'),
     requiredMapCleared: 'map_forest',
     bitsReward: 250,
-    tamerExpReward: 10,
+    tamerExpReward: 20,
     stages: [
       { index: 0, name: 'Avenida dos Neons',   enemyCharacterId: 'greymon',      enemyLevel: 12,  expReward: 300, enemyCharacterIds: ['greymon', 'garurumon', 'devimon'] },
       { index: 1, name: 'Setor Industrial',    enemyCharacterId: 'garurumon',    enemyLevel: 16,  expReward: 500, enemyCharacterIds: ['greymon', 'garurumon', 'devimon'] },
@@ -687,7 +687,7 @@ export const GAME_MAPS: GameMap[] = [
     backgroundImage: require('../assets/images/maps/chaos_brain.png'),
     requiredMapCleared: 'map_city',
     bitsReward: 500,
-    tamerExpReward: 15,
+    tamerExpReward: 30,
     stages: [
       { index: 0, name: 'Portal das Trevas',   enemyCharacterId: 'metalGreymon',  enemyLevel: 20,  expReward: 1500, enemyCharacterIds: ['metalGreymon', 'wereGarurumon', 'myotismon'] },
       { index: 1, name: 'Abismo Corrompido',   enemyCharacterId: 'wereGarurumon', enemyLevel: 22,  expReward: 2500, enemyCharacterIds: ['metalGreymon', 'wereGarurumon', 'myotismon'] },
