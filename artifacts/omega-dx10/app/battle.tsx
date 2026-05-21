@@ -71,8 +71,6 @@ type DroppedItem = { id: string; name: string; amount: number; color: string };
 
 const PIECE_META: Record<string, { name: string; color: string }> = {
   piece_coragem:      { name: 'Fragmento da Coragem', color: '#ef4444' },
-  piece_gelo:         { name: 'Fragmento de Gelo',    color: '#38bdf8' },
-  piece_caos:         { name: 'Fragmento do Caos',    color: '#a855f7' },
   piece_tecido:       { name: 'Tecido Colorido',      color: '#ec4899' },
   piece_agulha:       { name: 'Agulha Média',         color: '#8b5cf6' },
   piece_linha:        { name: 'Linha Colorida',       color: '#06b6d4' },
@@ -340,8 +338,6 @@ export default function BattleScreen() {
       });
     } else if (Math.random() < 0.30) {
       if (mapId === 'map_forest') { gainPiece('piece_coragem', 1); recordDrop('piece_coragem', 1); addLog('🔴 Fragmento da Coragem!', '#ef4444'); }
-      else if (mapId === 'map_city') { gainPiece('piece_gelo', 1); recordDrop('piece_gelo', 1); addLog('🔵 Fragmento de Gelo!', '#38bdf8'); }
-      else if (mapId === 'map_shadow') { gainPiece('piece_caos', 1); recordDrop('piece_caos', 1); addLog('🟣 Fragmento do Caos!', '#a855f7'); }
     }
     if (Math.random() < 0.20) { gainPiece('piece_tecido', 1); recordDrop('piece_tecido', 1); addLog('🎨 Tecido Colorido!', '#ec4899'); }
     if (Math.random() < 0.20) { gainPiece('piece_agulha', 1); recordDrop('piece_agulha', 1); addLog('🪡 Agulha Média!', '#8b5cf6'); }
