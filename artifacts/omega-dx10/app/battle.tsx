@@ -1135,7 +1135,7 @@ export default function BattleScreen() {
                 >
                   <Image
                     source={require('../assets/images/next-stage-btn.png')}
-                    style={styles.startBattleBtnImg}
+                    style={styles.nextStageBtnImg}
                     resizeMode="contain"
                   />
                 </TouchableOpacity>
@@ -1197,6 +1197,7 @@ const styles = StyleSheet.create({
   startBattleBtnText: { fontSize: 15, fontWeight: '800' as const },
   startBattleBtnImgWrap: { alignItems: 'center', gap: 2 },
   startBattleBtnImg: { width: 220, height: 70 },
+  nextStageBtnImg: { width: 140, height: 44 },
   startBattleBtnCount: { fontSize: 12, fontWeight: '700' as const, marginTop: -8, letterSpacing: 0.5 },
 
   // ── Arena with simultaneous enemies ──
