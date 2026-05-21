@@ -10,6 +10,8 @@ const EQUIP_ITEM_IMAGES: Record<string, any> = {
   oculos_escuro_fitado:    require('../assets/images/oculos_escuro_fitado.png'),
   brasao_conhecimento:  require('../assets/images/brasao_conhecimento.png'),
   pulseira_ouro:        require('../assets/images/pulseira_ouro.png'),
+  anel_sagrado:         require('../assets/images/anel_sagrado.png'),
+  piece_anel_sagrado:   require('../assets/images/anel_sagrado.png'),
   blusa_social:     require('../assets/images/blusa_social.png'),
   bermuda_poliester: require('../assets/images/bermuda_poliester.png'),
   tenis_corrida:    require('../assets/images/tenis_corrida.png'),
