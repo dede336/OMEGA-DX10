@@ -10,6 +10,7 @@ import { CHARACTERS, ATTRIBUTES, GAME_MAPS, getScaledStats, TAMERS } from '@/con
 import { AttributeBadge, ElementBadge, HPBar, CharacterAvatar } from '@/components/GameComponents';
 
 const LIGHT_STATUS_GIF = require('../../assets/images/light_status.gif');
+const DARK_STATUS_GIF  = require('../../assets/images/dark_status.gif');
 
 const SPECIAL_GIFS: Record<string, any> = {
   omegamon:              require('../../assets/images/omegamon_digivolve.gif'),
@@ -28,6 +29,13 @@ const SPECIAL_GIFS: Record<string, any> = {
   magnaAngemon:          LIGHT_STATUS_GIF,
   goldramon:             LIGHT_STATUS_GIF,
   seraphimon:            LIGHT_STATUS_GIF,
+  // Dark element — no dedicated GIF
+  demiDevimon:           DARK_STATUS_GIF,
+  lucemonChaosMode:      DARK_STATUS_GIF,
+  devimon:               DARK_STATUS_GIF,
+  myotismon:             DARK_STATUS_GIF,
+  vnonMyotismon:         DARK_STATUS_GIF,
+  gulusGammamon:         DARK_STATUS_GIF,
 };
 
 export default function HomeScreen() {
