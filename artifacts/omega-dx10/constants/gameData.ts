@@ -226,6 +226,17 @@ export const CHARACTERS: Record<string, Character> = {
     attackName: 'Divine Dasher ✨',
     spiritName: 'Chaos Blast 🌑',
   },
+  garudamon: {
+    id: 'garudamon',
+    name: 'Garudamon',
+    rarity: 'EPIC',
+    attribute: 'VC',
+    element: 'WIND',
+    baseStats: { hp: 215, mp: 250, atk: 128, def: 99, spt: 116, spd: 115, apt: 50 },
+    description: 'O Digimon Guerreiro das Chamas. A forma Ultimate da Birdramon, uma poderosa ave de batalha do tipo Vacina revestida de armadura vermelha. Seus ataques de fogo são capazes de varrer campos inteiros de inimigos.',
+    attackName: 'Crimson Claw 🔥',
+    spiritName: 'Shadow Wing 🔥',
+  },
   birdramon: {
     id: 'birdramon',
     name: 'Birdramon',
@@ -427,6 +438,7 @@ export const EVOLUTIONS: Record<string, { evolvesTo: string; requiredLevel: numb
   megaloGrowlmon: { evolvesTo: 'gallantmon',   requiredLevel: 60, label: 'Gallantmon' },
   lucemon:        { evolvesTo: 'lucemonChaosMode', requiredLevel: 40, label: 'Lucemon Chaos Mode' },
   pyomon:         { evolvesTo: 'birdramon',    requiredLevel: 16, label: 'Birdramon' },
+  birdramon:      { evolvesTo: 'garudamon',    requiredLevel: 32, label: 'Garudamon' },
   patamon:        { evolvesTo: 'angemon',      requiredLevel: 19, label: 'Angemon' },
   angemon:        { evolvesTo: 'magnaAngemon', requiredLevel: 33, label: 'MagnaAngemon' },
   magnaAngemon:   { evolvesTo: 'seraphimon',   requiredLevel: 60, label: 'Seraphimon', requiredItem: 'anel_sagrado' },
@@ -472,7 +484,7 @@ export const ITEM_NAMES: Record<string, string> = {
 export const SCANNABLE_CHARACTERS: string[] = ['agumon', 'gabumon', 'demiDevimon', 'patamon', 'pyomon'];
 
 // Display order in the Codex (grouped by evolution line)
-export const CODEX_ORDER: string[] = ['agumon', 'agumonSaver', 'geoGreymon', 'rizeGreymon', 'shineGreymon', 'greymon', 'metalGreymon', 'warGreymon', 'gabumon', 'garurumon', 'wereGarurumon', 'metalGarurumon', 'omegamon', 'guilmon', 'growlmon', 'megaloGrowlmon', 'gallantmon', 'gallantmonCrimsonMode', 'lucemon', 'lucemonChaosMode', 'patamon', 'angemon', 'magnaAngemon', 'seraphimon', 'pyomon', 'birdramon', 'demiDevimon', 'devimon', 'myotismon', 'vnonMyotismon', 'gulusGammamon'];
+export const CODEX_ORDER: string[] = ['agumon', 'agumonSaver', 'geoGreymon', 'rizeGreymon', 'shineGreymon', 'greymon', 'metalGreymon', 'warGreymon', 'gabumon', 'garurumon', 'wereGarurumon', 'metalGarurumon', 'omegamon', 'guilmon', 'growlmon', 'megaloGrowlmon', 'gallantmon', 'gallantmonCrimsonMode', 'lucemon', 'lucemonChaosMode', 'patamon', 'angemon', 'magnaAngemon', 'seraphimon', 'pyomon', 'birdramon', 'garudamon', 'demiDevimon', 'devimon', 'myotismon', 'vnonMyotismon', 'gulusGammamon'];
 
 // ─── Maps & Stages ─────────────────────────────────────────────────────────────
 export const GAME_MAPS: GameMap[] = [
