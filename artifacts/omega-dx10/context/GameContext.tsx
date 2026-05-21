@@ -68,6 +68,7 @@ interface GameState {
   collection: OwnedCharacter[];
   clearedStages: Record<string, boolean>;
   selectedOwnedId: string | null;
+  team: string[];
   scanProgress: Record<string, number>;
   inventory: string[];
   equippedItems: EquippedItems;
@@ -106,6 +107,7 @@ interface GameContextValue extends GameState {
   unreadMailCount: number;
   readMessage: (id: string) => void;
   claimReward: (id: string) => void;
+  setTeam: (ownedIds: string[]) => void;
 }
 
 const STORAGE_KEY = 'omega_dx10_save_v2';
@@ -118,6 +120,7 @@ const defaultState: GameState = {
   collection: [{ ownedId: 'owned_agumon_0', characterId: 'agumon', level: 1, exp: 0 }],
   clearedStages: {},
   selectedOwnedId: 'owned_agumon_0',
+  team: [],
   scanProgress: {},
   inventory: DEFAULT_INVENTORY,
   equippedItems: defaultEquipped,
@@ -266,6 +269,10 @@ export function GameProvider({ children }: { children: React.ReactNode }) {
 
   const setSelectedCharacter = useCallback((ownedId: string) => {
     setState((prev) => ({ ...prev, selectedOwnedId: ownedId }));
+  }, []);
+
+  const setTeam = useCallback((ownedIds: string[]) => {
+    setState((prev) => ({ ...prev, team: ownedIds.slice(0, 3) }));
   }, []);
 
   const setPlayerName = useCallback((name: string) => {
@@ -481,6 +488,7 @@ export function GameProvider({ children }: { children: React.ReactNode }) {
         unreadMailCount,
         readMessage,
         claimReward,
+        setTeam,
       }}
     >
       {children}

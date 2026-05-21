@@ -33,6 +33,7 @@ export interface MapStage {
   index: number;
   name: string;
   enemyCharacterId: string;
+  enemyCharacterIds?: string[];
   enemyLevel: number;
   expReward: number;
   drops?: StageDrop[];
@@ -211,7 +212,7 @@ export const CHARACTERS: Record<string, Character> = {
     rarity: 'RARE',
     attribute: 'VR',
     element: 'DARK',
-    baseStats: { hp: 145, mp: 130, atk: 115, def: 85, spt: 75, spd: 105, apt: 30 },
+    baseStats: { hp: 290, mp: 260, atk: 230, def: 170, spt: 150, spd: 210, apt: 60 },
     description: 'A forma sombria do Gammamon. Um Digimon Champion do tipo Vírus corrompido pelas trevas, com velocidade e poder de ataque devastadores.',
   },
   greymon: {
@@ -290,7 +291,7 @@ export const GAME_MAPS: GameMap[] = [
     stages: [
       { index: 0, name: 'Entrada da Floresta', enemyCharacterId: 'agumon',      enemyLevel: 1,  expReward: 40  },
       { index: 1, name: 'Clareira dos Dados',  enemyCharacterId: 'gabumon',     enemyLevel: 4,  expReward: 60  },
-      { index: 2, name: 'Núcleo da Floresta',  enemyCharacterId: 'demiDevimon', enemyLevel: 8,  expReward: 100 },
+      { index: 2, name: 'Núcleo da Floresta',  enemyCharacterId: 'demiDevimon', enemyLevel: 8,  expReward: 100, enemyCharacterIds: ['agumon', 'demiDevimon'] },
     ],
   },
   {
@@ -302,9 +303,9 @@ export const GAME_MAPS: GameMap[] = [
     bitsReward: 250,
     tamerExpReward: 10,
     stages: [
-      { index: 0, name: 'Avenida dos Neons',   enemyCharacterId: 'gabumon',     enemyLevel: 12,  expReward: 130 },
-      { index: 1, name: 'Setor Industrial',    enemyCharacterId: 'agumon',      enemyLevel: 16,  expReward: 160 },
-      { index: 2, name: 'Torre Central',       enemyCharacterId: 'demiDevimon', enemyLevel: 18,  expReward: 220 },
+      { index: 0, name: 'Avenida dos Neons',   enemyCharacterId: 'greymon',      enemyLevel: 12,  expReward: 130, enemyCharacterIds: ['greymon', 'garurumon', 'devimon'] },
+      { index: 1, name: 'Setor Industrial',    enemyCharacterId: 'garurumon',    enemyLevel: 16,  expReward: 160, enemyCharacterIds: ['greymon', 'garurumon', 'devimon'] },
+      { index: 2, name: 'Torre Central',       enemyCharacterId: 'devimon',      enemyLevel: 18,  expReward: 220, enemyCharacterIds: ['greymon', 'garurumon', 'devimon'] },
     ],
   },
   {
@@ -316,9 +317,9 @@ export const GAME_MAPS: GameMap[] = [
     bitsReward: 500,
     tamerExpReward: 15,
     stages: [
-      { index: 0, name: 'Portal das Trevas',   enemyCharacterId: 'demiDevimon', enemyLevel: 20,  expReward: 280 },
-      { index: 1, name: 'Abismo Corrompido',   enemyCharacterId: 'agumon',      enemyLevel: 22,  expReward: 340 },
-      { index: 2, name: 'Trono do Caos',       enemyCharacterId: 'devimon',     enemyLevel: 24,  expReward: 450, firstClearReward: 'oculos_escuro_fitado' },
+      { index: 0, name: 'Portal das Trevas',   enemyCharacterId: 'metalGreymon',  enemyLevel: 20,  expReward: 280, enemyCharacterIds: ['metalGreymon', 'wereGarurumon', 'myotismon'] },
+      { index: 1, name: 'Abismo Corrompido',   enemyCharacterId: 'wereGarurumon', enemyLevel: 22,  expReward: 340, enemyCharacterIds: ['metalGreymon', 'wereGarurumon', 'myotismon'] },
+      { index: 2, name: 'Trono do Caos',       enemyCharacterId: 'myotismon',     enemyLevel: 24,  expReward: 450, enemyCharacterIds: ['metalGreymon', 'wereGarurumon', 'myotismon'], firstClearReward: 'oculos_escuro_fitado' },
     ],
   },
   {

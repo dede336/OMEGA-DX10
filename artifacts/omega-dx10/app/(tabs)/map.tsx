@@ -162,6 +162,7 @@ export default function MapScreen() {
                 <View style={[styles.stagesContainer, { borderTopColor: colors.border }]}>
                   {map.stages.map((stage) => {
                     const cleared = isStageCleared(map.id, stage.index);
+                    const stageEnemyCount = stage.enemyCharacterIds?.length ?? 1;
                     const enemyChar = CHARACTERS[stage.enemyCharacterId];
                     const enemyAttr = enemyChar ? ATTRIBUTES[enemyChar.attribute] : null;
                     const enemyElem = enemyChar ? ELEMENTS[enemyChar.element] : null;
@@ -191,6 +192,11 @@ export default function MapScreen() {
                               <View style={[styles.elemTag, { backgroundColor: (enemyElem?.color ?? '#6b7280') + '33', borderColor: enemyElem?.color ?? '#6b7280' }]}>
                                 <Text style={[styles.elemTagText, { color: enemyElem?.color ?? '#6b7280' }]}>{enemyElem?.label}</Text>
                               </View>
+                              {stageEnemyCount > 1 && (
+                                <View style={[styles.enemyCountTag, { backgroundColor: '#ef444422', borderColor: '#ef4444' }]}>
+                                  <Text style={[styles.enemyCountTagText, { color: '#ef4444' }]}>×{stageEnemyCount}</Text>
+                                </View>
+                              )}
                             </View>
                           )}
                           {!cleared && !isDungeon && (
@@ -301,6 +307,8 @@ const styles = StyleSheet.create({
   enemyName: { fontSize: 12 },
   elemTag: { borderRadius: 6, borderWidth: 1, paddingHorizontal: 6, paddingVertical: 1 },
   elemTagText: { fontSize: 10, fontWeight: '700' as const },
+  enemyCountTag: { borderRadius: 6, borderWidth: 1, paddingHorizontal: 5, paddingVertical: 1 },
+  enemyCountTagText: { fontSize: 10, fontWeight: '800' as const },
   rewardRow: { flexDirection: 'row', alignItems: 'center', gap: 4 },
   rewardText: { fontSize: 11, fontWeight: '600' as const },
   stageRight: { alignItems: 'center', gap: 8 },

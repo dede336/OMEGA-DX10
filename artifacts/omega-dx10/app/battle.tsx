@@ -19,11 +19,9 @@ import { useGame } from '@/context/GameContext';
 import {
   CHARACTERS,
   ATTRIBUTES,
-  ELEMENTS,
   GAME_MAPS,
   EQUIPMENT_ITEMS,
   EQUIP_SLOTS_ORDER,
-  SCANNABLE_CHARACTERS,
   getScaledStats,
 } from '@/constants/gameData';
 import CHARACTER_IMAGES from '@/constants/characterImages';
@@ -37,16 +35,32 @@ import {
   EquipBonuses,
   SPIRIT_MP_COST,
 } from '@/utils/battleEngine';
-import { HPBar, AttributeBadge, ElementBadge, CharacterAvatar } from '@/components/GameComponents';
+import { HPBar, AttributeBadge, CharacterAvatar } from '@/components/GameComponents';
 
 type Phase = 'select' | 'battle' | 'result';
 type BattleLog = { text: string; color: string };
+type TeamFighter = BattleFighter & { ownedId: string };
 
 export default function BattleScreen() {
   const colors = useColors();
   const insets = useSafeAreaInsets();
   const params = useLocalSearchParams<{ mapId: string; stageIndex: string }>();
-  const { collection, selectedCharacter, setSelectedCharacter, gainExp, clearStage, isStageCleared, gainScan, equippedItems, gainPiece, gainBits, gainTamerExp, addToInventory } = useGame();
+  const {
+    collection,
+    selectedCharacter,
+    setSelectedCharacter,
+    gainExp,
+    clearStage,
+    isStageCleared,
+    gainScan,
+    equippedItems,
+    gainPiece,
+    gainBits,
+    gainTamerExp,
+    addToInventory,
+    team,
+    setTeam,
+  } = useGame();
 
   const mapId = params.mapId ?? '';
   const stageIndex = Number(params.stageIndex ?? '0');
@@ -54,27 +68,56 @@ export default function BattleScreen() {
   const stage = map?.stages[stageIndex];
   const alreadyCleared = isStageCleared(mapId, stageIndex);
 
+  const topPad = Platform.OS === 'web' ? 67 : insets.top;
+  const botPad = Platform.OS === 'web' ? 34 : insets.bottom;
+
+  // ── Phase / result ──────────────────────────────────────────────────────────
   const [phase, setPhase] = useState<Phase>('select');
-  const [playerFighter, setPlayerFighter] = useState<BattleFighter | null>(null);
-  const [enemyFighter, setEnemyFighter] = useState<BattleFighter | null>(null);
-  const [log, setLog] = useState<BattleLog[]>([]);
   const [winner, setWinner] = useState<'player' | 'enemy' | null>(null);
   const [busy, setBusy] = useState(false);
+  const [log, setLog] = useState<BattleLog[]>([]);
+  const logRef = useRef<ScrollView>(null);
+
+  // ── Team selection (select phase) ───────────────────────────────────────────
+  const initialTeam = team.length > 0 ? team : (selectedCharacter ? [selectedCharacter.ownedId] : []);
+  const [selectedTeam, setSelectedTeam] = useState<string[]>(initialTeam);
+  const selectedTeamRef = useRef<string[]>(initialTeam);
+  useEffect(() => { selectedTeamRef.current = selectedTeam; }, [selectedTeam]);
+
+  // ── Battle team fighters ────────────────────────────────────────────────────
+  const [teamFighters, setTeamFighters] = useState<TeamFighter[]>([]);
+  const [activeTeamIdx, setActiveTeamIdx] = useState(0);
+  const teamFightersRef = useRef<TeamFighter[]>([]);
+  const activeTeamIdxRef = useRef(0);
+  useEffect(() => { teamFightersRef.current = teamFighters; }, [teamFighters]);
+  useEffect(() => { activeTeamIdxRef.current = activeTeamIdx; }, [activeTeamIdx]);
+
+  // ── Enemy queue ─────────────────────────────────────────────────────────────
+  const [enemyQueue, setEnemyQueue] = useState<string[]>([]);
+  const [currentEnemyIdx, setCurrentEnemyIdx] = useState(0);
+  const enemyQueueRef = useRef<string[]>([]);
+  const currentEnemyIdxRef = useRef(0);
+  useEffect(() => { enemyQueueRef.current = enemyQueue; }, [enemyQueue]);
+  useEffect(() => { currentEnemyIdxRef.current = currentEnemyIdx; }, [currentEnemyIdx]);
+
+  // ── Active fighters ─────────────────────────────────────────────────────────
+  const [playerFighter, setPlayerFighter] = useState<BattleFighter | null>(null);
+  const [enemyFighter, setEnemyFighter] = useState<BattleFighter | null>(null);
+  const enemyFighterRef = useRef<BattleFighter | null>(null);
+  useEffect(() => { enemyFighterRef.current = enemyFighter; }, [enemyFighter]);
+
+  // ── Auto battle ─────────────────────────────────────────────────────────────
   const [autoMode, setAutoMode] = useState(false);
   const [autoRunCount, setAutoRunCount] = useState(0);
   const autoModeRef = useRef(false);
   const autoRunCountRef = useRef(0);
-  const selectedOwnedIdRef = useRef<string | null>(null);
-
   const AUTO_RUN_MAX = 10;
+  useEffect(() => { autoModeRef.current = autoMode; }, [autoMode]);
+  useEffect(() => { autoRunCountRef.current = autoRunCount; }, [autoRunCount]);
 
+  // ── Animations ──────────────────────────────────────────────────────────────
   const playerShake = useRef(new Animated.Value(0)).current;
   const enemyShake = useRef(new Animated.Value(0)).current;
-  const logRef = useRef<ScrollView>(null);
-
-  const topPad = Platform.OS === 'web' ? 67 : insets.top;
-  const botPad = Platform.OS === 'web' ? 34 : insets.bottom;
-
   const shake = useCallback((anim: Animated.Value) => {
     Animated.sequence([
       Animated.timing(anim, { toValue: 10, duration: 60, useNativeDriver: true }),
@@ -84,33 +127,22 @@ export default function BattleScreen() {
     ]).start();
   }, []);
 
-  // Keep refs in sync
-  useEffect(() => { autoModeRef.current = autoMode; }, [autoMode]);
-  useEffect(() => { autoRunCountRef.current = autoRunCount; }, [autoRunCount]);
-
-  // Auto-battle: whenever busy becomes false in battle phase, fire next ATTACK
+  // ── Auto-battle tick ────────────────────────────────────────────────────────
   useEffect(() => {
     if (!autoMode || busy || phase !== 'battle' || winner !== null) return;
-    const timer = setTimeout(() => {
-      if (autoModeRef.current) handleAction('ATTACK');
-    }, 700);
+    const timer = setTimeout(() => { if (autoModeRef.current) handleAction('ATTACK'); }, 700);
     return () => clearTimeout(timer);
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [autoMode, busy, phase, winner]);
 
-  // Auto-restart: after winning in auto mode, wait 3s then restart (up to AUTO_RUN_MAX times)
+  // ── Auto-restart after win ──────────────────────────────────────────────────
   useEffect(() => {
     if (!autoMode || winner !== 'player') return;
-    if (autoRunCountRef.current >= AUTO_RUN_MAX) {
-      setAutoMode(false);
-      return;
-    }
+    if (autoRunCountRef.current >= AUTO_RUN_MAX) { setAutoMode(false); return; }
     const timer = setTimeout(() => {
       if (!autoModeRef.current) return;
-      const ownedId = selectedOwnedIdRef.current;
-      if (!ownedId) return;
-      setAutoRunCount((prev) => prev + 1);
-      startBattle(ownedId);
+      setAutoRunCount((p) => p + 1);
+      startBattle(selectedTeamRef.current);
     }, 3000);
     return () => clearTimeout(timer);
   // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -121,110 +153,214 @@ export default function BattleScreen() {
     setTimeout(() => logRef.current?.scrollToEnd({ animated: true }), 100);
   }
 
-  function startBattle(ownedId: string) {
-    const owned = collection.find((c) => c.ownedId === ownedId);
-    if (!owned || !stage) return;
-    setSelectedCharacter(ownedId);
-    selectedOwnedIdRef.current = ownedId;
-
-    const pChar = CHARACTERS[owned.characterId];
-    const eChar = CHARACTERS[stage.enemyCharacterId];
-    if (!pChar || !eChar) return;
-
-    const equipBonuses: EquipBonuses = { flat: {} };
+  // ── Build equip bonuses ─────────────────────────────────────────────────────
+  function buildEquipBonuses(): EquipBonuses {
+    const bonuses: EquipBonuses = { flat: {} };
     EQUIP_SLOTS_ORDER.forEach((slot) => {
       const itemId = equippedItems[slot];
       if (!itemId) return;
       const item = EQUIPMENT_ITEMS.find((i) => i.id === itemId);
       if (!item) return;
       Object.entries(item.bonuses).forEach(([k, v]) => {
-        (equipBonuses.flat as Record<string, number>)[k] = ((equipBonuses.flat as Record<string, number>)[k] ?? 0) + (v ?? 0);
+        (bonuses.flat as Record<string, number>)[k] = ((bonuses.flat as Record<string, number>)[k] ?? 0) + (v ?? 0);
       });
       if (item.elementBonus) {
-        if (!equipBonuses.elementBonuses) equipBonuses.elementBonuses = [];
-        equipBonuses.elementBonuses.push(item.elementBonus);
+        if (!bonuses.elementBonuses) bonuses.elementBonuses = [];
+        bonuses.elementBonuses.push(item.elementBonus);
       }
       if (item.percentBonuses) {
-        if (!equipBonuses.percentBonuses) equipBonuses.percentBonuses = {};
+        if (!bonuses.percentBonuses) bonuses.percentBonuses = {};
         Object.entries(item.percentBonuses).forEach(([k, v]) => {
           if (v !== undefined) {
-            (equipBonuses.percentBonuses as Record<string, number>)[k] = ((equipBonuses.percentBonuses as Record<string, number>)[k] ?? 0) + v;
+            (bonuses.percentBonuses as Record<string, number>)[k] =
+              ((bonuses.percentBonuses as Record<string, number>)[k] ?? 0) + v;
           }
         });
       }
     });
-
-    const pFighter = buildFighter(pChar.name, pChar.attribute, pChar.element, pChar.baseStats, owned.level, equipBonuses);
-    let eFighter = buildFighter(eChar.name, eChar.attribute, eChar.element, eChar.baseStats, stage.enemyLevel);
-    if (stage.bossMultipliers) {
-      const bm = stage.bossMultipliers;
-      const newHp  = bm.hp  ? Math.floor(eFighter.stats.hp  * bm.hp)  : eFighter.stats.hp;
-      const newDef = bm.def ? Math.floor(eFighter.stats.def * bm.def) : eFighter.stats.def;
-      eFighter = {
-        ...eFighter,
-        currentHP: newHp,
-        stats: { ...eFighter.stats, hp: newHp, def: newDef },
-      };
-    }
-
-    setPlayerFighter(pFighter);
-    setEnemyFighter(eFighter);
-    setLog([]);
-    setWinner(null);
-    setPhase('battle');
-
-    const first = whoGoesFirst(pFighter, eFighter);
-    addLog(
-      first === 'player'
-        ? `${pChar.name} age primeiro!`
-        : `${eChar.name} age primeiro!`,
-      colors.primary,
-    );
-
-    if (first === 'enemy') {
-      setTimeout(() => doEnemyTurn(pFighter, eFighter), 800);
-    }
+    return bonuses;
   }
 
+  // ── Build enemy fighter ─────────────────────────────────────────────────────
+  function buildEnemy(charId: string): BattleFighter {
+    const eChar = CHARACTERS[charId];
+    let f = buildFighter(eChar.name, eChar.attribute, eChar.element, eChar.baseStats, stage!.enemyLevel);
+    if (stage!.bossMultipliers) {
+      const bm = stage!.bossMultipliers;
+      const hp = bm.hp ? Math.floor(f.stats.hp * bm.hp) : f.stats.hp;
+      const def = bm.def ? Math.floor(f.stats.def * bm.def) : f.stats.def;
+      f = { ...f, currentHP: hp, stats: { ...f.stats, hp, def } };
+    }
+    return f;
+  }
+
+  // ── Grant victory rewards ───────────────────────────────────────────────────
+  function grantRewards(activeOwnedId: string) {
+    const xp = stage?.expReward ?? 0;
+    gainExp(activeOwnedId, xp);
+
+    const dv = equippedItems.digivice
+      ? EQUIPMENT_ITEMS.find((i) => i.id === equippedItems.digivice)
+      : null;
+    if (dv?.xpSharePercent && xp > 0) {
+      const shared = Math.floor(xp * dv.xpSharePercent);
+      if (shared > 0) {
+        const bench = teamFightersRef.current.filter((t) => t.ownedId !== activeOwnedId);
+        bench.forEach((t) => gainExp(t.ownedId, shared));
+        if (bench.length > 0) addLog(`📡 +${shared} XP compartilhado!`, '#60a5fa');
+      }
+    }
+
+    const wasCleared = isStageCleared(mapId, stageIndex);
+    clearStage(mapId, stageIndex);
+    if (!wasCleared && stage?.firstClearReward) {
+      addToInventory(stage.firstClearReward);
+      const ri = EQUIPMENT_ITEMS.find((i) => i.id === stage!.firstClearReward);
+      addLog(`🎁 ${ri?.name ?? stage.firstClearReward} obtido!`, '#f59e0b');
+    }
+
+    const eQueue = enemyQueueRef.current;
+    eQueue.forEach((eid) => { if (CHARACTERS[eid]?.rarity === 'COMMON') gainScan(eid, 5); });
+
+    if (map?.bitsReward) {
+      gainBits(map.bitsReward);
+      addLog(`💰 +${map.bitsReward.toLocaleString()} Bits!`, '#facc15');
+    }
+    if (map?.tamerExpReward) {
+      const tx = dv?.tamerXpBonusPercent
+        ? Math.floor(map.tamerExpReward * (1 + dv.tamerXpBonusPercent))
+        : map.tamerExpReward;
+      gainTamerExp(tx);
+      addLog(`⭐ +${tx} XP Tamer!`, '#a78bfa');
+    }
+
+    if (stage?.drops) {
+      stage.drops.forEach((d) => {
+        if (Math.random() < d.chance) {
+          if (d.type === 'bits') { gainBits(d.amount); addLog(`💰 +${d.amount.toLocaleString()} Bits!`, '#facc15'); }
+          else if (d.type === 'piece' && d.id) { gainPiece(d.id, d.amount); addLog('✦ Fragmento obtido!', '#f59e0b'); }
+        }
+      });
+    } else if (Math.random() < 0.30) {
+      if (mapId === 'map_forest') { gainPiece('piece_coragem', 1); addLog('🔴 Fragmento da Coragem!', '#ef4444'); }
+      else if (mapId === 'map_city') { gainPiece('piece_gelo', 1); addLog('🔵 Fragmento de Gelo!', '#38bdf8'); }
+      else if (mapId === 'map_shadow') { gainPiece('piece_caos', 1); addLog('🟣 Fragmento do Caos!', '#a855f7'); }
+    }
+    if (Math.random() < 0.20) { gainPiece('piece_tecido', 1); addLog('🎨 Tecido Colorido!', '#ec4899'); }
+    if (Math.random() < 0.20) { gainPiece('piece_agulha', 1); addLog('🪡 Agulha Média!', '#8b5cf6'); }
+    if (Math.random() < 0.20) { gainPiece('piece_linha', 1); addLog('🧵 Linha Colorida!', '#06b6d4'); }
+  }
+
+  // ── Start battle ────────────────────────────────────────────────────────────
+  function startBattle(teamIds: string[]) {
+    if (!stage || teamIds.length === 0) return;
+    const eqBonuses = buildEquipBonuses();
+    const fighters: TeamFighter[] = [];
+    for (const ownedId of teamIds) {
+      const owned = collection.find((c) => c.ownedId === ownedId);
+      if (!owned) continue;
+      const ch = CHARACTERS[owned.characterId];
+      if (!ch) continue;
+      fighters.push({ ...buildFighter(ch.name, ch.attribute, ch.element, ch.baseStats, owned.level, eqBonuses), ownedId });
+    }
+    if (fighters.length === 0) return;
+
+    const queue = stage.enemyCharacterIds ?? [stage.enemyCharacterId];
+
+    teamFightersRef.current = fighters;
+    activeTeamIdxRef.current = 0;
+    enemyQueueRef.current = queue;
+    currentEnemyIdxRef.current = 0;
+
+    setTeamFighters(fighters);
+    setActiveTeamIdx(0);
+    setEnemyQueue(queue);
+    setCurrentEnemyIdx(0);
+    setSelectedCharacter(fighters[0].ownedId);
+    setTeam(teamIds);
+
+    const firstEnemy = buildEnemy(queue[0]);
+    enemyFighterRef.current = firstEnemy;
+    setEnemyFighter(firstEnemy);
+    setPlayerFighter({ ...fighters[0] });
+    setLog([]);
+    setWinner(null);
+    setBusy(false);
+    setPhase('battle');
+
+    const first = whoGoesFirst(fighters[0], firstEnemy);
+    addLog(
+      first === 'player'
+        ? `${fighters[0].name} age primeiro!`
+        : `${CHARACTERS[queue[0]]?.name} age primeiro!`,
+      colors.primary,
+    );
+    if (first === 'enemy') setTimeout(() => doEnemyTurn({ ...fighters[0] }, firstEnemy), 800);
+  }
+
+  // ── Enemy turn ──────────────────────────────────────────────────────────────
   function doEnemyTurn(pF: BattleFighter, eF: BattleFighter): boolean {
-    if (!eF || !pF) return false;
     const action = enemyChooseAction(eF);
     const result = executeTurn(eF, pF, action);
 
     const newEnemyMP = result.attackerResult.newMP;
     const newPlayerHP = result.defenderResult.newHP;
-    const logColor = result.defenderResult.attrMult > 1 || result.defenderResult.elemMult > 1 ? '#ef4444' : colors.foreground;
-    addLog(result.defenderResult.log, logColor);
+    const lc = result.defenderResult.attrMult > 1 || result.defenderResult.elemMult > 1
+      ? '#ef4444' : colors.foreground;
+    addLog(result.defenderResult.log, lc);
     shake(playerShake);
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
 
-    setEnemyFighter((prev) => prev ? { ...prev, currentMP: newEnemyMP } : prev);
-    setPlayerFighter((prev) => prev ? { ...prev, currentHP: newPlayerHP } : prev);
+    const newEF = { ...eF, currentMP: newEnemyMP };
+    setEnemyFighter(newEF);
+    enemyFighterRef.current = newEF;
 
-    if (newPlayerHP <= 0) {
+    const newPlayerHP2 = newPlayerHP;
+    setPlayerFighter((prev) => prev ? { ...prev, currentHP: newPlayerHP2 } : prev);
+    const newTeam = teamFightersRef.current.map((t, i) =>
+      i === activeTeamIdxRef.current ? { ...t, currentHP: newPlayerHP2 } : t
+    );
+    setTeamFighters(newTeam);
+    teamFightersRef.current = newTeam;
+
+    if (newPlayerHP2 <= 0) {
       setTimeout(() => {
-        addLog('Você foi derrotado!', '#ef4444');
-        setWinner('enemy');
-        setPhase('result');
+        addLog(`${pF.name} foi derrotado!`, '#ef4444');
+        Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
+        const nextIdx = activeTeamIdxRef.current + 1;
+        if (nextIdx < teamFightersRef.current.length) {
+          const next = teamFightersRef.current[nextIdx];
+          addLog(`${next.name} entrou em batalha!`, '#f59e0b');
+          activeTeamIdxRef.current = nextIdx;
+          setActiveTeamIdx(nextIdx);
+          setSelectedCharacter(next.ownedId);
+          setPlayerFighter(next);
+          setBusy(false);
+        } else {
+          addLog('Toda a equipe foi derrotada!', '#ef4444');
+          setWinner('enemy');
+          setPhase('result');
+        }
       }, 400);
       return true;
     }
     return false;
   }
 
+  // ── Player action ───────────────────────────────────────────────────────────
   function handleAction(action: ActionType) {
-    if (busy || !playerFighter || !enemyFighter || phase !== 'battle') return;
+    if (busy || !playerFighter || !enemyFighter || phase !== 'battle' || winner !== null) return;
     if (playerFighter.currentHP <= 0 || enemyFighter.currentHP <= 0) return;
     if (action === 'SPIRIT' && playerFighter.currentMP < SPIRIT_MP_COST) return;
 
     setBusy(true);
 
-    // Player turn
     const pResult = executeTurn(playerFighter, enemyFighter, action);
     const newPlayerMP = pResult.attackerResult.newMP;
     const newEnemyHP = pResult.defenderResult.newHP;
-    const logColor = pResult.defenderResult.attrMult > 1 || pResult.defenderResult.elemMult > 1 ? '#22c55e' : colors.foreground;
-    addLog(pResult.defenderResult.log, logColor);
+    const lc = pResult.defenderResult.attrMult > 1 || pResult.defenderResult.elemMult > 1
+      ? '#22c55e' : colors.foreground;
+    addLog(pResult.defenderResult.log, lc);
     shake(enemyShake);
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
 
@@ -232,106 +368,64 @@ export default function BattleScreen() {
     const updatedEnemy: BattleFighter = { ...enemyFighter, currentHP: newEnemyHP };
     setPlayerFighter(updatedPlayer);
     setEnemyFighter(updatedEnemy);
+    enemyFighterRef.current = updatedEnemy;
+
+    const updatedTeam = teamFightersRef.current.map((t, i) =>
+      i === activeTeamIdxRef.current ? { ...t, currentMP: newPlayerMP } : t
+    );
+    setTeamFighters(updatedTeam);
+    teamFightersRef.current = updatedTeam;
 
     if (newEnemyHP <= 0) {
-      setTimeout(() => {
-        addLog('Inimigo derrotado! Vitória!', '#22c55e');
-        Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
-        setWinner('player');
-        setPhase('result');
-        // Grant rewards
-        const xpAmount = stage?.expReward ?? 0;
-        if (selectedCharacter) {
-          gainExp(selectedCharacter.ownedId, xpAmount);
-        }
-        // D-2: share 25% XP with benched digimon
-        const equippedDigivice = equippedItems.digivice
-          ? EQUIPMENT_ITEMS.find((i) => i.id === equippedItems.digivice)
-          : null;
-        if (equippedDigivice?.xpSharePercent && xpAmount > 0 && selectedCharacter) {
-          const shared = Math.floor(xpAmount * equippedDigivice.xpSharePercent);
-          if (shared > 0) {
-            const benched = collection.filter((c) => c.ownedId !== selectedCharacter.ownedId);
-            benched.forEach((c) => gainExp(c.ownedId, shared));
-            if (benched.length > 0) {
-              addLog(`📡 +${shared} XP compartilhado com ${benched.length} Digimon!`, '#60a5fa');
-            }
+      const nextEnemyIdx = currentEnemyIdxRef.current + 1;
+      if (nextEnemyIdx < enemyQueueRef.current.length) {
+        setTimeout(() => {
+          const nextCharId = enemyQueueRef.current[nextEnemyIdx];
+          const nextChar = CHARACTERS[nextCharId];
+          addLog(`${updatedEnemy.name} derrotado! ${nextChar?.name} chegou!`, '#22c55e');
+          currentEnemyIdxRef.current = nextEnemyIdx;
+          setCurrentEnemyIdx(nextEnemyIdx);
+          const nextEF = buildEnemy(nextCharId);
+          setEnemyFighter(nextEF);
+          enemyFighterRef.current = nextEF;
+          const curPlayer = teamFightersRef.current[activeTeamIdxRef.current];
+          const first = whoGoesFirst(curPlayer, nextEF);
+          addLog(
+            first === 'player'
+              ? `${curPlayer.name} age primeiro!`
+              : `${nextChar?.name} age primeiro!`,
+            colors.primary,
+          );
+          if (first === 'enemy') {
+            setTimeout(() => {
+              const pd = doEnemyTurn(curPlayer, nextEF);
+              if (!pd) setBusy(false);
+            }, 800);
+          } else {
+            setBusy(false);
           }
-        }
-        // First clear reward
-        const wasCleared = isStageCleared(mapId, stageIndex);
-        clearStage(mapId, stageIndex);
-        if (!wasCleared && stage?.firstClearReward) {
-          addToInventory(stage.firstClearReward);
-          const rewardItem = EQUIPMENT_ITEMS.find((i) => i.id === stage.firstClearReward);
-          addLog(`🎁 Item obtido: ${rewardItem?.name ?? stage.firstClearReward}!`, '#f59e0b');
-        }
-        if (stage && CHARACTERS[stage.enemyCharacterId]?.rarity === 'COMMON') {
-          gainScan(stage.enemyCharacterId, 5);
-        }
-
-        if (map?.bitsReward) {
-          gainBits(map.bitsReward);
-          addLog(`💰 +${map.bitsReward.toLocaleString()} Bits!`, '#facc15');
-        }
-        if (map?.tamerExpReward) {
-          // D-2: +20% tamer XP bonus
-          const tamerXp = equippedDigivice?.tamerXpBonusPercent
-            ? Math.floor(map.tamerExpReward * (1 + equippedDigivice.tamerXpBonusPercent))
-            : map.tamerExpReward;
-          gainTamerExp(tamerXp);
-          addLog(`⭐ +${tamerXp} XP Tamer!`, '#a78bfa');
-        }
-
-        if (stage?.drops) {
-          stage.drops.forEach((drop) => {
-            if (Math.random() < drop.chance) {
-              if (drop.type === 'bits') {
-                gainBits(drop.amount);
-                addLog(`💰 +${drop.amount.toLocaleString()} Bits!`, '#facc15');
-              } else if (drop.type === 'piece' && drop.id) {
-                gainPiece(drop.id, drop.amount);
-                addLog(`✦ Fragmento obtido!`, '#f59e0b');
-              }
-            }
-          });
-        } else if (Math.random() < 0.30) {
-          if (mapId === 'map_forest') {
-            gainPiece('piece_coragem', 1);
-            addLog('🔴 Fragmento da Coragem obtido!', '#ef4444');
-          } else if (mapId === 'map_city') {
-            gainPiece('piece_gelo', 1);
-            addLog('🔵 Fragmento de Gelo obtido!', '#38bdf8');
-          } else if (mapId === 'map_shadow') {
-            gainPiece('piece_caos', 1);
-            addLog('🟣 Fragmento do Caos obtido!', '#a855f7');
-          }
-        }
-        // Universal sewing material drops (independent 20% each, any stage)
-        if (Math.random() < 0.20) {
-          gainPiece('piece_tecido', 1);
-          addLog('🎨 Tecido Colorido obtido!', '#ec4899');
-        }
-        if (Math.random() < 0.20) {
-          gainPiece('piece_agulha', 1);
-          addLog('🪡 Agulha Média obtida!', '#8b5cf6');
-        }
-        if (Math.random() < 0.20) {
-          gainPiece('piece_linha', 1);
-          addLog('🧵 Linha Colorida obtida!', '#06b6d4');
-        }
-      }, 400);
-      setBusy(false);
+        }, 1200);
+      } else {
+        setTimeout(() => {
+          addLog('Todos os inimigos derrotados! Vitória!', '#22c55e');
+          Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+          const activeId = teamFightersRef.current[activeTeamIdxRef.current]?.ownedId;
+          if (activeId) grantRewards(activeId);
+          setWinner('player');
+          setPhase('result');
+        }, 400);
+        setBusy(false);
+      }
       return;
     }
 
-    // Enemy turn after delay
     setTimeout(() => {
       const playerDied = doEnemyTurn(updatedPlayer, updatedEnemy);
       if (!playerDied) setBusy(false);
     }, 900);
   }
 
+  // ── Guard ───────────────────────────────────────────────────────────────────
   if (!stage || !map) {
     return (
       <View style={[styles.container, { backgroundColor: colors.background, paddingTop: topPad }]}>
@@ -343,10 +437,22 @@ export default function BattleScreen() {
     );
   }
 
-  const enemyChar = CHARACTERS[stage.enemyCharacterId];
+  const stageQueue = stage.enemyCharacterIds ?? [stage.enemyCharacterId];
+  const activeEnemyId = phase === 'battle'
+    ? (enemyQueue[currentEnemyIdx] ?? stage.enemyCharacterId)
+    : stageQueue[0];
+  const enemyChar = CHARACTERS[activeEnemyId];
   const enemyAttrData = enemyChar ? ATTRIBUTES[enemyChar.attribute] : null;
 
-  // ── Select Phase ──────────────────────────────────────────────────────────────
+  function toggleTeam(ownedId: string) {
+    setSelectedTeam((prev) => {
+      if (prev.includes(ownedId)) return prev.filter((id) => id !== ownedId);
+      if (prev.length >= 3) return prev;
+      return [...prev, ownedId];
+    });
+  }
+
+  // ─── SELECT ─────────────────────────────────────────────────────────────────
   if (phase === 'select') {
     return (
       <View style={[styles.container, { backgroundColor: colors.background }]}>
@@ -359,60 +465,82 @@ export default function BattleScreen() {
         </View>
 
         {/* Enemy preview */}
-        {enemyChar && (
-          <View style={[styles.enemyPreviewCard, { borderColor: enemyAttrData ? enemyAttrData.color + '88' : colors.border, overflow: 'hidden' }]}>
-            {map?.backgroundImage ? (
-              <ImageBackground source={map.backgroundImage} style={styles.previewBg} imageStyle={{ resizeMode: 'cover' }}>
-                <View style={styles.previewBgOverlay}>
-                  <Text style={styles.previewLabel}>INIMIGO</Text>
-                  {CHARACTER_IMAGES[stage.enemyCharacterId] ? (
-                    <Image source={CHARACTER_IMAGES[stage.enemyCharacterId]} style={styles.previewSprite} resizeMode="contain" />
-                  ) : (
-                    <CharacterAvatar characterId={stage.enemyCharacterId} size={90} />
+        <View style={[styles.enemyPreviewCard, { borderColor: enemyAttrData ? enemyAttrData.color + '88' : colors.border }]}>
+          {map.backgroundImage ? (
+            <ImageBackground source={map.backgroundImage} style={styles.previewBg} imageStyle={{ resizeMode: 'cover' }}>
+              <View style={styles.previewBgOverlay}>
+                <Text style={styles.previewLabel}>
+                  {stageQueue.length > 1 ? `${stageQueue.length} INIMIGOS` : 'INIMIGO'}
+                </Text>
+                <View style={styles.previewEnemyRow}>
+                  {stageQueue.map((cid) =>
+                    CHARACTER_IMAGES[cid] ? (
+                      <Image
+                        key={cid}
+                        source={CHARACTER_IMAGES[cid]}
+                        style={[styles.previewSprite, stageQueue.length > 1 && { width: 70, height: 70 }]}
+                        resizeMode="contain"
+                      />
+                    ) : (
+                      <CharacterAvatar key={cid} characterId={cid} size={stageQueue.length > 1 ? 60 : 90} />
+                    )
                   )}
                 </View>
-              </ImageBackground>
-            ) : (
-              <>
-                <Text style={[styles.sectionLabel, { color: colors.mutedForeground }]}>Inimigo</Text>
-                <CharacterAvatar characterId={stage.enemyCharacterId} size={90} />
-              </>
-            )}
-            <View style={[styles.previewInfo, { backgroundColor: colors.card }]}>
-              <Text style={[styles.enemyNameLg, { color: colors.foreground }]}>{enemyChar.name}</Text>
-              <Text style={[styles.enemyLevel, { color: colors.primary }]}>Nível {stage.enemyLevel}</Text>
-              <View style={styles.enemyBadges}>
-                <AttributeBadge attr={enemyChar.attribute} />
-                <View style={{ width: 8 }} />
-                <ElementBadge elem={enemyChar.element} />
               </View>
-              <View style={[styles.expBadge, { backgroundColor: colors.primary + '22', borderColor: colors.primary }]}>
-                <Feather name="award" size={12} color={colors.primary} />
-                <Text style={[styles.expBadgeText, { color: colors.primary }]}>+{stage.expReward} EXP</Text>
+            </ImageBackground>
+          ) : (
+            <View style={[styles.previewBgOverlay, { backgroundColor: colors.card }]}>
+              <Text style={[styles.previewLabel, { color: colors.mutedForeground }]}>
+                {stageQueue.length > 1 ? `${stageQueue.length} INIMIGOS` : 'INIMIGO'}
+              </Text>
+              <View style={styles.previewEnemyRow}>
+                {stageQueue.map((cid) => <CharacterAvatar key={cid} characterId={cid} size={stageQueue.length > 1 ? 60 : 90} />)}
               </View>
             </View>
+          )}
+          <View style={[styles.previewInfo, { backgroundColor: colors.card }]}>
+            <Text style={[styles.enemyNameLg, { color: colors.foreground }]} numberOfLines={1}>
+              {stageQueue.map((id) => CHARACTERS[id]?.name ?? id).join(' · ')}
+            </Text>
+            <Text style={[styles.enemyLevel, { color: colors.primary }]}>Nível {stage.enemyLevel}</Text>
+            <View style={[styles.expBadge, { backgroundColor: colors.primary + '22', borderColor: colors.primary }]}>
+              <Feather name="award" size={12} color={colors.primary} />
+              <Text style={[styles.expBadgeText, { color: colors.primary }]}>+{stage.expReward} EXP</Text>
+            </View>
           </View>
-        )}
+        </View>
 
-        <Text style={[styles.chooseLabel, { color: colors.mutedForeground }]}>ESCOLHA SEU DIGIMON</Text>
-        <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.selectList}>
+        {/* Team builder */}
+        <Text style={[styles.chooseLabel, { color: colors.mutedForeground }]}>
+          MONTE SUA EQUIPE ({selectedTeam.length}/3)
+        </Text>
+        <ScrollView
+          horizontal
+          showsHorizontalScrollIndicator={false}
+          contentContainerStyle={styles.selectList}
+        >
           {collection.map((owned) => {
             const c = CHARACTERS[owned.characterId];
-            const attr = c ? ATTRIBUTES[c.attribute] : null;
-            const isSelected = selectedCharacter?.ownedId === owned.ownedId;
+            const pos = selectedTeam.indexOf(owned.ownedId);
+            const inTeam = pos !== -1;
             return (
               <TouchableOpacity
                 key={owned.ownedId}
-                onPress={() => startBattle(owned.ownedId)}
+                onPress={() => toggleTeam(owned.ownedId)}
                 activeOpacity={0.8}
                 style={[
                   styles.selectCard,
                   {
-                    backgroundColor: colors.card,
-                    borderColor: isSelected ? colors.primary : colors.border,
+                    backgroundColor: inTeam ? colors.primary + '22' : colors.card,
+                    borderColor: inTeam ? colors.primary : colors.border,
                   },
                 ]}
               >
+                {inTeam && (
+                  <View style={[styles.teamPosBadge, { backgroundColor: colors.primary }]}>
+                    <Text style={styles.teamPosBadgeText}>{pos + 1}</Text>
+                  </View>
+                )}
                 <CharacterAvatar characterId={owned.characterId} size={64} />
                 <Text style={[styles.selectName, { color: colors.foreground }]}>{c?.name}</Text>
                 <Text style={[styles.selectLevel, { color: colors.primary }]}>Lv {owned.level}</Text>
@@ -421,53 +549,72 @@ export default function BattleScreen() {
             );
           })}
         </ScrollView>
+
+        {/* Battle button */}
+        <TouchableOpacity
+          onPress={() => { if (selectedTeam.length > 0) startBattle(selectedTeam); }}
+          activeOpacity={selectedTeam.length > 0 ? 0.8 : 1}
+          style={[
+            styles.startBattleBtn,
+            {
+              backgroundColor: selectedTeam.length > 0 ? '#ef4444' : colors.card,
+              borderColor: selectedTeam.length > 0 ? '#ef4444' : colors.border,
+              marginBottom: botPad + 16,
+            },
+          ]}
+        >
+          <Feather name="crosshair" size={20} color={selectedTeam.length > 0 ? '#fff' : colors.mutedForeground} />
+          <Text style={[styles.startBattleBtnText, { color: selectedTeam.length > 0 ? '#fff' : colors.mutedForeground }]}>
+            {selectedTeam.length > 0
+              ? `Batalhar! (${selectedTeam.length} Digimon)`
+              : 'Selecione ao menos 1 Digimon'}
+          </Text>
+        </TouchableOpacity>
       </View>
     );
   }
 
-  // ── Battle Phase ──────────────────────────────────────────────────────────────
+  // ─── BATTLE ─────────────────────────────────────────────────────────────────
   if (phase === 'battle' && playerFighter && enemyFighter) {
-    const pOwned = collection.find((c) => c.ownedId === selectedCharacter?.ownedId);
+    const pOwned = collection.find((c) => c.ownedId === teamFighters[activeTeamIdx]?.ownedId);
     const pChar = pOwned ? CHARACTERS[pOwned.characterId] : null;
-    const pAttr = pChar ? ATTRIBUTES[pChar.attribute] : null;
     const canSpirit = playerFighter.currentMP >= SPIRIT_MP_COST;
+    const enemyTotal = enemyQueue.length || stageQueue.length;
 
     return (
       <View style={[styles.container, { backgroundColor: colors.background }]}>
         <View style={[styles.battleHeader, { paddingTop: topPad + 8, borderBottomColor: colors.border }]}>
           <Text style={[styles.battleTitle, { color: colors.foreground }]}>{stage.name}</Text>
+          {enemyTotal > 1 && (
+            <View style={[styles.enemyCountBadge, { backgroundColor: '#ef444422', borderColor: '#ef4444' }]}>
+              <Text style={styles.enemyCountText}>{currentEnemyIdx + 1}/{enemyTotal}</Text>
+            </View>
+          )}
         </View>
 
         {/* Enemy arena */}
-        {map?.backgroundImage ? (
-          <ImageBackground
-            source={map.backgroundImage}
-            style={styles.arena}
-            imageStyle={styles.arenaImage}
-          >
+        {map.backgroundImage ? (
+          <ImageBackground source={map.backgroundImage} style={styles.arena} imageStyle={styles.arenaImage}>
             <View style={styles.arenaOverlay}>
-              {/* Name + level top-left */}
               <View style={styles.arenaTopRow}>
                 <View style={styles.arenaNameBadge}>
                   <Text style={styles.arenaEnemyName}>{enemyFighter.name}</Text>
                   <Text style={styles.arenaEnemyLevel}>Lv {stage.enemyLevel}</Text>
                 </View>
               </View>
-              {/* Enemy sprite */}
               <Animated.View style={[styles.arenaSpriteWrapper, { transform: [{ translateX: enemyShake }] }]}>
-                {CHARACTER_IMAGES[stage.enemyCharacterId] ? (
-                  <Image
-                    source={CHARACTER_IMAGES[stage.enemyCharacterId]}
-                    style={styles.arenaSprite}
-                    resizeMode="contain"
-                  />
+                {CHARACTER_IMAGES[activeEnemyId] ? (
+                  <Image source={CHARACTER_IMAGES[activeEnemyId]} style={styles.arenaSprite} resizeMode="contain" />
                 ) : (
-                  <CharacterAvatar characterId={stage.enemyCharacterId} size={100} />
+                  <CharacterAvatar characterId={activeEnemyId} size={100} />
                 )}
               </Animated.View>
-              {/* HP bar bottom */}
               <View style={styles.arenaHpRow}>
-                <HPBar current={enemyFighter.currentHP} max={getScaledStats(enemyChar?.baseStats ?? enemyFighter.stats, stage.enemyLevel).hp} color={enemyAttrData?.color ?? '#ef4444'} />
+                <HPBar
+                  current={enemyFighter.currentHP}
+                  max={getScaledStats(enemyChar?.baseStats ?? enemyFighter.stats, stage.enemyLevel).hp}
+                  color={enemyAttrData?.color ?? '#ef4444'}
+                />
               </View>
             </View>
           </ImageBackground>
@@ -478,9 +625,13 @@ export default function BattleScreen() {
               <Text style={[styles.fighterLevel, { color: colors.mutedForeground }]}>Lv {stage.enemyLevel}</Text>
             </View>
             <Animated.View style={{ transform: [{ translateX: enemyShake }] }}>
-              <CharacterAvatar characterId={stage.enemyCharacterId} size={80} />
+              <CharacterAvatar characterId={activeEnemyId} size={80} />
             </Animated.View>
-            <HPBar current={enemyFighter.currentHP} max={getScaledStats(enemyChar?.baseStats ?? enemyFighter.stats, stage.enemyLevel).hp} color={enemyAttrData?.color ?? colors.primary} />
+            <HPBar
+              current={enemyFighter.currentHP}
+              max={getScaledStats(enemyChar?.baseStats ?? enemyFighter.stats, stage.enemyLevel).hp}
+              color={enemyAttrData?.color ?? colors.primary}
+            />
           </View>
         )}
 
@@ -492,17 +643,21 @@ export default function BattleScreen() {
           showsVerticalScrollIndicator={false}
         >
           {log.map((entry, i) => (
-            <Text key={i} style={[styles.logEntry, { color: entry.color }]}>
-              {entry.text}
-            </Text>
+            <Text key={i} style={[styles.logEntry, { color: entry.color }]}>{entry.text}</Text>
           ))}
         </ScrollView>
 
-        {/* Player */}
+        {/* Player + team strip */}
         <View style={[styles.fighterRow, styles.playerSide]}>
-          <HPBar current={playerFighter.currentHP} max={getScaledStats(pChar?.baseStats ?? playerFighter.stats, pOwned?.level ?? 1).hp} color={colors.primary} />
+          <HPBar
+            current={playerFighter.currentHP}
+            max={getScaledStats(pChar?.baseStats ?? playerFighter.stats, pOwned?.level ?? 1).hp}
+            color={colors.primary}
+          />
           <View style={styles.mpRow}>
-            <Text style={[styles.mpText, { color: '#a855f7' }]}>MP: {playerFighter.currentMP}/{playerFighter.stats.mp}</Text>
+            <Text style={[styles.mpText, { color: '#a855f7' }]}>
+              MP: {playerFighter.currentMP}/{playerFighter.stats.mp}
+            </Text>
           </View>
           <View style={styles.fighterInfo}>
             <Text style={[styles.fighterName, { color: colors.foreground }]}>{playerFighter.name}</Text>
@@ -511,17 +666,56 @@ export default function BattleScreen() {
           <Animated.View style={{ transform: [{ translateX: playerShake }] }}>
             <CharacterAvatar characterId={pOwned?.characterId ?? ''} size={80} />
           </Animated.View>
+
+          {/* Team strip */}
+          {teamFighters.length > 1 && (
+            <View style={styles.teamStrip}>
+              {teamFighters.map((tf, i) => {
+                const tfOwned = collection.find((c) => c.ownedId === tf.ownedId);
+                const tfChar = tfOwned ? CHARACTERS[tfOwned.characterId] : null;
+                const maxHP = tfChar
+                  ? getScaledStats(tfChar.baseStats, tfOwned?.level ?? 1).hp
+                  : tf.stats.hp;
+                const isActive = i === activeTeamIdx;
+                const dead = tf.currentHP <= 0;
+                return (
+                  <View
+                    key={tf.ownedId}
+                    style={[
+                      styles.teamChip,
+                      { borderColor: isActive ? colors.primary : colors.border, opacity: dead ? 0.35 : 1 },
+                    ]}
+                  >
+                    <CharacterAvatar characterId={tfOwned?.characterId ?? ''} size={28} />
+                    <View style={[styles.teamChipHpTrack, { backgroundColor: colors.border }]}>
+                      <View
+                        style={[
+                          styles.teamChipHpFill,
+                          {
+                            width: `${Math.max(0, (tf.currentHP / maxHP) * 100)}%` as any,
+                            backgroundColor: dead ? '#ef4444' : isActive ? colors.primary : '#22c55e',
+                          },
+                        ]}
+                      />
+                    </View>
+                  </View>
+                );
+              })}
+            </View>
+          )}
         </View>
 
         {/* Actions */}
         <View style={[styles.actions, { paddingBottom: botPad + 16, borderTopColor: colors.border }]}>
-          {/* Manual buttons — hidden while auto is on */}
           {!autoMode && (
             <>
               <TouchableOpacity
                 activeOpacity={busy ? 1 : 0.8}
                 onPress={() => handleAction('ATTACK')}
-                style={[styles.actionBtn, { backgroundColor: '#ef4444' + (busy ? '33' : '22'), borderColor: busy ? colors.border : '#ef4444' }]}
+                style={[
+                  styles.actionBtn,
+                  { backgroundColor: '#ef4444' + (busy ? '33' : '22'), borderColor: busy ? colors.border : '#ef4444' },
+                ]}
               >
                 <Feather name="crosshair" size={22} color={busy ? colors.mutedForeground : '#ef4444'} />
                 <Text style={[styles.actionBtnLabel, { color: busy ? colors.mutedForeground : '#ef4444' }]}>Ataque</Text>
@@ -529,7 +723,13 @@ export default function BattleScreen() {
               <TouchableOpacity
                 activeOpacity={busy || !canSpirit ? 1 : 0.8}
                 onPress={() => !busy && canSpirit && handleAction('SPIRIT')}
-                style={[styles.actionBtn, { backgroundColor: '#a855f7' + (!canSpirit || busy ? '11' : '22'), borderColor: !canSpirit || busy ? colors.border : '#a855f7' }]}
+                style={[
+                  styles.actionBtn,
+                  {
+                    backgroundColor: '#a855f7' + (!canSpirit || busy ? '11' : '22'),
+                    borderColor: !canSpirit || busy ? colors.border : '#a855f7',
+                  },
+                ]}
               >
                 <Feather name="star" size={22} color={!canSpirit || busy ? colors.mutedForeground : '#a855f7'} />
                 <Text style={[styles.actionBtnLabel, { color: !canSpirit || busy ? colors.mutedForeground : '#a855f7' }]}>
@@ -538,24 +738,20 @@ export default function BattleScreen() {
               </TouchableOpacity>
             </>
           )}
-
-          {/* Auto-battle indicator shown while active */}
           {autoMode && (
             <View style={[styles.autoIndicator, { backgroundColor: '#22c55e11', borderColor: '#22c55e' }]}>
               <Feather name="zap" size={18} color="#22c55e" />
               <Text style={[styles.autoIndicatorText, { color: '#22c55e' }]}>Batalha Automática…</Text>
             </View>
           )}
-
-          {/* Toggle auto button — available after first clear, or always in dungeons */}
-          {(alreadyCleared || map?.isDungeon) && (
+          {(alreadyCleared || map.isDungeon) && (
             <TouchableOpacity
               activeOpacity={0.8}
               onPress={() => {
-                setAutoMode((prev) => {
-                  const next = !prev;
-                  if (next) setAutoRunCount(0);
-                  return next;
+                setAutoMode((p) => {
+                  const n = !p;
+                  if (n) setAutoRunCount(0);
+                  return n;
                 });
               }}
               style={[
@@ -577,7 +773,7 @@ export default function BattleScreen() {
     );
   }
 
-  // ── Result Phase ──────────────────────────────────────────────────────────────
+  // ─── RESULT ─────────────────────────────────────────────────────────────────
   if (phase === 'result') {
     const won = winner === 'player';
     const autoRunning = autoMode && won && autoRunCount < AUTO_RUN_MAX;
@@ -596,16 +792,14 @@ export default function BattleScreen() {
               <Text style={[styles.rewardText, { color: colors.primary }]}>+{stage.expReward} EXP ganhos!</Text>
             </View>
           )}
-          {won && stage && (
+          {won && (
             <View style={[styles.rewardBox, { backgroundColor: '#3b82f622', borderColor: '#3b82f6' }]}>
               <Feather name="cpu" size={16} color="#3b82f6" />
               <Text style={[styles.rewardText, { color: '#3b82f6' }]}>
-                +5% scan de {CHARACTERS[stage.enemyCharacterId]?.name ?? 'Digimon'}!
+                +5% scan de {CHARACTERS[stageQueue[0]]?.name ?? 'Digimon'}!
               </Text>
             </View>
           )}
-
-          {/* Auto-restart banner */}
           {autoRunning && (
             <View style={[styles.autoRestartBanner, { backgroundColor: '#22c55e11', borderColor: '#22c55e55' }]}>
               <Feather name="zap" size={14} color="#22c55e" />
@@ -625,8 +819,6 @@ export default function BattleScreen() {
               </Text>
             </View>
           )}
-
-          {/* Cancel auto */}
           {autoMode && won && (
             <TouchableOpacity
               onPress={() => { setAutoMode(false); setAutoRunCount(0); }}
@@ -635,7 +827,6 @@ export default function BattleScreen() {
               <Text style={[styles.resultBtnText, { color: '#ef4444' }]}>Cancelar Auto</Text>
             </TouchableOpacity>
           )}
-
           {!autoMode && (
             <TouchableOpacity
               onPress={() => router.replace('/(tabs)/map')}
@@ -673,29 +864,47 @@ const styles = StyleSheet.create({
   headerTitle: { fontSize: 17, fontWeight: '700' as const },
   backBtn: { padding: 4 },
   errorText: { textAlign: 'center', fontSize: 16, margin: 40 },
+
+  // ── Select ──
   enemyPreviewCard: {
     margin: 20,
     borderRadius: 16,
     borderWidth: 1.5,
-    padding: 20,
-    alignItems: 'center',
-    gap: 10,
+    overflow: 'hidden',
   },
-  sectionLabel: { fontSize: 11, fontWeight: '700' as const, letterSpacing: 1, textTransform: 'uppercase' },
-  enemyAvatarLg: {
-    width: 90,
-    height: 90,
-    borderRadius: 45,
-    borderWidth: 2,
+  previewBg: { width: '100%', height: 160 },
+  previewBgOverlay: {
+    flex: 1,
+    minHeight: 120,
+    backgroundColor: 'rgba(0,0,0,0.25)',
     alignItems: 'center',
     justifyContent: 'center',
+    paddingTop: 10,
+    gap: 6,
   },
-  enemyNameLg: { fontSize: 24, fontWeight: '800' as const },
+  previewLabel: { fontSize: 10, fontWeight: '800' as const, letterSpacing: 1.5, color: '#ffffffcc' },
+  previewEnemyRow: { flexDirection: 'row', gap: 8, alignItems: 'center', justifyContent: 'center', flexWrap: 'wrap' },
+  previewSprite: { width: 100, height: 100 },
+  previewInfo: { alignItems: 'center', gap: 8, padding: 14, width: '100%' },
+  enemyNameLg: { fontSize: 18, fontWeight: '800' as const, textAlign: 'center' },
   enemyLevel: { fontSize: 14, fontWeight: '700' as const },
-  enemyBadges: { flexDirection: 'row' },
-  expBadge: { flexDirection: 'row', alignItems: 'center', gap: 6, borderWidth: 1, borderRadius: 10, paddingHorizontal: 12, paddingVertical: 4 },
+  expBadge: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
+    borderWidth: 1,
+    borderRadius: 10,
+    paddingHorizontal: 12,
+    paddingVertical: 4,
+  },
   expBadgeText: { fontSize: 13, fontWeight: '700' as const },
-  chooseLabel: { fontSize: 11, fontWeight: '700' as const, letterSpacing: 1, paddingHorizontal: 20, marginBottom: 10 },
+  chooseLabel: {
+    fontSize: 11,
+    fontWeight: '700' as const,
+    letterSpacing: 1,
+    paddingHorizontal: 20,
+    marginBottom: 10,
+  },
   selectList: { paddingHorizontal: 20, paddingBottom: 20, gap: 12 },
   selectCard: {
     width: 120,
@@ -704,66 +913,78 @@ const styles = StyleSheet.create({
     padding: 14,
     alignItems: 'center',
     gap: 8,
+    position: 'relative' as const,
   },
-  selectAvatar: {
-    width: 60,
-    height: 60,
-    borderRadius: 30,
-    borderWidth: 2,
+  teamPosBadge: {
+    position: 'absolute',
+    top: 6,
+    right: 6,
+    width: 20,
+    height: 20,
+    borderRadius: 10,
     alignItems: 'center',
     justifyContent: 'center',
   },
+  teamPosBadgeText: { fontSize: 11, fontWeight: '800' as const, color: '#fff' },
   selectName: { fontSize: 14, fontWeight: '700' as const },
   selectLevel: { fontSize: 12, fontWeight: '600' as const },
-  // Battle
+  startBattleBtn: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 10,
+    marginHorizontal: 20,
+    borderRadius: 16,
+    borderWidth: 1.5,
+    paddingVertical: 16,
+  },
+  startBattleBtnText: { fontSize: 15, fontWeight: '800' as const },
+
+  // ── Battle header ──
   battleHeader: {
     paddingHorizontal: 20,
     paddingBottom: 10,
     borderBottomWidth: 1,
+    flexDirection: 'row',
     alignItems: 'center',
+    justifyContent: 'center',
+    gap: 10,
   },
   battleTitle: { fontSize: 16, fontWeight: '700' as const },
+  enemyCountBadge: { borderRadius: 10, borderWidth: 1, paddingHorizontal: 10, paddingVertical: 3 },
+  enemyCountText: { fontSize: 12, fontWeight: '800' as const, color: '#ef4444' },
+
+  // ── Fighters ──
   fighterRow: { padding: 20, gap: 10 },
   enemySide: { paddingBottom: 0 },
   playerSide: { paddingTop: 0 },
   fighterInfo: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' },
   fighterName: { fontSize: 18, fontWeight: '700' as const },
   fighterLevel: { fontSize: 13 },
-  fighterAvatar: {
-    width: 80,
-    height: 80,
-    borderRadius: 40,
-    borderWidth: 2,
-    alignItems: 'center',
-    justifyContent: 'center',
-    alignSelf: 'center',
-  },
   mpRow: { flexDirection: 'row', justifyContent: 'flex-end' },
   mpText: { fontSize: 12, fontWeight: '600' as const },
-  logBox: {
-    flex: 1,
-    marginHorizontal: 20,
-    borderRadius: 12,
-    borderWidth: 1,
-    maxHeight: 130,
-  },
-  logContent: { padding: 12, gap: 4 },
-  logEntry: { fontSize: 12, lineHeight: 18 },
-  actions: {
+
+  // ── Team strip ──
+  teamStrip: { flexDirection: 'row', gap: 8, marginTop: 6, flexWrap: 'wrap' as const },
+  teamChip: {
     flexDirection: 'row',
-    gap: 12,
-    padding: 16,
-    paddingTop: 12,
-    borderTopWidth: 1,
-  },
-  actionBtn: {
-    flex: 1,
-    borderRadius: 14,
-    borderWidth: 1.5,
-    padding: 16,
     alignItems: 'center',
     gap: 6,
+    borderRadius: 10,
+    borderWidth: 1.5,
+    padding: 5,
   },
+  teamChipHpTrack: { width: 56, height: 5, borderRadius: 3, overflow: 'hidden' as const },
+  teamChipHpFill: { height: 5, borderRadius: 3 },
+
+  // ── Log ──
+  logBox: { flex: 1, marginHorizontal: 20, borderRadius: 12, borderWidth: 1, maxHeight: 130 },
+  logContent: { padding: 12, gap: 4 },
+  logEntry: { fontSize: 12, lineHeight: 18 },
+
+  // ── Actions ──
+  actions: { flexDirection: 'row', gap: 12, padding: 16, paddingTop: 12, borderTopWidth: 1 },
+  actionBtn: { flex: 1, borderRadius: 14, borderWidth: 1.5, padding: 16, alignItems: 'center', gap: 6 },
   actionBtnLabel: { fontSize: 13, fontWeight: '700' as const },
   autoIndicator: {
     flex: 1,
@@ -787,17 +1008,32 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
   },
   autoBtnLabel: { fontSize: 12, fontWeight: '700' as const },
-  autoRestartBanner: {
-    width: '100%',
-    borderRadius: 12,
-    borderWidth: 1,
-    padding: 12,
-    alignItems: 'center',
-    gap: 4,
+
+  // ── Arena ──
+  arena: { width: '100%', height: 210 },
+  arenaImage: { resizeMode: 'cover' as const },
+  arenaOverlay: {
+    flex: 1,
+    backgroundColor: 'rgba(0,0,0,0.18)',
+    justifyContent: 'space-between',
+    paddingHorizontal: 14,
+    paddingTop: 10,
+    paddingBottom: 10,
   },
-  autoRestartText: { fontSize: 13, fontWeight: '700' as const },
-  autoRestartSub: { fontSize: 11 },
-  // Result
+  arenaTopRow: { flexDirection: 'row', alignItems: 'flex-start' },
+  arenaNameBadge: {
+    backgroundColor: 'rgba(0,0,0,0.55)',
+    borderRadius: 10,
+    paddingHorizontal: 12,
+    paddingVertical: 5,
+  },
+  arenaEnemyName: { fontSize: 16, fontWeight: '800' as const, color: '#ffffff' },
+  arenaEnemyLevel: { fontSize: 11, color: '#ffffffaa', fontWeight: '600' as const },
+  arenaSpriteWrapper: { alignItems: 'center', flex: 1, justifyContent: 'center' },
+  arenaSprite: { width: 120, height: 120 },
+  arenaHpRow: { backgroundColor: 'rgba(0,0,0,0.55)', borderRadius: 10, padding: 8 },
+
+  // ── Result ──
   resultCenter: { alignItems: 'center', justifyContent: 'center' },
   resultCard: {
     width: '80%',
@@ -821,40 +1057,7 @@ const styles = StyleSheet.create({
   resultBtn: { width: '100%', borderRadius: 12, padding: 16, alignItems: 'center' },
   resultBtnOutline: { width: '100%', borderRadius: 12, padding: 16, alignItems: 'center', borderWidth: 1 },
   resultBtnText: { fontSize: 15, fontWeight: '700' as const },
-  // Select preview with background
-  previewBg: { width: '100%', height: 160 },
-  previewBgOverlay: {
-    flex: 1,
-    backgroundColor: 'rgba(0,0,0,0.25)',
-    alignItems: 'center',
-    justifyContent: 'center',
-    paddingTop: 10,
-    gap: 6,
-  },
-  previewLabel: { fontSize: 10, fontWeight: '800' as const, letterSpacing: 1.5, color: '#ffffffcc' },
-  previewSprite: { width: 100, height: 100 },
-  previewInfo: { alignItems: 'center', gap: 8, padding: 14 },
-  // Arena
-  arena: { width: '100%', height: 210 },
-  arenaImage: { resizeMode: 'cover' },
-  arenaOverlay: {
-    flex: 1,
-    backgroundColor: 'rgba(0,0,0,0.18)',
-    justifyContent: 'space-between',
-    paddingHorizontal: 14,
-    paddingTop: 10,
-    paddingBottom: 10,
-  },
-  arenaTopRow: { flexDirection: 'row', alignItems: 'flex-start' },
-  arenaNameBadge: {
-    backgroundColor: 'rgba(0,0,0,0.55)',
-    borderRadius: 10,
-    paddingHorizontal: 12,
-    paddingVertical: 5,
-  },
-  arenaEnemyName: { fontSize: 16, fontWeight: '800' as const, color: '#ffffff' },
-  arenaEnemyLevel: { fontSize: 11, color: '#ffffffaa', fontWeight: '600' as const },
-  arenaSpriteWrapper: { alignItems: 'center', flex: 1, justifyContent: 'center' },
-  arenaSprite: { width: 120, height: 120 },
-  arenaHpRow: { backgroundColor: 'rgba(0,0,0,0.55)', borderRadius: 10, padding: 8 },
+  autoRestartBanner: { width: '100%', borderRadius: 12, borderWidth: 1, padding: 12, alignItems: 'center', gap: 4 },
+  autoRestartText: { fontSize: 13, fontWeight: '700' as const },
+  autoRestartSub: { fontSize: 11 },
 });
