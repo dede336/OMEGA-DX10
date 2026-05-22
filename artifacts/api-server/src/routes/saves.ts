@@ -5,8 +5,6 @@ import { requireAuth } from "../middlewares/requireAuth.js";
 
 const router = Router();
 
-const DEDE_USER_ID = 3;
-
 const CODEX_ORDER = [
   'agumon','agumonSaver','geoGreymon','rizeGreymon','shineGreymon','shineGreymonBurstMode',
   'veemon','exVeemon','paildramon','imperialDramonFM','imperialDramonRM','imperialDramonPM',
@@ -24,7 +22,7 @@ const CODEX_ORDER = [
 
 type OwnedEntry = { ownedId: string; characterId: string; level: number; exp: number };
 
-function injectDedeDigimon(saveData: Record<string, unknown>): Record<string, unknown> {
+function injectAdminDigimon(saveData: Record<string, unknown>): Record<string, unknown> {
   const existing = (saveData.collection ?? []) as OwnedEntry[];
   const ownedCharIds = new Set(existing.map((c) => c.characterId));
   const missing = CODEX_ORDER.filter((id) => !ownedCharIds.has(id));
@@ -46,11 +44,11 @@ router.get("/", requireAuth, async (req, res) => {
     return;
   }
   const [user] = await db.select({ isAdmin: usersTable.isAdmin }).from(usersTable).where(eq(usersTable.id, req.auth!.userId)).limit(1);
-  const isDede = req.auth!.userId === DEDE_USER_ID;
-  const saveData = isDede
-    ? injectDedeDigimon(save.saveData as Record<string, unknown>)
+  const isAdmin = user?.isAdmin ?? false;
+  const saveData = isAdmin
+    ? injectAdminDigimon(save.saveData as Record<string, unknown>)
     : save.saveData;
-  res.json({ saveData, updatedAt: save.updatedAt, isAdmin: user?.isAdmin ?? false, isDede });
+  res.json({ saveData, updatedAt: save.updatedAt, isAdmin, isDede: isAdmin });
 });
 
 // PUT /saves
@@ -79,8 +77,9 @@ router.put("/", requireAuth, async (req, res) => {
     }
   }
 
-  if (req.auth!.userId === DEDE_USER_ID) {
-    merged = injectDedeDigimon(merged);
+  const [user] = await db.select({ isAdmin: usersTable.isAdmin }).from(usersTable).where(eq(usersTable.id, req.auth!.userId)).limit(1);
+  if (user?.isAdmin) {
+    merged = injectAdminDigimon(merged);
   }
 
   const [save] = await db
